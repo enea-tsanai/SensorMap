@@ -3,174 +3,155 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-    <title>Simple Sidebar - Start Bootstrap Template</title>
+	<title>Simple Sidebar - Start Bootstrap Template</title>
 
-    <!-- Dynographs -->
+	<!-- Dynographs -->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
 
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
+	<!-- Bootstrap Core CSS -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
 
-    <!-- Custom CSS -->
-    <link href="../static/css/simple-sidebar.css" rel="stylesheet">
+	<!-- Custom CSS -->
+	<link href="../static/css/simple-sidebar.css" rel="stylesheet">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
 
-    <!-- Maps information goes here -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyHouJvIaHwiAcMpxP152Vfd0INgbawjo"></script>
-    <script type="text/javascript" src="../static/js/google-maps.js"></script>
-    <link rel="stylesheet" href="../static/css/maps.css" />
+	<!-- Maps information goes here -->
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyHouJvIaHwiAcMpxP152Vfd0INgbawjo"></script>
+	<script type="text/javascript" src="../static/js/google-maps.js"></script>
+	<link rel="stylesheet" href="../static/css/maps.css" />
 
 </head>
 
 <body>
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/">GeoSync OptiRTC</a>
-        </div>
-              <ul class="nav navbar-nav">
-              <li class="active"><a href="#">MAP</a></li>
-              <li><a href="#">Page 2</a></li>
-              <li><a href="#">About</a></li>
-            </ul>
-              <a class="navbar-text navbar-right" id="map-tool">Map Tool</a>
-      </div>
-    </nav>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/">GeoSync OptiRTC</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">MAP</a></li>
+				<li><a href="#">Page 2</a></li>
+				<li><a href="#">About</a></li>
+			</ul>
+			<a class="navbar-text navbar-right" id="map-tool">Map Tool</a>
+		</div>
+	</nav>
 
-    <div id="wrapper" class="toggled">
+	<div id="wrapper" class="toggled">
 
-        <!-- Sidebar -->
-        <div id="sidebar-wrapper">
+		<!-- Sidebar -->
+		<div id="sidebar-wrapper">
 
-            <div id="sidebar-header">
-            <nav class="navbar-default">
-              <div class="container-fluid">
-                <ul class="nav navbar-nav">
-                  <li><a id="sidebar-title" href="#"><span id="sidebar-title-icon"
-                                                           class="glyphicon glyphicon-dashboard"></span>Dashboard
-                  </a></li>
-                </ul>
+			<div id="sidebar-header">
+				<nav class="navbar-default">
+					<div class="container-fluid">
+					<ul class="nav navbar-nav">
+				  <li><a id="sidebar-title" href="#"><span id="sidebar-title-icon"
+														   class="glyphicon glyphicon-dashboard"></span>Dashboard
+				  </a></li>
+				</ul>
+					<ul class="nav navbar-nav navbar-right">
 
-                <ul class="nav navbar-nav navbar-right">
+					<li>
+						<a href="#" id="maximize" class="btn btn-link btn-sm" onclick="maximizeToolbar()"
+						   data-toggle="tooltip" data-placement="right" title="Maximize Toolbar">
+							<span class="glyphicon glyphicon-resize-full"></span>
+						</a>
+					</li>
+				  <li>
+					<a href="#" id="close" class="btn btn-link btn-sm" onclick="closeToolbar()"
+						data-toggle="tooltip" data-placement="right" title="Close Toolbar">
+						<span class="glyphicon glyphicon-chevron-left"></span>
+					</a>
+				  </li>
+				</ul>
+					</div>
+				</nav>
+			</div>
 
-                    <!--<li>-->
-    <!--<div class="input-group">-->
-      <!--<span class="input-group-btn">-->
-        <!--<button class="btn btn-default" style="z-index:50000" type="button">Go!</button>-->
-      <!--</span>-->
-      <!--<input type="text" class="form-control" placeholder="Search for...">-->
-    <!--</div>&lt;!&ndash; /input-group &ndash;&gt;-->
+			<ul class="nav in">
+				<li>
+					<a href="#">Shortcuts</a>
+				</li>
+				<li>
+					<a href="#">Overview</a>
+				</li>
+				<li>
+					<a href="#"><span class="glyphicon glyphicon-th"></span> Tables</a>
+				</li>
+			</ul>
 
-                    <!--</li>-->
+			<div>
+				<h4>Selection</h4>
+				<ul class="nav nav-tabs" id="selection-tabs">
+					<li class="active"><a data-toggle="tab" href="#Selection">Charts</a></li>
+					<li><a data-toggle="tab" href="#Analyze">Analyze</a></li>
+					<li><a data-toggle="tab" href="#Export">Export</a></li>
+				</ul>
+			</div>
 
-                    <li>
-                        <a href="#" id="maximize" class="btn btn-link btn-sm" onclick="maximizeToolbar()"
-                           data-toggle="tooltip" data-placement="right" title="Maximize Toolbar">
-                            <span class="glyphicon glyphicon-resize-full"></span>
-                        </a>
-                    </li>
-                  <li>
-                    <a href="#" id="close" class="btn btn-link btn-sm" onclick="closeToolbar()"
-                        data-toggle="tooltip" data-placement="right" title="Close Toolbar">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </nav>
-            </div>
+			<div class="tab-content">
+				<div id="Selection" class="tab-pane fade in active">
+					<div id="sensors-charts"></div>
+				</div>
+				<div id="Analyze" class="tab-pane fade">
+					<h3>Analyze</h3>
+					<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+				</div>
+				<div id="Export" class="tab-pane fade">
+					<h3>Export</h3>
+					<p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+				</div>
+			</div>
 
-                <ul class="nav in">
-                    <li>
-                        <a href="#">Shortcuts</a>
-                    </li>
-                    <li>
-                        <a href="#">Overview</a>
-                    </li>
-                    <li>
-                        <a href="#"><span class="glyphicon glyphicon-th"></span> Tables</a>
-                    </li>
-                </ul>
+		</div>
+		<!-- End of Sidebar -->
 
-                <div>
-                    <h4>Selection</h4>
-                    <ul class="nav nav-tabs" id="selection-tabs">
-                        <li class="active"><a data-toggle="tab" href="#Selection">Charts</a></li>
-                        <li><a data-toggle="tab" href="#Analyze">Analyze</a></li>
-                        <li><a data-toggle="tab" href="#Export">Export</a></li>
-                    </ul>
-                </div>
+		<!-- Page Content -->
+		<div id="page-content-wrapper">
+			<div id="map-area" class="container-fluid">
+				<div id="controller-pane" class="btn-group">
+					<button type="button" class="btn btn-default" onclick="openToolbar()">Dashboard</button>
+					<button type="button" class="btn btn-default" onclick="showSites()">Show Sites</button>
+					<button type="button" class="btn btn-default" onclick="clearMap()">Clear Map</button>
+				</div>
+				<div id="map-canvas"></div>
+			</div>
+		</div>
+		<!-- End of Page Content -->
 
-                <div class="tab-content">
+	</div>
+	<!-- /#wrapper -->
 
-                    <div id="Selection" class="tab-pane fade in active">
-                            <div id="sensors-charts"></div>
-                    </div>
-                    <div id="Analyze" class="tab-pane fade">
-                      <h3>Analyze</h3>
-                      <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
-                    </div>
-                    <div id="Export" class="tab-pane fade">
-                      <h3>Export</h3>
-                      <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-                    </div>
-                </div>
+	<!-- jQuery -->
+	<script src="../static/js/jquery.js"></script>
 
+	<!-- Bootstrap Core JavaScript -->
+	<!--<script src="../static/js/bootstrap.min.js"></script>-->
 
-
-        </div>
-        <!-- /#sidebar-wrapper -->
-
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-
-            <div id="map-area" class="container-fluid">
-
-                <div id="controller-pane" class="btn-group">
-                  <button type="button" class="btn btn-default" onclick="showSensors()">Sensors</button>
-                  <button type="button" class="btn btn-default" onclick="clearMap()">Clear Map</button>
-                  <button type="button" class="btn btn-default" onclick="openToolbar()">Dashboard</button>
-                </div>
-
-                <div id="map-canvas"></div>
-
-            </div>
-
-        </div>
-        <!-- /#page-content-wrapper -->
-
-    </div>
-    <!-- /#wrapper -->
-
-    <!-- jQuery -->
-    <script src="../static/js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <!--<script src="../static/js/bootstrap.min.js"></script>-->
-
-    <!-- Menu Toggle Script -->
-    <script>
-    $(window).resize(function () {
-        var h = $(window).height(),
-            offsetTop = 52; // Calculate the top offset
-        $('#map-canvas').css('height', (h - offsetTop));
-    }).resize();
-    </script>
+	<!-- Menu Toggle Script -->
+	<script>
+	$(window).resize(function () {
+		var h = $(window).height(),
+			offsetTop = 52; // Calculate the top offset
+		$('#map-canvas').css('height', (h - offsetTop));
+	}).resize();
+	</script>
 
 </body>
 

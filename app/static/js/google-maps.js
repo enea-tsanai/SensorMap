@@ -38,10 +38,10 @@ function initialize() {
 	});
 }
 
-function showSensors() {
+function showSites() {
 	clearMap();
 
-	console.log('showSensors');
+	console.log('showSites');
 	//cannot make global due to asynchronous Ajax Calls
 	var callResult = {};
 
