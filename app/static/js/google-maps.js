@@ -1,4 +1,5 @@
 var map = null;
+var center = {lat: 40.036137, lng: -75.340919};
 var regionArray = []; 
 var markers = [];
 var selectedMarker = null;
@@ -20,7 +21,7 @@ var sidebarState="closed";
 
 function initialize() {
 	var mapOptions = {
-	center: { lat: 40.036137, lng: -75.340919},
+	center: center,
 	zoom: 17,
 	scrollwheel: false
 	};
@@ -123,12 +124,18 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 			labelIndex = 0;
 			selectedMarker = marker;
 			if (selectedMarkers.indexOf(marker) == -1) {
+
+				if (sidebarState.localeCompare("minimized") == 0)
+					offsetCenter(marker.getPosition(), -($(window).width() * 0.15), 0);
+				else
+					map.panTo(marker.getPosition());
+
 				selectedMarkers.push(selectedMarker);
 				selectedSensors.push(sensor);
 				marker.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/purple.png'});
 				// marker.set('labelContent', labels[labelIndex++ % labels.length]);
 			}
-			infowindow.open(map, this);
+			//infowindow.open(map, this);
 
 			// InfoWindow
 			var windowContent = '<div id="content"><div id="siteNotice"></div><p>Sensor: #' + sensor.id +
@@ -286,6 +293,8 @@ function minimizeToolbar() {
 }
 
 function openToolbar() {
+	// Shift center of map to the right by half width of the sidebar
+	offsetCenter(map.getCenter(), -($(window).width() * 0.15), 0);
 	if (sidebarState.localeCompare("closed") == 0) {
 		sidebarState="minimized";
 		$("#wrapper").toggleClass("toggled");
@@ -296,6 +305,8 @@ function openToolbar() {
 }
 
 function closeToolbar() {
+	// Shift center of map to the left by half width of the sidebar
+	offsetCenter(map.getCenter(), $(window).width() * 0.15 , 0);
 	if (sidebarState.localeCompare("minimized") == 0) {
 		sidebarState="closed";
 		$("#wrapper").toggleClass("toggled");
@@ -322,6 +333,29 @@ function refreshMapOnSidebarClose() {
 	}).resize();
 }
 
+/*
+	Moves the camera to latlng with an offset
+	latlng is the apparent centre-point
+	offsetx is the distance you want that point to move to the right, in pixels
+	offsety is the distance you want that point to move upwards, in pixels
+	offset can be negative
+	offsetx and offsety are both optional
+*/
+function offsetCenter(latlng, offsetx, offsety) {
+	var scale = Math.pow(2, map.getZoom());
+	var nw = new google.maps.LatLng(
+		map.getBounds().getNorthEast().lat(),
+		map.getBounds().getSouthWest().lng()
+	);
+	var worldCoordinateCenter = map.getProjection().fromLatLngToPoint(latlng);
+	var pixelOffset = new google.maps.Point((offsetx/scale) || 0,(offsety/scale) ||0)
+	var worldCoordinateNewCenter = new google.maps.Point(
+		worldCoordinateCenter.x - pixelOffset.x,
+		worldCoordinateCenter.y + pixelOffset.y
+	);
 
-
+	var newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
+	// Set a tiny delay to avoid glitches while opening sidebar and shifting the map simultaneously
+	setTimeout(function(){ map.panTo(newCenter); }, 30);
+}
 

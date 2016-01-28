@@ -1,8 +1,8 @@
 #controller-pane {
 	z-index: 1;
-	position: absolute;
+	position: relative;
+	left: -50%;
 	background: rgba(109, 107, 101, 0.28);
-	left: 39%;
 	margin: 8px auto;
 	display:inline-block;
 }
