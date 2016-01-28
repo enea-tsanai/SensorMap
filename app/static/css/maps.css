@@ -29,3 +29,24 @@
 #map-tool {
     margin-right: 10px;
 }
+
+#site-overview-header {
+	position: relative;
+	width: inherit;
+	left: 0px;
+	background-color: white;
+}
+
+#balloon {
+	width: 200px;
+    height: 250px;
+    overflow: hidden;
+}
+
+#SiteOverview {
+	padding: 14px;
+}
+
+#SiteOverview div {
+    overflow-y: scroll;
+}

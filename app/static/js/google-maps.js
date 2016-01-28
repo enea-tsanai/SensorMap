@@ -16,7 +16,19 @@ var Sensors = [];
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
 
-var dummySensors = {"Items":[{"id":"2519574419502746487","timeValue":"2015-10-14T21:40:49.7253512","value":[{"resourceId":9958,"value":5258.46}]},{"id":"2519574420267038073","timeValue":"2015-10-14T21:39:33.2961926","value":[{"resourceId":9958,"value":5258.46}]},{"id":"2519574421371622994","timeValue":"2015-10-14T21:37:42.8377005","value":[{"resourceId":9958,"value":5258.46}]},{"id":"2519574421937179308","timeValue":"2015-10-14T21:36:46.2820691","value":[{"resourceId":9958,"value":5258.46}]},{"id":"2519574422537011978","timeValue":"2015-10-14T21:35:46.2988021","value":[{"resourceId":9958,"value":5258.46}]}],"Count":5};
+var CEERTEXT = "Construction of Villanova's Green Roof took place in 3 days in the summer of 2006. The design was a " +
+"retrofit of a small portion of Villanova's Center for Engineering Education Research (CEER) roof. The green roof is " +
+"located on a second storey terrace above the \"Holy Grounds\" coffee shop. It is highly visible because it is located"+
+"outside of the main stairwell and serves multiple purposes.";
+
+var dummySites = {"Items":[
+{"ID":"0","Name":"CEER Green Roof","Description":CEERTEXT},
+{"ID":"1","Name":"name","Description":"description"},
+{"ID":"2","Name":"name","Description":"description"},
+{"ID":"3","Name":"name","Description":"description"},
+{"ID":"4","Name":"name","Description":"description"}],
+"Count":5};
+
 var sidebarState="closed";
 
 function initialize() {
@@ -47,7 +59,7 @@ function showSites() {
 	var callResult = {};
 
 	// $.ajax({url:"https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=4626&top=5",success:function(result) { //change url
-	var result = dummySensors;
+	var result = dummySites;
 
 	var indx = 0;
 	console.log('Ajax success');
@@ -138,11 +150,24 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 			//infowindow.open(map, this);
 
 			// InfoWindow
-			var windowContent = '<div id="content"><div id="siteNotice"></div><p>Sensor: #' + sensor.id +
-							  '</p><div id="bodyContent"><img src="static/img/villanova-1.jpg" style="max-width: 300px;"></img></div></div>';
-
+			var windowContent = '<div id="balloon">' +
+									'<div id="site-overview-header">' +
+										'<h4>' + sensor.Name + '</h4>' +
+										'<ul class="nav nav-tabs nav-justified">' +
+										'<li class="active"><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>' +
+										'<li><a href="#AboutSite" data-toggle="tab">About this site</a></li></ul>' +
+									'</div>' +
+									'<div id="SiteOverview" class="tab-content">' +
+										'<div id="LMetrics" class="tab-pane fade in active">' +
+											'<p>' + sensor.ID + '</p>'+
+										'</div>' +
+										'<div id="AboutSite" class="tab-pane fade">' +
+											'<p>' + sensor.Description + '</p>'+
+										'</div>' +
+									'</div>' +
+								'</div>';
 			infowindow.setContent(windowContent);
-			// infowindow.open(map, marker);
+			infowindow.open(map, marker);
 
 			updateWindowPane();
 		}
@@ -193,9 +218,9 @@ function updateWindowPane() {
 	var sensorsData = [];
 	if (selectedSensors.length == 1) {
 		var updatedSensorInfo = '<div id="sensor-info">' +
-							'<p>Sensor: #' + selectedSensors[0].id + '</p><p><u><b>Latest Captured Value</b></u></p>' +
-							'Timestamp: ' + selectedSensors[0].timeValue + '<br>' +
-							'Value: ' + selectedSensors[0].value + '<br></div>';
+							'<p>Sensor: #' + selectedSensors[0].id + '</p><p><u><b>Latest Captured Value</b></u></p>';
+//							'Timestamp: ' + selectedSensors[0].timeValue + '<br>' +
+//							'Value: ' + selectedSensors[0].value + '<br></div>';
 		showGraphof();
 		$("#sensor-info").replaceWith(updatedSensorInfo);
 
