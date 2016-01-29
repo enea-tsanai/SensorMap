@@ -260,18 +260,24 @@ function showGraphof() {
 		lab.push(selectedSensors[sensor].id);
 	}
 
+	console.log("reeeeeeeeeee");
+	console.log(Date.parse("2016-01-29T06:45:57.5291273"));
+
 	$("#sensors-charts").replaceWith('<div id="sensors-charts"><div id="selectedSensorInfo">' +
 									'<div id="sensor-info"></div><div id="sensor-data-viz"></div>' +
 									'<div id="sensor-data-viz-2"></div></div><div id="master-view"></div></div>');
 
 	$("sensor-data-viz").empty();
-	var g = new Dygraph(document.getElementById("sensor-data-viz"), data,
+	var g = new Dygraph(document.getElementById("sensor-data-viz"), [
+                [1247382000,10,100],
+                [1247986800,20,80]
+              ],
 					{
+					xValueFormatter: Dygraph.dateString_,
 						drawPoints: true,
 						title: 'A vs B',
 						// showRoller: true,
-						valueRange: [0.0, 1.2],
-						labels: lab,
+						labels: [ "x", "A", "B" ],
 						ylabel: 'A (a)',
 						xlabel: 'B (b)'
 					});
