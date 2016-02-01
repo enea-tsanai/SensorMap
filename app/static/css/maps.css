@@ -52,3 +52,11 @@
 	height: 250px;
 	overflow-y: scroll;
 }
+
+#Selection, LMetrics {
+    border: dotted;
+    margin: 10px auto;
+    margin-bottom: 30px;
+    width: 240px;
+    height: 240px;
+}

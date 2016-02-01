@@ -16,6 +16,8 @@ var Sensors = [];
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
 
+var dataValues = "Date, Temperature [deg F]\n";
+
 var CEERTEXT = "Construction of Villanova's Green Roof took place in 3 days in the summer of 2006. The design was a " +
 "retrofit of a small portion of Villanova's Center for Engineering Education Research (CEER) roof. The green roof is " +
 "located on a second storey terrace above the \"Holy Grounds\" coffee shop. It is highly visible because it is located"+
@@ -33,6 +35,12 @@ var dummySites = {"Items":[
 "Count":5};
 
 var sidebarState="closed";
+
+var latestDummy = {"Items":[{"id":"2519481915025100012","timeValue":"2016-01-29T23:14:57.4899987",
+"value":[{"resourceId":43709,
+"value":0.263631550239205}]},{"id":"2519481915625003292","timeValue":"2016-01-29T23:13:57.4996707","value":[{"resourceId":43709,"value":0.265517212643547}]},{"id":"2519481916232200565","timeValue":"2016-01-29T23:12:56.7799434","value":[{"resourceId":43709,"value":0.260189133282945}]},{"id":"2519481916819238178","timeValue":"2016-01-29T23:11:58.0761821","value":[{"resourceId":43709,"value":0.263631550239205}]},{"id":"2519481917426590378","timeValue":"2016-01-29T23:10:57.3409621","value":[{"resourceId":43709,"value":0.263631550239205}]},{"id":"2519481918023765555","timeValue":"2016-01-29T23:09:57.6234444","value":[{"resourceId":43709,"value":0.260813618964134}]},{"id":"2519481918604816842","timeValue":"2016-01-29T23:08:59.5183157","value":[{"resourceId":43709,"value":0.260501297884047}]},{"id":"2519481919224917025","timeValue":"2016-01-29T23:07:57.5082974","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481919832760547","timeValue":"2016-01-29T23:06:56.7239452","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481920427566201","timeValue":"2016-01-29T23:05:57.2433798","value":[{"resourceId":43709,"value":0.261438730561259}]},{"id":"2519481921023507610","timeValue":"2016-01-29T23:04:57.6492389","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481921617906224","timeValue":"2016-01-29T23:03:58.2093775","value":[{"resourceId":43709,"value":0.264573677285947}]},{"id":"2519481922225246532","timeValue":"2016-01-29T23:02:57.4753467","value":[{"resourceId":43709,"value":0.26331782084826}]},{"id":"2519481922817993356","timeValue":"2016-01-29T23:01:58.2006643","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481923409747940","timeValue":"2016-01-29T23:00:59.0252059","value":[{"resourceId":43709,"value":0.265832037387382}]},{"id":"2519481924026448970","timeValue":"2016-01-29T22:59:57.3551029","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481924631702584","timeValue":"2016-01-29T22:58:56.8297415","value":[{"resourceId":43709,"value":0.26962213967419}]},{"id":"2519481925222820365","timeValue":"2016-01-29T22:57:57.7179634","value":[{"resourceId":43709,"value":0.262690831503322}]},{"id":"2519481925825619100","timeValue":"2016-01-29T22:56:57.4380899","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481926421821771","timeValue":"2016-01-29T22:55:57.8178228","value":[{"resourceId":43709,"value":0.263004247936299}]},{"id":"2519481927030675658","timeValue":"2016-01-29T22:54:56.9324341","value":[{"resourceId":43709,"value":0.264888032592829}]},{"id":"2519481927634065219","timeValue":"2016-01-29T22:53:56.593478","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481928223712637","timeValue":"2016-01-29T22:52:57.6287362","value":[{"resourceId":43709,"value":0.263631550239205}]},{"id":"2519481928830282688","timeValue":"2016-01-29T22:51:56.9717311","value":[{"resourceId":43709,"value":0.26331782084826}]},{"id":"2519481929432853767","timeValue":"2016-01-29T22:50:56.7146232","value":[{"resourceId":43709,"value":0.264259478458048}]},{"id":"2519481930024276488","timeValue":"2016-01-29T22:49:57.5723511","value":[{"resourceId":43709,"value":0.26237757154933}]},{"id":"2519481930632084243","timeValue":"2016-01-29T22:48:56.7915756","value":[{"resourceId":43709,"value":0.265202544378696}]},{"id":"2519481931218448306","timeValue":"2016-01-29T22:47:58.1551693","value":[{"resourceId":43709,"value":0.266147018610209}]},{"id":"2519481931828578742","timeValue":"2016-01-29T22:46:57.1421257","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481932422005788","timeValue":"2016-01-29T22:45:57.7994211","value":[{"resourceId":43709,"value":0.261126096523204}]},{"id":"2519481933028333537","timeValue":"2016-01-29T22:44:57.1666462","value":[{"resourceId":43709,"value":0.261126096523204}]},{"id":"2519481933631604904","timeValue":"2016-01-29T22:43:56.8395095","value":[{"resourceId":43709,"value":0.260813618964134}]},{"id":"2519481934236787672","timeValue":"2016-01-29T22:42:56.3212327","value":[{"resourceId":43709,"value":0.262690831503322}]},{"id":"2519481934833508729","timeValue":"2016-01-29T22:41:56.649127","value":[{"resourceId":43709,"value":0.263004247936299}]},{"id":"2519481935417894631","timeValue":"2016-01-29T22:40:58.2105368","value":[{"resourceId":43709,"value":0.263631550239205}]},{"id":"2519481936024923127","timeValue":"2016-01-29T22:39:57.5076872","value":[{"resourceId":43709,"value":0.260813618964134}]},{"id":"2519481936636071731","timeValue":"2016-01-29T22:38:56.3928268","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481937233005443","timeValue":"2016-01-29T22:37:56.6994556","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481937831920359","timeValue":"2016-01-29T22:36:56.807964","value":[{"resourceId":43709,"value":0.261438730561259}]},{"id":"2519481938423044070","timeValue":"2016-01-29T22:35:57.6955929","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481939026765684","timeValue":"2016-01-29T22:34:57.3234315","value":[{"resourceId":43709,"value":0.26331782084826}]},{"id":"2519481939630298050","timeValue":"2016-01-29T22:33:56.9701949","value":[{"resourceId":43709,"value":0.260501297884047}]},{"id":"2519481940232385958","timeValue":"2016-01-29T22:32:56.7614041","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481940830826966","timeValue":"2016-01-29T22:31:56.9173033","value":[{"resourceId":43709,"value":0.260501297884047}]},{"id":"2519481941431561650","timeValue":"2016-01-29T22:30:56.8438349","value":[{"resourceId":43709,"value":0.259253578353539}]},{"id":"2519481942024060683","timeValue":"2016-01-29T22:29:57.5939316","value":[{"resourceId":43709,"value":0.264573677285947}]},{"id":"2519481942620607553","timeValue":"2016-01-29T22:28:57.9392446","value":[{"resourceId":43709,"value":0.265517212643547}]},{"id":"2519481943232187722","timeValue":"2016-01-29T22:27:56.7812277","value":[{"resourceId":43709,"value":0.264259478458048}]},{"id":"2519481943836283389","timeValue":"2016-01-29T22:26:56.371661","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481944415632138","timeValue":"2016-01-29T22:25:58.4367861","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481945025623692","timeValue":"2016-01-29T22:24:57.4376307","value":[{"resourceId":43709,"value":0.26331782084826}]},{"id":"2519481945632258887","timeValue":"2016-01-29T22:23:56.7741112","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481946235862923","timeValue":"2016-01-29T22:22:56.4137076","value":[{"resourceId":43709,"value":0.265517212643547}]},{"id":"2519481946835830922","timeValue":"2016-01-29T22:21:56.4169077","value":[{"resourceId":43709,"value":0.261438730561259}]},{"id":"2519481947429652028","timeValue":"2016-01-29T22:20:57.0347971","value":[{"resourceId":43709,"value":0.261438730561259}]},{"id":"2519481948024766973","timeValue":"2016-01-29T22:19:57.5233026","value":[{"resourceId":43709,"value":0.263631550239205}]},{"id":"2519481948627722403","timeValue":"2016-01-29T22:18:57.2277596","value":[{"resourceId":43709,"value":0.263631550239205}]},{"id":"2519481949236874053","timeValue":"2016-01-29T22:17:56.3125946","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481949830861517","timeValue":"2016-01-29T22:16:56.9138482","value":[{"resourceId":43709,"value":0.264259478458048}]},{"id":"2519481950429688892","timeValue":"2016-01-29T22:15:57.0311107","value":[{"resourceId":43709,"value":0.26237757154933}]},{"id":"2519481951026840079","timeValue":"2016-01-29T22:14:57.315992","value":[{"resourceId":43709,"value":0.261751521078299}]},{"id":"2519481951627805039","timeValue":"2016-01-29T22:13:57.219496","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481952226227008","timeValue":"2016-01-29T22:12:57.3772991","value":[{"resourceId":43709,"value":0.259877125160828}]},{"id":"2519481952827799623","timeValue":"2016-01-29T22:11:57.2200376","value":[{"resourceId":43709,"value":0.263004247936299}]},{"id":"2519481953435915488","timeValue":"2016-01-29T22:10:56.4084511","value":[{"resourceId":43709,"value":0.26237757154933}]},{"id":"2519481954024316799","timeValue":"2016-01-29T22:09:57.56832","value":[{"resourceId":43709,"value":0.263004247936299}]},{"id":"2519481954626066737","timeValue":"2016-01-29T22:08:57.3933262","value":[{"resourceId":43709,"value":0.263631550239205}]},{"id":"2519481955228834254","timeValue":"2016-01-29T22:07:57.1165745","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481955831739019","timeValue":"2016-01-29T22:06:56.826098","value":[{"resourceId":43709,"value":0.263004247936299}]},{"id":"2519481956431695933","timeValue":"2016-01-29T22:05:56.8304066","value":[{"resourceId":43709,"value":0.263004247936299}]},{"id":"2519481957025244324","timeValue":"2016-01-29T22:04:57.4755675","value":[{"resourceId":43709,"value":0.261126096523204}]},{"id":"2519481957630072205","timeValue":"2016-01-29T22:03:56.9927794","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481958234588396","timeValue":"2016-01-29T22:02:56.5411603","value":[{"resourceId":43709,"value":0.26331782084826}]},{"id":"2519481958832874277","timeValue":"2016-01-29T22:01:56.7125722","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481959428313344","timeValue":"2016-01-29T22:00:57.1686655","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481960020973268","timeValue":"2016-01-29T21:59:57.9026731","value":[{"resourceId":43709,"value":0.26237757154933}]},{"id":"2519481960631992146","timeValue":"2016-01-29T21:58:56.8007853","value":[{"resourceId":43709,"value":0.262690831503322}]},{"id":"2519481961235469108","timeValue":"2016-01-29T21:57:56.4530891","value":[{"resourceId":43709,"value":0.261126096523204}]},{"id":"2519481961827768770","timeValue":"2016-01-29T21:56:57.2231229","value":[{"resourceId":43709,"value":0.260501297884047}]},{"id":"2519481962428171351","timeValue":"2016-01-29T21:55:57.1828648","value":[{"resourceId":43709,"value":0.264259478458048}]},{"id":"2519481963026969559","timeValue":"2016-01-29T21:54:57.303044","value":[{"resourceId":43709,"value":0.260501297884047}]},{"id":"2519481963630778964","timeValue":"2016-01-29T21:53:56.9221035","value":[{"resourceId":43709,"value":0.263004247936299}]},{"id":"2519481964233618838","timeValue":"2016-01-29T21:52:56.6381161","value":[{"resourceId":43709,"value":0.260501297884047}]},{"id":"2519481964831112024","timeValue":"2016-01-29T21:51:56.8887975","value":[{"resourceId":43709,"value":0.26331782084826}]},{"id":"2519481965432625948","timeValue":"2016-01-29T21:50:56.7374051","value":[{"resourceId":43709,"value":0.263004247936299}]},{"id":"2519481966027805114","timeValue":"2016-01-29T21:49:57.2194885","value":[{"resourceId":43709,"value":0.261126096523204}]},{"id":"2519481966628220485","timeValue":"2016-01-29T21:48:57.1779514","value":[{"resourceId":43709,"value":0.26331782084826}]},{"id":"2519481967230058852","timeValue":"2016-01-29T21:47:56.9941147","value":[{"resourceId":43709,"value":0.26237757154933}]},{"id":"2519481967832462631","timeValue":"2016-01-29T21:46:56.7537368","value":[{"resourceId":43709,"value":0.265517212643547}]},{"id":"2519481968432491265","timeValue":"2016-01-29T21:45:56.7508734","value":[{"resourceId":43709,"value":0.261126096523204}]},{"id":"2519481969023318845","timeValue":"2016-01-29T21:44:57.6681154","value":[{"resourceId":43709,"value":0.263945436109134}]},{"id":"2519481969627044827","timeValue":"2016-01-29T21:43:57.2955172","value":[{"resourceId":43709,"value":0.264259478458048}]},{"id":"2519481970830003519","timeValue":"2016-01-29T21:41:56.999648","value":[{"resourceId":43709,"value":0.263631550239205}]},{"id":"2519481971425394656","timeValue":"2016-01-29T21:40:57.4605343","value":[{"resourceId":43709,"value":0.260501297884047}]},{"id":"2519481972024324886","timeValue":"2016-01-29T21:39:57.5675113","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481972634341064","timeValue":"2016-01-29T21:38:56.5658935","value":[{"resourceId":43709,"value":0.260501297884047}]},{"id":"2519481973223546464","timeValue":"2016-01-29T21:37:57.6453535","value":[{"resourceId":43709,"value":0.261438730561259}]},{"id":"2519481973839244905","timeValue":"2016-01-29T21:36:56.0755094","value":[{"resourceId":43709,"value":0.262064468074322}]},{"id":"2519481974436686563","timeValue":"2016-01-29T21:35:56.3313436","value":[{"resourceId":43709,"value":0.264573677285947}]},{"id":"2519481975034027773","timeValue":"2016-01-29T21:34:56.5972226","value":[{"resourceId":43709,"value":0.262690831503322}]}],"Count":100};
+
+
 
 function initialize() {
 	var mapOptions = {
@@ -97,6 +105,31 @@ function showSites() {
 }
 
 
+function getStreamData(url) {
+	$.each(latestDummy.Items, function (i, item) {
+		dataValues = dataValues + item.timeValue + ',' + item.value[0].value + '\n';
+	});
+
+//	$.ajax({
+//		url: url,
+//		dataType: "json",
+//	}).done(function (data) {
+//
+//		$.each(data.Items, function (i, item) {
+//			dataValues = dataValues + item.timeValue + ',' + item.value[0].value + '\n';
+//		});
+//
+//		//handle paging; next page of data provided by NextPageLink, which is typeof() == 'undefined' if the client just received the last page of data
+//		//see http://stackoverflow.com/questions/3390396/how-to-check-for-undefined-in-javascript
+//		if (typeof (data.NextPageLink) != 'undefined') {
+//			GetValues(data.NextPageLink);
+//		} else {
+//			console.log(data);
+//		}
+//	});
+}
+
+
 var ctrlPressed = false;
 
 window.onkeydown = function(e) {
@@ -151,6 +184,8 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 				// marker.set('labelContent', labels[labelIndex++ % labels.length]);
 			}
 			//infowindow.open(map, this);
+
+			getStreamData("https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18704&top=100");
 
 			// InfoWindow
 			var windowContent = '<div id="balloon">' +
@@ -238,6 +273,33 @@ function updateWindowPane() {
 }
 
 function showGraphof() {
+	$("Selection").empty();
+	var g = new Dygraph(document.getElementById("Selection"), dataValues,
+		{
+		xValueFormatter: Dygraph.dateString_,
+			drawPoints: true,
+			title: 'A vs B',
+			showRoller: true,
+	//						labels: [ "x", "A"],
+			ylabel: 'Cubic Meters',
+			xlabel: 'DateTime'
+		});
+
+	$("LMetrics").empty();
+	var g = new Dygraph(document.getElementById("LMetrics"), dataValues,
+	{
+	xValueFormatter: Dygraph.dateString_,
+		drawPoints: true,
+		title: 'A vs B',
+		showRoller: true,
+	//						labels: [ "x", "A"],
+		ylabel: 'Cubic Meters',
+		xlabel: 'DateTime'
+	});
+}
+
+
+function showGraph() {
 	var data = [];
 	var t = new Date();
 
@@ -268,10 +330,7 @@ function showGraphof() {
 									'<div id="sensor-data-viz-2"></div></div><div id="master-view"></div></div>');
 
 	$("sensor-data-viz").empty();
-	var g = new Dygraph(document.getElementById("sensor-data-viz"), [
-                [1247382000,10,100],
-                [1247986800,20,80]
-              ],
+	var g = new Dygraph(document.getElementById("LMetrics"), dataValues,
 					{
 					xValueFormatter: Dygraph.dateString_,
 						drawPoints: true,
