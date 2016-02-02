@@ -16,13 +16,22 @@ var Sensors = [];
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
 
-var dataValues = {data: "Date, CubicMeters\n"};
-var dataValues2 = "Date, Cubic\n";
-
-
+/*Quadrants*/
 var quad_1_soilMoisture_1 = {name: "quad_1_soilMoisture_1", labels: ["Date", "Cubic Meters"], data: ""};
 var quad_1_soilMoisture_2 = {name: "quad_1_soilMoisture_2", labels: ["Date", "Cubic Meters"], data: ""};
 var quad_1_soilTemperature_1 = {name: "quad_1_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
+
+var quad_2_soilMoisture_1 = {name: "quad_2_soilMoisture_1", labels: ["Date", "Cubic Meters"], data: ""};
+var quad_2_soilMoisture_2 = {name: "quad_2_soilMoisture_2", labels: ["Date", "Cubic Meters"], data: ""};
+var quad_2_soilTemperature_1 = {name: "quad_2_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
+
+var quad_3_soilMoisture_1 = {name: "quad_2_soilMoisture_1", labels: ["Date", "Cubic Meters"], data: ""};
+var quad_3_soilMoisture_2 = {name: "quad_2_soilMoisture_2", labels: ["Date", "Cubic Meters"], data: ""};
+var quad_3_soilTemperature_1 = {name: "quad_2_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
+
+var quad_4_soilMoisture_1 = {name: "quad_4_soilMoisture_1", labels: ["Date", "Cubic Meters"], data: ""};
+var quad_4_soilMoisture_2 = {name: "quad_4_soilMoisture_2", labels: ["Date", "Cubic Meters"], data: ""};
+var quad_4_soilTemperature_1 = {name: "quad_4_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
 
 
 var CEERTEXT = "Construction of Villanova's Green Roof took place in 3 days in the summer of 2006. The design was a " +
@@ -69,8 +78,6 @@ function initialize() {
 
 function showSites() {
 	clearMap();
-
-	console.log('showSites');
 	//cannot make global due to asynchronous Ajax Calls
 	var callResult = {};
 
@@ -126,14 +133,17 @@ function getStreamData(siteData, url) {
 		if (typeof (data.NextPageLink) != 'undefined') {
 			GetValues(data.NextPageLink);
 		} else {
-			console.log(data);
 			setTimeout(function(){ stopLoading(); }, 1000);
 		}
 	});
 }
 
-function showGraphof(divElement, site) {
+function showGraphof(site, divElement) {
+	if (divElement === undefined)
+		divElement = site.name;
 	$(divElement).empty();
+
+	console.log(divElement);
 	var g = new Dygraph(document.getElementById(divElement), site.data,
 	{
 //		xValueFormatter: Dygraph.dateString_,
@@ -158,10 +168,30 @@ function stopLoading() {
 	$("#loader").remove();
 }
 
-function populateQuad1() {
+function initializeQuadrantsDomElements() {
+	for (var i=1; i<5; i++) {
+		$("#quad-" + i).append('<div id=quad_'+i+'_soilMoisture_1></div>');
+		$("#quad-" + i).append('<div id=quad_'+i+'_soilMoisture_2></div>');
+		$("#quad-" + i).append('<div id=quad_'+i+'_soilTemperature_1></div>');
+	}
+}
+
+function populateQuads() {
 	getStreamData(quad_1_soilMoisture_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18704&top=100");
 	getStreamData(quad_1_soilMoisture_2, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18711&top=100");
 	getStreamData(quad_1_soilTemperature_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18762&top=100");
+
+	getStreamData(quad_2_soilMoisture_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18718&top=100");
+	getStreamData(quad_2_soilMoisture_2, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18725&top=100");
+	getStreamData(quad_2_soilTemperature_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18767&top=100");
+
+	getStreamData(quad_3_soilMoisture_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18732&top=100");
+	getStreamData(quad_3_soilMoisture_2, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18739&top=100");
+	getStreamData(quad_3_soilTemperature_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18772&top=100");
+
+	getStreamData(quad_4_soilMoisture_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18746&top=100");
+	getStreamData(quad_4_soilMoisture_2, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18753&top=100");
+	getStreamData(quad_4_soilTemperature_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18777&top=100");
 }
 
 var ctrlPressed = false;
@@ -237,7 +267,6 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 								'</div>';
 			infowindow.setContent(windowContent);
 			infowindow.open(map, marker);
-			populateQuad1();
 			updateWindowPane();
 		}
 		// infoWindow Pane
@@ -290,16 +319,45 @@ function updateWindowPane() {
 							'<p>Sensor: #' + selectedSensors[0].id + '</p><p><u><b>Latest Captured Value</b></u></p>';
 //							'Timestamp: ' + selectedSensors[0].timeValue + '<br>' +
 //							'Value: ' + selectedSensors[0].value + '<br></div>';
-		showGraphof("LMetrics", quad_1_soilMoisture_1);
-		showGraphof("quad-1", quad_1_soilMoisture_1);
+		showGraphof(quad_1_soilMoisture_1, "LMetrics");
+		showGraphof(quad_1_soilMoisture_1);
+		showGraphof(quad_1_soilMoisture_2);
+		showGraphof(quad_1_soilTemperature_1);
+
+		showGraphof(quad_2_soilMoisture_1);
+		showGraphof(quad_2_soilMoisture_2);
+		showGraphof(quad_2_soilTemperature_1);
+
+		showGraphof(quad_3_soilMoisture_1);
+		showGraphof(quad_3_soilMoisture_2);
+		showGraphof(quad_3_soilTemperature_1);
+
+		showGraphof(quad_4_soilMoisture_1);
+		showGraphof(quad_4_soilMoisture_2);
+		showGraphof(quad_4_soilTemperature_1);
+
 		$("#sensor-info").replaceWith(updatedSensorInfo);
 
 	} else {
 		for (sensor in selectedSensors) {
 			var updatedSensorInfo = '<div id="sensor-info"><h2>Showing data for multiple sensors</h2></div>';
 			console.log('updating info of sensor');
-			showGraphof("LMetrics", quad_1_soilMoisture_1);
-			showGraphof("quad-1", quad_1_soilMoisture_1);
+			showGraphof(quad_1_soilMoisture_1, "LMetrics");
+			showGraphof(quad_1_soilMoisture_1);
+			showGraphof(quad_1_soilTemperature_1);
+
+			showGraphof(quad_2_soilMoisture_1);
+			showGraphof(quad_2_soilMoisture_2);
+			showGraphof(quad_2_soilTemperature_1);
+
+			showGraphof(quad_3_soilMoisture_1);
+			showGraphof(quad_3_soilMoisture_2);
+			showGraphof(quad_3_soilTemperature_1);
+
+			showGraphof(quad_4_soilMoisture_1);
+			showGraphof(quad_4_soilMoisture_2);
+			showGraphof(quad_4_soilTemperature_1);
+
 			$("#sensor-info").replaceWith(updatedSensorInfo);
 		}
 	}
@@ -457,3 +515,9 @@ function offsetCenter(latlng, offsetx, offsety) {
 	// Set a tiny delay to avoid glitches while opening sidebar and shifting the map simultaneously
 	setTimeout(function(){ map.panTo(newCenter); }, 30);
 }
+
+$( document ).ready(function() {
+	initializeQuadrantsDomElements();
+	populateQuads();
+});
+

@@ -60,7 +60,14 @@ LMetrics {
     height: 240px;
 }
 
-#quad-1 {
+#quad-1>div {
+    margin: 10px auto;
+    margin-bottom: 30px;
+    width: 300px;
+    height: 300px;
+}
+
+#quad-1>div, #quad-2>div, #quad-3>div, #quad-4>div {
     margin: 10px auto;
     margin-bottom: 30px;
     width: 300px;
