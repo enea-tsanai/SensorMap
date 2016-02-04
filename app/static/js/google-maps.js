@@ -1,3 +1,4 @@
+// Map
 var map = null;
 var center = {lat: 40.036577, lng: -75.342661};
 var regionArray = []; 
@@ -5,6 +6,8 @@ var markers = [];
 var selectedMarker = null;
 var selectedMarkers = [];
 var sensorArray = [];
+
+// Info window
 var infowindow = null;
 var sensorJSONRaw = {};
 var dummyCoords = [{x: 40.036602, y: -75.345526},
@@ -15,6 +18,12 @@ var dummyCoords = [{x: 40.036602, y: -75.345526},
 var Sensors = [];
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
+
+// Dygraph options
+var gWidthRatioWhenMaximized = 0.7;
+var gWidthRatioWhenMinimized = 1;
+var gHeightRatioWhenMaximized = 0.3;
+var gHeightRatioWhenMinimized = 0.9;
 
 /*Quadrants*/
 var quad_1_soilMoisture_1 = {name: "quad_1_soilMoisture_1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
@@ -136,29 +145,59 @@ function getStreamData(siteData, url) {
 	});
 }
 
+var graphs = {};
+
+
 function showGraphof(site, divElement) {
 	if (divElement === undefined)
-		divElement = site.name;
-	$(divElement).empty();
+			divElement = site.name;
+		//$(divElement).empty();
 
-	if (site.probe === undefined)
-		graphTitle = site.labels[1] + " vs " + site.labels[0];
-	else
-		graphTitle = site.probe + ": " + site.labels[1] + " vs " + site.labels[0];
+	if (graphs[divElement] === undefined) {
 
+		if (site.probe === undefined)
+			graphTitle = site.labels[1] + " vs " + site.labels[0];
+		else
+			graphTitle = site.probe + ": " + site.labels[1] + " vs " + site.labels[0];
 
-	console.log(sidebarState);
-	var g = new Dygraph(document.getElementById(divElement), site.data,
-	{
-//		xValueFormatter: Dygraph.dateString_,
-//		legend: 'always',
-		width: (sidebarState.localeCompare("minimized") == 0) ? $(window).width() * 0.20: $(window).width() * 0.60,
-		height: (sidebarState.localeCompare("minimized") == 0) ? $(window).width() * 0.18: $(window).width() * 0.35,
-		labels: site.labels,
-		drawPoints: true,
-		title: graphTitle,
-		showRoller: false,
-	});
+		var x = (sidebarState.localeCompare("minimized") == 0) ?
+		$("#"+divElement).parent().width() * gWidthRatioWhenMinimized:
+		$("#"+divElement).parent().width() * gWidthRatioWhenMaximized;
+
+		var y = (sidebarState.localeCompare("minimized") == 0) ?
+		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
+		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized
+
+		graphs[divElement] = new Dygraph(document.getElementById(divElement), site.data,
+		{
+	//		xValueFormatter: Dygraph.dateString_,
+	//		legend: 'always',
+			width: x,
+			height: y,
+			strokeWidth: 0.75,
+			showLabelsOnHighlight: true,
+			highlightCircleSize: 2,
+			highlightSeriesOpts: {
+				strokeWidth: 1,
+				highlightCircleSize: 5
+			},
+			labels: site.labels,
+			drawPoints: true,
+			title: graphTitle,
+			showRoller: false,
+		});
+	} else {
+		console.log(graphs[divElement]);
+		if (sidebarState.localeCompare("minimized") == 0) {
+			resizeGraphs(gWidthRatioWhenMinimized, gHeightRatioWhenMinimized);
+//			graphs[divElement].width_ = 100;
+//			graphs[divElement].height_ = 100;
+		}
+		else if (sidebarState.localeCompare("maximized") == 0)
+			resizeGraphs(gWidthRatioWhenMaximized, gHeightRatioWhenMaximized);
+//			graphs[divElement].width = 500;
+//			graphs[divElement].height = 500;
+	}
 }
 
 function startLoading() {
@@ -422,11 +461,19 @@ function showGraph() {
 	// }, 1000);
 }
 
+function resizeGraphs(x, y) {
+	setTimeout(function() {
+		for (var gKey in graphs) {
+			graphs[gKey].resize($("#"+gKey).parent().width() * x, $("#"+gKey).parent().width() * y);
+		}}, 200);
+}
+
 google.maps.event.addDomListener(window, 'load', initialize);
 
 function maximizeToolbar() {
 	if (sidebarState.localeCompare("minimized") == 0) {
 		sidebarState="maximized";
+		resizeGraphs(gWidthRatioWhenMaximized, gHeightRatioWhenMaximized);
 		$("#wrapper").toggleClass("maximized");
 		$("#sidebar-header").toggleClass("maximized");
 		$("#maximize").replaceWith('<a href="#" id="maximize" class="btn btn-link btn-sm" onclick="minimizeToolbar()" data-toggle="tooltip" data-placement="right" title="Minimize Toolbar"><span class="glyphicon glyphicon-resize-small"></span></a>');
@@ -436,6 +483,7 @@ function maximizeToolbar() {
 function minimizeToolbar() {
 	if (sidebarState.localeCompare("maximized") == 0) {
 		sidebarState="minimized";
+		resizeGraphs(gWidthRatioWhenMinimized, gHeightRatioWhenMinimized);
 		$("#wrapper").toggleClass("maximized");
 		$("#sidebar-header").toggleClass("maximized");
 		$("#maximize").replaceWith('<a href="#" id="maximize" class="btn btn-link btn-sm" onclick="maximizeToolbar()"' +
@@ -451,7 +499,7 @@ function openToolbar() {
 		sidebarState="minimized";
 		$("#wrapper").toggleClass("toggled");
 		$("#sidebar-header").toggleClass("toggled");
-		populateGraphs(1);
+		setTimeout(function(){ populateGraphs(1); }, 500);
 	} else {
 		closeToolbar();
 	}
@@ -511,7 +559,7 @@ $(document).ready(function() {
     $(".nav-tabs a").click(function(){
         $(this).tab('show');
     });
-    $('.nav-tabs a').on('shown.bs.tab', function(event){
+    $('.nav-tabs a').on('shown.bs.tab', function(event) {
         var x = $(event.target).text();
         populateGraphs(x.split(" ")[1]);
     });

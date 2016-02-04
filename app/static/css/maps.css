@@ -63,6 +63,7 @@ LMetrics {
 #quad-1>div, #quad-2>div, #quad-3>div, #quad-4>div {
     margin: 10px auto;
     margin-bottom: 30px;
+    position: relative;
 }
 
 /*
