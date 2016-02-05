@@ -133,7 +133,7 @@
 }
 
 #wrapper.maximized #page-content-wrapper {
-    position: absolute;
+    position: fixed;
     margin-right: -100%;
 }
 
