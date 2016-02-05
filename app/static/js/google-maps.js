@@ -25,6 +25,9 @@ var gWidthRatioWhenMinimized = 1;
 var gHeightRatioWhenMaximized = 0.3;
 var gHeightRatioWhenMinimized = 0.9;
 
+var pages = 0;
+var totalCount = 0;
+
 /*Quadrants*/
 var quad_1_soilMoisture_1 = {name: "quad_1_soilMoisture_1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
 var quad_1_soilMoisture_2 = {name: "quad_1_soilMoisture_2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
@@ -127,20 +130,27 @@ function getStreamData(siteData, url) {
 //	$.each(latestDummy.Items, function (i, item) {
 //		dataValues = dataValues + item.timeValue + ',' + item.value[0].value + '\n';
 //	});
-	startLoading();
+	//startLoading();
 //	setTimeout(function(){ stopLoading(); }, 1000);
 
 	$.ajax({
 		url: url,
 		dataType: "json",
 	}).done(function (data) {
+		pages += 1;
+
 		$.each(data.Items, function (i, item) {
-			siteData.data = siteData.data + item.timeValue + ',' + item.value[0].value + '\n';
+			siteData.data += item.timeValue + ',' + item.value[0].value + '\n';
 		});
+
+		totalCount = totalCount + data.Count;
+
 		if (typeof (data.NextPageLink) != 'undefined') {
-			GetValues(data.NextPageLink);
+			getStreamData(siteData, data.NextPageLink);
 		} else {
-			setTimeout(function(){ stopLoading(); }, 1000);
+			console.log("pages: " + pages);
+			console.log(siteData.data);
+			//setTimeout(function(){ stopLoading(); }, 1000);
 		}
 	});
 }
@@ -174,11 +184,11 @@ function showGraphof(site, divElement) {
 	//		legend: 'always',
 			width: x,
 			height: y,
-			strokeWidth: 0.75,
+			strokeWidth: 1.2,
 			showLabelsOnHighlight: true,
 			highlightCircleSize: 2,
 			highlightSeriesOpts: {
-				strokeWidth: 1,
+				strokeWidth: 1.4,
 				highlightCircleSize: 5
 			},
 			labels: site.labels,
@@ -222,15 +232,26 @@ function initializeQuadrantsDomElements() {
 	}
 }
 
+function resetCounters() {
+	pages = 0;
+    totalCount = 0;
+}
+
 function populateQuads() {
 	getStreamData(quad_1_soilMoisture_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18704&top=100");
+	resetCounters();
 	getStreamData(quad_1_soilMoisture_2, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18711&top=100");
+	resetCounters();
 	getStreamData(quad_1_soilTemperature_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18762&top=100");
 
-	getStreamData(quad_2_soilMoisture_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18718&top=100");
-	getStreamData(quad_2_soilMoisture_2, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18725&top=100");
-	getStreamData(quad_2_soilTemperature_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18767&top=100");
+	resetCounters();
+	getStreamData(quad_2_soilMoisture_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18718");
+	resetCounters();
+	getStreamData(quad_2_soilMoisture_2, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18725");
+	resetCounters();
+	getStreamData(quad_2_soilTemperature_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18767");
 
+	resetCounters();
 	getStreamData(quad_3_soilMoisture_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18732&top=100");
 	getStreamData(quad_3_soilMoisture_2, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18739&top=100");
 	getStreamData(quad_3_soilTemperature_1, "https://public.optirtc.com/api/datapoint/?key=z5ywCWZ4rLh3lu*3i234StqF&dataStreamId=18772&top=100");
