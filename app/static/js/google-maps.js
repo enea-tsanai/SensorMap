@@ -185,6 +185,7 @@ function showGraphof(site, divElement) {
 			drawPoints: true,
 			title: graphTitle,
 			showRoller: false,
+			showRangeSelector: true
 		});
 	} else {
 		console.log(graphs[divElement]);
