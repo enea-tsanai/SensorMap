@@ -487,7 +487,7 @@ function resizeGraphs(x, y) {
 	setTimeout(function() {
 		for (var gKey in graphs) {
 			graphs[gKey].resize($("#"+gKey).parent().width() * x, $("#"+gKey).parent().width() * y);
-		}}, 100);
+		}}, 200);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
@@ -586,6 +586,57 @@ $(document).ready(function() {
         populateGraphs(x.split(" ")[1]);
     });
 });
+
+function generateMixedGraphs() {
+	var quadrants = [];
+	var probes = [];
+	var temps = [];
+	$.each($("input[name='Quadrant']:checked"), function(){
+		quadrants.push($(this).val());
+	});
+	$.each($("input[name='Probe']:checked"), function(){
+		probes.push($(this).val());
+	});
+	$.each($("input[name='Temp']:checked"), function(){
+		temps.push($(this).val());
+	});
+	console.log(quadrants + " " + probes + " " + temps );
+
+	var data;
+
+	if ($.inArray('q-1', quadrants) > -1) {
+			data = "2011-01-01," + Math.random()*100 + "\n" +
+			"2011-01-02," + Math.random()*100 + "\n" +
+			"2011-01-03," + Math.random()*100 + "\n" +
+			"2011-01-04," + Math.random()*100 + "\n" +
+			"2011-01-05," + Math.random()*100 + "\n" +
+			"2011-01-06," + Math.random()*100 + "\n" +
+			"2011-01-07," + Math.random()*100 + "\n";
+	} else {
+		data = "2011-01-01," + 4 + "\n" +
+			"2011-01-02," + 6 + "\n" +
+			"2011-01-03," + 3 + "\n" +
+			"2011-01-04," + 4 + "\n" +
+			"2011-01-05," + 7 + "\n" +
+			"2011-01-06," + 8 + "\n" +
+			"2011-01-07," + 1 + "\n";
+	}
+
+
+	var g = new Dygraph(
+            document.getElementById("test"),
+            data, {
+              rollPeriod: 7,
+              animatedZooms: true,
+              // errorBars: true,
+              width: 600,
+              height: 300,
+              labels: ["Date", "a", "b"]
+            }
+          );
+
+
+}
 
 function populateGraphs(quad) {
 	switch (parseInt(quad)) {
