@@ -184,7 +184,7 @@ h3 .panel-heading { display: inline-block; }
 }
 
 
-.checkbox-toolbar div{
+.checkbox-toolbar div {
 	margin: 0px 10px 10px 10px;
 }
 
@@ -192,6 +192,20 @@ h3 .panel-heading { display: inline-block; }
 .col-sm-4 div {
 	margin: 0 auto;
 }
-#test {
+
+#combined-graphs-menu div {
 	min-width: 155px;
+}
+
+#combined-graphs-menu .combined-graphs-menu-item {
+	text-align: center;
+	margin: auto
+}
+
+.combined-graphs-menu-item h1, h2, h3, h4, h5, h6 {
+	text-align: center;
+}
+
+#combined-graphs-plot-button {
+	margin: 15px 15px;
 }

@@ -101,9 +101,10 @@
 				</div>
 				<div id="all-quads" class="tab-pane fade">
 
-				<div class="row">
-				  <div class="col-sm-4">
-					  <div>Quadrants:</div><div id="test">
+				<div id="combined-graphs-menu" class="row">
+					<div class="col-sm-4 combined-graphs-menu-item">
+						<div><h6>Quadrants</h6></div>
+						<div>
 							<label class="checkbox-inline">
 								<input type="checkbox" name="Quadrant" value="q-1">1
 							</label>
@@ -117,61 +118,39 @@
 								<input type="checkbox" name="Quadrant" value="q-4">4
 							</label>
 						</div>
+					</div>
 
-				  </div>
-				  <div class="col-sm-4">reeee</div>
-				  <div class="col-sm-4">.col-sm-4</div>
+					<div class="col-sm-4 combined-graphs-menu-item">
+						<div><h6>Probes</h6></div>
+						<div>
+							<label class="checkbox-inline">
+									<input type="checkbox" name="Probe" value="p-1">1
+							</label>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="Probe" value="p-2">2
+							</label>
+						</div>
+					</div>
+
+					<div class="col-sm-4 combined-graphs-menu-item">
+						<div><h6>Temp</h6></div>
+						<div>
+							<label class="checkbox-inline">
+									<input type="checkbox" name="Temp" value="t-1">1
+							</label>
+						</div>
+					</div>
+
+					<div class="text-center">
+						<button id="combined-graphs-plot-button" type="button" class="btn btn-primary btn-xs" onclick="generateMixedGraphs()">Plot Graphs</button>
+					</div>
+
 				</div>
-
-
-					<!--<div class="container">-->
-						<!--<form role="form">-->
-    				<!--<div class="row row-centered">-->
-
-					<!--&lt;!&ndash;<div class="row-fluid">&ndash;&gt;-->
-    					<!--&lt;!&ndash;<div class="span10">&ndash;&gt;-->
-    						<!--&lt;!&ndash;<div class="checkbox-toolbar">&ndash;&gt;-->
-								<!--<div class="col-xs-3 col-centered col-fixed">Quadrants:-->
-									<!--<label class="checkbox-inline">-->
-										<!--<input type="checkbox" name="Quadrant" value="q-1">1-->
-									<!--</label>-->
-									<!--<label class="checkbox-inline">-->
-										<!--<input type="checkbox" name="Quadrant" value="q-2">2-->
-									<!--</label>-->
-									<!--<label class="checkbox-inline">-->
-										<!--<input type="checkbox" name="Quadrant" value="q-3">3-->
-									<!--</label>-->
-									<!--<label class="checkbox-inline">-->
-										<!--<input type="checkbox" name="Quadrant" value="q-4">4-->
-									<!--</label>-->
-								<!--</div>-->
-								<!--<div class="col-xs-2 col-centered col-fixed">Probes:-->
-									<!--<label class="checkbox-inline">-->
-										<!--<input type="checkbox" name="Probe" value="p-1">1-->
-									<!--</label>-->
-									<!--<label class="checkbox-inline">-->
-										<!--<input type="checkbox" name="Probe" value="p-2">2-->
-									<!--</label>-->
-								<!--</div>-->
-								<!--<div class="col-xs-2 col-centered col-fixed">Temp:-->
-					<!--<label class="checkbox-inline">-->
-						<!--<input type="checkbox" name="Temp" value="t-1">1-->
-					<!--</label>-->
-					<!--<label class="checkbox-inline">-->
-						<!--<input type="checkbox" name="Temp" value="t-2">2-->
-					<!--</label>-->
-				<!--</div>-->
-    						<!--&lt;!&ndash;</div>&ndash;&gt;-->
-    					<!--</div>-->
-							<!--</form>-->
-					<!--</div>-->
-
-				<button type="button" class="btn btn-primary btn-xs" onclick="generateMixedGraphs()">Plot Graphs</button>
 				<div id="plotArea"></div>
 
 				</div>
 			</div>
-		</div>
+			</div>
 		<!-- End of Sidebar -->
 
 		<!-- Page Content -->

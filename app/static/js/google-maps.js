@@ -133,26 +133,26 @@ function getStreamData(siteData, url) {
 	//startLoading();
 //	setTimeout(function(){ stopLoading(); }, 1000);
 
-	$.ajax({
-		url: url,
-		dataType: "json",
-	}).done(function (data) {
-		pages += 1;
-
-		$.each(data.Items, function (i, item) {
-			siteData.data += item.timeValue + ',' + item.value[0].value + '\n';
-		});
-
-		totalCount = totalCount + data.Count;
-
-		if (typeof (data.NextPageLink) != 'undefined') {
-			getStreamData(siteData, data.NextPageLink);
-		} else {
-			console.log("pages: " + pages);
-			console.log(siteData.data);
-			//setTimeout(function(){ stopLoading(); }, 1000);
-		}
-	});
+//	$.ajax({
+//		url: url,
+//		dataType: "json",
+//	}).done(function (data) {
+//		pages += 1;
+//
+//		$.each(data.Items, function (i, item) {
+//			siteData.data += item.timeValue + ',' + item.value[0].value + '\n';
+//		});
+//
+//		totalCount = totalCount + data.Count;
+//
+//		if (typeof (data.NextPageLink) != 'undefined') {
+//			getStreamData(siteData, data.NextPageLink);
+//		} else {
+//			console.log("pages: " + pages);
+//			console.log(siteData.data);
+//			//setTimeout(function(){ stopLoading(); }, 1000);
+//		}
+//	});
 }
 
 var graphs = {};
@@ -605,40 +605,50 @@ function generateMixedGraphs() {
 	var data;
 
 	if ($.inArray('q-1', quadrants) > -1) {
-			data = "2011-01-01," + Math.random()*100 + "\n" +
-			"2011-01-02," + Math.random()*100 + "\n" +
-			"2011-01-03," + Math.random()*100 + "\n" +
-			"2011-01-04," + Math.random()*100 + "\n" +
-			"2011-01-05," + Math.random()*100 + "\n" +
-			"2011-01-06," + Math.random()*100 + "\n" +
-			"2011-01-07," + Math.random()*100 + "\n";
+
+		var data1 = "2016-02-10T15:56:03.7783794,5\n" +
+				"2016-02-10T15:57:10.4915719,5\n" +
+				"2016-02-10T15:55:10.4915719,5\n" +
+				"2016-02-10T15:54:10.4915719,5\n" +
+				"2016-02-10T15:53:10.4915719,5\n" +
+				"2016-02-10T15:52:10.4915719,5\n" +
+				"2016-02-10T15:51:03.1974357,5";
+
+		var data2 = "2016-02-10T15:56:03.7783794,10\n" +
+				"2016-02-10T15:57:10.4915719,10\n" +
+				"2016-02-10T15:50:10.4915719,10\n" +
+				"2016-02-10T15:52:10.4915719,10\n" +
+				"2016-02-10T15:59:10.4915719,10\n" +
+				"2016-02-10T15:49:10.4915719,10\n" +
+				"2016-02-10T15:51:03.1974357,10";
+		data = aggregateData(data1, data2);
 	} else {
-		data = "2011-01-01," + 4 + "\n" +
-			"2011-01-02," + 6 + "\n" +
-			"2011-01-03," + 3 + "\n" +
-			"2011-01-04," + 4 + "\n" +
-			"2011-01-05," + 7 + "\n" +
-			"2011-01-06," + 8 + "\n" +
-			"2011-01-07," + 1 + "\n";
+		var data1 = "2016-02-10T15:56:03.7783794,15\n" +
+				"2016-02-10T15:57:10.4915719,15\n" +
+				"2016-02-10T15:55:10.4915719,15\n" +
+				"2016-02-10T15:54:10.4915719,15\n" +
+				"2016-02-10T15:53:10.4915719,15\n" +
+				"2016-02-10T15:52:10.4915719,15\n" +
+				"2016-02-10T15:51:03.1974357,15";
+
+		var data2 = "2016-02-10T15:56:03.7783794,10\n" +
+				"2016-02-10T15:57:10.4915719,20\n" +
+				"2016-02-10T15:50:10.4915719,20\n" +
+				"2016-02-10T15:52:10.4915719,20\n" +
+				"2016-02-10T15:59:10.4915719,20\n" +
+				"2016-02-10T15:49:10.4915719,20\n" +
+				"2016-02-10T15:51:03.1974357,20";
+		data = aggregateData(data1, data2);
 	}
-
-	var data1 = "2016-02-10T15:56:03.7783794,5\n" +
-				"2016-02-10T15:57:10.4915719,5" ;
-//				"2016-02-10T15:55:03.1974357,5";
-
-	var data2 = "2016-02-10T15:57:10.4915719,10\n" +
-				"2016-02-10T15:50:03.2043582,10";
-//				"2016-02-10T15:56:03.7783794, 10";
 
 //	console.log("Test for data format: " + quad_1_soilMoisture_1.data);
 //	aggregateData(data1, data2);
 
 	var g = new Dygraph(
             document.getElementById("plotArea"),
-            aggregateData(data1, data2), {
+            data, {
 //              rollPeriod: 7,
               animatedZooms: true,
-              // errorBars: true,
               width: 600,
               height: 300,
               labels: ["Date", "a", "b"],
@@ -745,7 +755,6 @@ function aggregateData() {
 	console.log("aggregatedData: " + aggregatedData);
 	return aggregatedData;
 }
-
 
 function populateGraphs(quad) {
 	switch (parseInt(quad)) {
