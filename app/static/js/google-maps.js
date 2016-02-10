@@ -622,21 +622,130 @@ function generateMixedGraphs() {
 			"2011-01-07," + 1 + "\n";
 	}
 
+	var data1 = "2016-02-10T15:56:03.7783794,5\n" +
+				"2016-02-10T15:57:10.4915719,5" ;
+//				"2016-02-10T15:55:03.1974357,5";
+
+	var data2 = "2016-02-10T15:57:10.4915719,10\n" +
+				"2016-02-10T15:50:03.2043582,10";
+//				"2016-02-10T15:56:03.7783794, 10";
+
+//	console.log("Test for data format: " + quad_1_soilMoisture_1.data);
+//	aggregateData(data1, data2);
 
 	var g = new Dygraph(
-            document.getElementById("test"),
-            data, {
-              rollPeriod: 7,
+            document.getElementById("plotArea"),
+            aggregateData(data1, data2), {
+//              rollPeriod: 7,
               animatedZooms: true,
               // errorBars: true,
               width: 600,
               height: 300,
-              labels: ["Date", "a", "b"]
+              labels: ["Date", "a", "b"],
+              connectSeparatedPoints: true
             }
           );
-
-
 }
+
+Date.prototype.setISO8601 = function (string) {
+    var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
+    "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
+    "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
+    var d = string.match(new RegExp(regexp));
+
+    var offset = 0;
+    var date = new Date(d[1], 0, 1);
+
+    if (d[3]) { date.setMonth(d[3] - 1); }
+    if (d[5]) { date.setDate(d[5]); }
+    if (d[7]) { date.setHours(d[7]); }
+    if (d[8]) { date.setMinutes(d[8]); }
+    if (d[10]) { date.setSeconds(d[10]); }
+    if (d[12]) { date.setMilliseconds(Number("0." + d[12]) * 1000); }
+    if (d[14]) {
+        offset = (Number(d[16]) * 60) + Number(d[17]);
+        offset *= ((d[15] == '-') ? 1 : -1);
+    }
+
+    offset -= date.getTimezoneOffset();
+    time = (Number(date) + (offset * 60 * 1000));
+    this.setTime(Number(time));
+    return this;
+}
+
+function sortByDate( date1, date2 ) {
+    var date1_ = (new Date()).setISO8601(date1);
+    var date2_ = (new Date()).setISO8601(date2);
+    return date2_ > date1_ ? 1 : -1;
+}
+
+function aggregateData() {
+
+	var T = [];
+	var D = [];
+	var TimeCol = [];
+	var aggregatedData = "";
+
+	// Iterate Data args
+	for (var i = 0; i < arguments.length; i++) {
+
+		T[i] = [], D[i] = [];
+
+		// Convert strings to arrays
+		var dataArray = arguments[i].split("\n");
+
+		console.log("dataArray: " + dataArray);
+
+		// Split to T and D
+		for (var d = 0; d < dataArray.length; d++) {
+			// First data column
+			var t = dataArray[d].split(",")[0];
+			T[i].push(t);
+
+			// Second data column
+			D[i].push(dataArray[d].split(",")[1]);
+
+			// If key not in array, then push it
+			if ($.inArray(t, TimeCol) < 0) {
+				TimeCol.push(t);
+			}
+		}
+	}
+
+	TimeCol.join();
+	TimeCol.sort(sortByDate);
+
+//	console.log("T: " + T + "\n");
+//	console.log("D: " + D + "\n");
+//	console.log("Time Col: " + TimeCol + "\n");
+
+	for (var i = 0; i < TimeCol.length; i++) {
+		datacol = "";
+		for (var j = 0; j < T.length; j++) {
+
+			var f = $.inArray(TimeCol[i], T[j]);
+			if (f > -1) {
+				console.log("Data found at: " + T[j][f] + " f: " + f);
+				if (j === T.length - 1) {
+					datacol += D[j][f];
+				} else {
+					datacol += D[j][f] + ",";
+				}
+			} else {
+				if (j === T.length - 1) {
+					datacol += "null";
+				} else {
+					datacol += "null,";
+				}
+			}
+		}
+		aggregatedData += TimeCol[i] + "," + datacol + "\n";
+	};
+
+	console.log("aggregatedData: " + aggregatedData);
+	return aggregatedData;
+}
+
 
 function populateGraphs(quad) {
 	switch (parseInt(quad)) {
