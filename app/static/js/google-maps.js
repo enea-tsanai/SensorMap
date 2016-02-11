@@ -178,8 +178,7 @@ function showGraphof(site, divElement) {
 		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
 		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized
 
-		graphs[divElement] = new Dygraph(document.getElementById(divElement), site.data,
-		{
+		graphs[divElement] = new Dygraph(document.getElementById(divElement), site.data, {
 	//		xValueFormatter: Dygraph.dateString_,
 	//		legend: 'always',
 			width: x,
@@ -539,6 +538,7 @@ function generateMixedGraphs() {
 	console.log(quadrants + " " + probes + " " + temps );
 
 	var data;
+	var labels;
 
 	if ($.inArray('q-1', quadrants) > -1) {
 
@@ -558,6 +558,7 @@ function generateMixedGraphs() {
 				"2016-02-10T15:49:10.4915719,10\n" +
 				"2016-02-10T15:51:03.1974357,10";
 		data = aggregateData(data1, data2);
+		labels = ["Date", "a", "b"];
 	} else {
 		var data1 = "2016-02-10T15:56:03.7783794,15\n" +
 				"2016-02-10T15:57:10.4915719,15\n" +
@@ -575,22 +576,40 @@ function generateMixedGraphs() {
 				"2016-02-10T15:49:10.4915719,20\n" +
 				"2016-02-10T15:51:03.1974357,20";
 		data = aggregateData(data1, data2);
+		labels = ["Date", "A", "B"];
 	}
 
 //	console.log("Test for data format: " + quad_1_soilMoisture_1.data);
 //	aggregateData(data1, data2);
+	var divElement = "plotArea";
+	var graphTitle = "Test";
+	var x = (sidebarState.localeCompare("minimized") == 0) ?
+		$("#"+divElement).parent().width() * gWidthRatioWhenMinimized:
+		$("#"+divElement).parent().width() * gWidthRatioWhenMaximized;
 
-	var g = new Dygraph(
-            document.getElementById("plotArea"),
-            data, {
+	var y = (sidebarState.localeCompare("minimized") == 0) ?
+	$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
+	$("#"+divElement).parent().width() * gHeightRatioWhenMaximized;
+
+	var g = new Dygraph(document.getElementById(divElement), data, {
 //              rollPeriod: 7,
-              animatedZooms: true,
-              width: 600,
-              height: 300,
-              labels: ["Date", "a", "b"],
-              connectSeparatedPoints: true
-            }
-          );
+		animatedZooms: true,
+		connectSeparatedPoints: true,
+		width: x,
+		height: y,
+		strokeWidth: 1.2,
+		showLabelsOnHighlight: true,
+		highlightCircleSize: 2,
+		highlightSeriesOpts: {
+			strokeWidth: 1.4,
+			highlightCircleSize: 5
+		},
+		labels: labels,
+		drawPoints: true,
+		title: graphTitle,
+		showRoller: false,
+		showRangeSelector: true
+	});
 }
 
 Date.prototype.setISO8601 = function (string) {
@@ -679,9 +698,9 @@ function aggregateData() {
 				}
 			} else {
 				if (j === T.length - 1) {
-					datacol += "null";
+					datacol += "";
 				} else {
-					datacol += "null,";
+					datacol += ",";
 				}
 			}
 		}
