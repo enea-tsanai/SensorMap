@@ -1,6 +1,7 @@
+#!flask/bin/python
 from flask import render_template, jsonify, request
-# from app import mongo
 from app import app
+from app import mongo
 from bson import Binary, Code, json_util
 from bson.json_util import dumps, loads
 
@@ -32,7 +33,22 @@ def findSensors():
 	return jsonify(records)
 
 
+@app.route('/getDataStream', methods=['POST', 'GET'])
+def getDataStream():
+	# getDataStream = request.args['dataStreamId']
+	cursor = mongo.db.streams.find({"streams.StreamId": 18711})
+
+	documents = []
+	for document in cursor:
+		documents.append(document)
+
+	# records = dict((record['_id'], record) for record in cursor)
+
+
+	return jsonify(documents)
+
 # returns basic list of sensors and their respective locations
+
 
 def db_test():
 	# e = mongo.db.sensors_generic.find()
