@@ -181,6 +181,7 @@ function showGraphof(site, divElement) {
 		graphs[divElement] = new Dygraph(document.getElementById(divElement), site.data, {
 //		"animatedZooms": true,
 			"connectSeparatedPoints": true,
+			"rollPeriod": 14,
 			"width": x,
 			"height": y,
 			"strokeWidth": 1.2,
@@ -598,6 +599,8 @@ function generateMixedGraphs() {
 	var g = new Dygraph(document.getElementById(divElement), data, {
 //		"animatedZooms": true,
 		"connectSeparatedPoints": true,
+		"titleHeight": 32,
+		"rollPeriod": 14,
 		"width": x,
 		"height": y,
 		"strokeWidth": 1.2,

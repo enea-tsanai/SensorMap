@@ -66,6 +66,8 @@ LMetrics {
     position: relative;
 }
 
+.dygraph-title { font-size: 15px;}
+
 /*
 Circle loading
 */
