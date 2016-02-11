@@ -179,22 +179,26 @@ function showGraphof(site, divElement) {
 		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized
 
 		graphs[divElement] = new Dygraph(document.getElementById(divElement), site.data, {
-	//		xValueFormatter: Dygraph.dateString_,
-	//		legend: 'always',
-			width: x,
-			height: y,
-			strokeWidth: 1.2,
-			showLabelsOnHighlight: true,
-			highlightCircleSize: 2,
-			highlightSeriesOpts: {
-				strokeWidth: 1.4,
-				highlightCircleSize: 5
+//		"animatedZooms": true,
+			"connectSeparatedPoints": true,
+			"width": x,
+			"height": y,
+			"strokeWidth": 1.2,
+			"showLabelsOnHighlight": true,
+			"highlightCircleSize": 2,
+			"highlightSeriesOpts": {
+				"strokeWidth": 1.4,
+				"highlightCircleSize": 5
 			},
-			labels: site.labels,
-			drawPoints: true,
-			title: graphTitle,
-			showRoller: false,
-			showRangeSelector: true
+			"labelsDivStyles": {
+					'text-align': 'right',
+					'background': 'none'
+			},
+			"labels": site.labels,
+			"drawPoints": true,
+			"title": graphTitle,
+			"showRoller": false,
+			"showRangeSelector": true
 		});
 	} else {
 		console.log(graphs[divElement]);
@@ -592,23 +596,26 @@ function generateMixedGraphs() {
 	$("#"+divElement).parent().width() * gHeightRatioWhenMaximized;
 
 	var g = new Dygraph(document.getElementById(divElement), data, {
-//              rollPeriod: 7,
-		animatedZooms: true,
-		connectSeparatedPoints: true,
-		width: x,
-		height: y,
-		strokeWidth: 1.2,
-		showLabelsOnHighlight: true,
-		highlightCircleSize: 2,
-		highlightSeriesOpts: {
-			strokeWidth: 1.4,
-			highlightCircleSize: 5
+//		"animatedZooms": true,
+		"connectSeparatedPoints": true,
+		"width": x,
+		"height": y,
+		"strokeWidth": 1.2,
+		"showLabelsOnHighlight": true,
+		"highlightCircleSize": 2,
+		"highlightSeriesOpts": {
+			"strokeWidth": 1.4,
+			"highlightCircleSize": 5
 		},
-		labels: labels,
-		drawPoints: true,
-		title: graphTitle,
-		showRoller: false,
-		showRangeSelector: true
+		"labelsDivStyles": {
+                'text-align': 'right',
+                'background': 'none'
+        },
+		"labels": labels,
+		"drawPoints": true,
+		"title": graphTitle,
+		"showRoller": false,
+		"showRangeSelector": true
 	});
 }
 
