@@ -29,6 +29,8 @@ var pages = 0;
 var totalCount = 0;
 
 /*Quadrants*/
+var localFetchMode = true;
+
 var quad_1_soilMoisture_1 = {name: "quad_1_soilMoisture_1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
 var quad_1_soilMoisture_2 = {name: "quad_1_soilMoisture_2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
 var quad_1_soilTemperature_1 = {name: "quad_1_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
@@ -133,26 +135,38 @@ function getStreamData(siteData, url) {
 	//startLoading();
 //	setTimeout(function(){ stopLoading(); }, 1000);
 
-//	$.ajax({
-//		url: url,
-//		dataType: "json",
-//	}).done(function (data) {
-//		pages += 1;
-//
-//		$.each(data.Items, function (i, item) {
-//			siteData.data += item.timeValue + ',' + item.value[0].value + '\n';
-//		});
-//
-//		totalCount = totalCount + data.Count;
-//
-//		if (typeof (data.NextPageLink) != 'undefined') {
-//			getStreamData(siteData, data.NextPageLink);
-//		} else {
-//			console.log("pages: " + pages);
-//			console.log(siteData.data);
-//			//setTimeout(function(){ stopLoading(); }, 1000);
-//		}
-//	});
+	if (localFetchMode === true) {
+		$.ajax({
+			url: "/getDataStream?dataStreamId=18777",
+			dataType: "json",
+		}).done(function (data) {
+			$.each(data.Items, function (i, item) {
+				siteData.data += item.timeValue + ',' + item.value + '\n';
+			});
+			console.log(siteData.data);
+		});
+	} else {
+		$.ajax({
+			url: url,
+			dataType: "json",
+		}).done(function (data) {
+			pages += 1;
+
+			$.each(data.Items, function (i, item) {
+				siteData.data += item.timeValue + ',' + item.value[0].value + '\n';
+			});
+
+			totalCount = totalCount + data.Count;
+
+			if (typeof (data.NextPageLink) != 'undefined') {
+				getStreamData(siteData, data.NextPageLink);
+			} else {
+				console.log("pages: " + pages);
+				console.log(siteData.data);
+				//setTimeout(function(){ stopLoading(); }, 1000);
+			}
+		});
+	}
 }
 
 var graphs = {};

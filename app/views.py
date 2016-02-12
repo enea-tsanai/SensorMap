@@ -35,19 +35,10 @@ def findSensors():
 
 @app.route('/getDataStream', methods=['POST', 'GET'])
 def getDataStream():
-	# getDataStream = request.args['dataStreamId']
-	cursor = mongo.db.streams.find({"streams.StreamId": 18711})
-
-	documents = []
-	for document in cursor:
-		documents.append(document)
-
-	# records = dict((record['_id'], record) for record in cursor)
-
-
-	return jsonify(documents)
-
-# returns basic list of sensors and their respective locations
+	dataStreamId = int(request.args['dataStreamId'])
+	cursor = mongo.db.streams.find({"StreamId": dataStreamId})
+	records = dict(("Items", record['Items']) for record in cursor)
+	return jsonify(records)
 
 
 def db_test():
