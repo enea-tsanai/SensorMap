@@ -129,15 +129,11 @@ function showSites() {
  * Make ajax call and store result to siteData
 */
 function getStreamData(siteData, url, requestParams) {
-//	$.each(latestDummy.Items, function (i, item) {
-//		dataValues = dataValues + item.timeValue + ',' + item.value[0].value + '\n';
-//	});
 	//startLoading();
 //	setTimeout(function(){ stopLoading(); }, 1000);
 
 	if (localFetchMode === true) {
-
-		var url_ = concatenateUrlAndParams("/getDataStream", requestParams)
+		var url_ = concatenateUrlAndParams("/getDataStream/", requestParams)
 		$.ajax({
 			url: url_,
 			dataType: "json",
@@ -145,30 +141,29 @@ function getStreamData(siteData, url, requestParams) {
 			$.each(data.Items, function (i, item) {
 				siteData.data += item.timeValue + ',' + item.value + '\n';
 			});
-//			console.log(siteData.data);
 		});
 	} else {
+		var url_ = concatenateUrlAndParams(url, requestParams)
+		$.ajax({
+			url: url_,
+			dataType: "json",
+		}).done(function (data) {
+			pages += 1;
 
-//		$.ajax({
-//			url: concatenateUrlAndParams,
-//			dataType: "json",
-//		}).done(function (data) {
-//			pages += 1;
-//
-//			$.each(data.Items, function (i, item) {
-//				siteData.data += item.timeValue + ',' + item.value[0].value + '\n';
-//			});
-//
-//			totalCount = totalCount + data.Count;
-//
-//			if (typeof (data.NextPageLink) != 'undefined') {
-//				getStreamData(siteData, data.NextPageLink);
-//			} else {
-//				console.log("pages: " + pages);
-//				console.log(siteData.data);
-//				//setTimeout(function(){ stopLoading(); }, 1000);
-//			}
-//		});
+			$.each(data.Items, function (i, item) {
+				siteData.data += item.timeValue + ',' + item.value[0].value + '\n';
+			});
+
+			totalCount = totalCount + data.Count;
+
+			if (typeof (data.NextPageLink) != 'undefined') {
+				getStreamData(siteData, data.NextPageLink, {});
+			} else {
+				console.log("pages: " + pages);
+				console.log(siteData.data);
+				//setTimeout(function(){ stopLoading(); }, 1000);
+			}
+		});
 	}
 }
 
@@ -794,16 +789,14 @@ function populateGraphs(quad) {
 }
 
 function concatenateUrlAndParams(url, requestParams) {
-	var params = "";
-	if (url[-1] === "/") {
-		url = url.slice(0, -1);
-	}
-
-	for(p in requestParams) {
-		params += p + "=" + requestParams[p] + "&"
-	}
-
-	if (params.length > 0) {
+	if (!jQuery.isEmptyObject(requestParams)) {
+		var params = "";
+		for(p in requestParams) {
+			params += p + "=" + requestParams[p] + "&"
+		}
+		if (url.slice(-1) === "/") {
+			url = url.slice(0, -1);
+		}
 		url += "?" + params.slice(0, -1);
 	}
 	return url;
