@@ -31,21 +31,39 @@ var totalCount = 0;
 /*Quadrants*/
 var localFetchMode = true;
 
-var quad_1_soilMoisture_1 = {name: "quad_1_soilMoisture_1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
-var quad_1_soilMoisture_2 = {name: "quad_1_soilMoisture_2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
-var quad_1_soilTemperature_1 = {name: "quad_1_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
+//var quad-1_probe-1 = {name: "quad-1_probe-1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
+//var quad-1_probe-2 = {name: "quad-1_probe-2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
+//var quad-1_temperature-1 = {name: "quad-1_temperature-1", labels: ["Date", "Temperature C"], data: ""};
+//
+//var quad-2_probe-1 = {name: "quad-2_probe-1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
+//var quad-2_probe-2 = {name: "quad-2_probe-2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
+//var quad-2_temperature-1 = {name: "quad-2_temperature-1", labels: ["Date", "Temperature C"], data: ""};
+//
+//var quad-3_probe-1 = {name: "quad-3_probe-1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
+//var quad-3_probe-2 = {name: "quad-3_probe-2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
+//var quad-3_temperature-1 = {name: "quad-3_temperature-1", labels: ["Date", "Temperature C"], data: ""};
+//
+//var quad-4_probe-1 = {name: "quad-4_probe-1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
+//var quad-4_probe-2 = {name: "quad-4_probe-2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
+//var quad-4_temperature-1 = {name: "quad-4_temperature-1", labels: ["Date", "Temperature C"], data: ""};
 
-var quad_2_soilMoisture_1 = {name: "quad_2_soilMoisture_1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
-var quad_2_soilMoisture_2 = {name: "quad_2_soilMoisture_2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
-var quad_2_soilTemperature_1 = {name: "quad_2_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
+var streams = [
+	{streamId: 18704, name: "quad-1_probe-1", quad: "1", probe: "1", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18711, name: "quad-1_probe-2", quad: "1", probe: "2", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18762, name: "quad-1_temperature-1", quad: "1", labels: ["Date", "Temperature C"], data: ""},
 
-var quad_3_soilMoisture_1 = {name: "quad_3_soilMoisture_1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
-var quad_3_soilMoisture_2 = {name: "quad_3_soilMoisture_2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
-var quad_3_soilTemperature_1 = {name: "quad_3_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
+	{streamId: 18718, name: "quad-2_probe-1", quad: "2", probe: "1", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18725, name: "quad-2_probe-2", quad: "2", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18767, name: "quad-2_temperature-1", quad: "2", labels: ["Date", "Temperature C"], data: ""},
 
-var quad_4_soilMoisture_1 = {name: "quad_4_soilMoisture_1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
-var quad_4_soilMoisture_2 = {name: "quad_4_soilMoisture_2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
-var quad_4_soilTemperature_1 = {name: "quad_4_soilTemperature_1", labels: ["Date", "Temperature C"], data: ""};
+	{streamId: 18732, name: "quad-3_probe-1", quad: "3", probe: "1", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18739, name: "quad-3_probe-2", quad: "3", probe: "2", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18772, name: "quad-3_temperature-1", quad: "3", labels: ["Date", "Temperature C"], data: ""},
+
+	{streamId: 18746, name: "quad-4_probe-1", quad: "4", probe: "1", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18753, name: "quad-4_probe-2", quad: "4", probe: "2", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18777, name: "quad-4_temperature-1", quad: "4", labels: ["Date", "Temperature C"], data: ""}
+];
 
 
 var CEERTEXT = "Construction of Villanova's Green Roof took place in 3 days in the summer of 2006. The design was a " +
@@ -171,8 +189,9 @@ var graphs = {};
 
 
 function showGraphof(site, divElement) {
-	if (divElement === undefined)
-			divElement = site.name;
+	if (divElement === undefined) {
+		divElement = site.name;
+	}
 		//$(divElement).empty();
 
 	if (graphs[divElement] === undefined) {
@@ -190,6 +209,7 @@ function showGraphof(site, divElement) {
 		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
 		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized
 
+		console.log("divElement: " + divElement);
 		graphs[divElement] = new Dygraph(document.getElementById(divElement), site.data, {
 //		"animatedZooms": true,
 			"connectSeparatedPoints": true,
@@ -241,10 +261,8 @@ function stopLoading() {
 }
 
 function initializeQuadrantsDomElements() {
-	for (var i=1; i<5; i++) {
-		$("#quad-" + i).append('<div id=quad_'+i+'_soilMoisture_1></div>');
-		$("#quad-" + i).append('<div id=quad_'+i+'_soilMoisture_2></div>');
-		$("#quad-" + i).append('<div id=quad_'+i+'_soilTemperature_1></div>');
+	for(var i=0; i<streams.length; i++) {
+		$("#quad-" + streams[i].quad).append('<div id=' + streams[i].name + '></div>');
 	}
 }
 
@@ -259,51 +277,57 @@ function populateQuads() {
 		"key": "z5ywCWZ4rLh3lu*3i234StqF",
 		"dataStreamId": 18704,
 	};
-	getStreamData(quad_1_soilMoisture_1, url, requestParams);
-	resetCounters();
 
-	requestParams.dataStreamId = 18711;
-	getStreamData(quad_1_soilMoisture_2, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18762;
-	getStreamData(quad_1_soilTemperature_1, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18718;
-	getStreamData(quad_2_soilMoisture_1, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18725;
-	getStreamData(quad_2_soilMoisture_2, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18767;
-	getStreamData(quad_2_soilTemperature_1, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18732;
-	getStreamData(quad_3_soilMoisture_1, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18739;
-	getStreamData(quad_3_soilMoisture_2, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18772;
-	getStreamData(quad_3_soilTemperature_1, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18746;
-	getStreamData(quad_4_soilMoisture_1, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18753;
-	getStreamData(quad_4_soilMoisture_2, url, requestParams);
-	resetCounters();
-
-	requestParams.dataStreamId = 18777;
-	getStreamData(quad_4_soilTemperature_1, url, requestParams);
+	for(var stream in streams) {
+		requestParams.dataStreamId = streams[stream].streamId;
+		getStreamData(stream, url, requestParams);
+		resetCounters();
+	}
+//	getStreamData(quad-1_probe-1, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18711;
+//	getStreamData(quad-1_probe-2, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18762;
+//	getStreamData(quad-1_temperature-1, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18718;
+//	getStreamData(quad-2_probe-1, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18725;
+//	getStreamData(quad-2_probe-2, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18767;
+//	getStreamData(quad-2_temperature-1, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18732;
+//	getStreamData(quad-3_probe-1, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18739;
+//	getStreamData(quad-3_probe-2, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18772;
+//	getStreamData(quad-3_temperature-1, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18746;
+//	getStreamData(quad-4_probe-1, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18753;
+//	getStreamData(quad-4_probe-2, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18777;
+//	getStreamData(quad-4_temperature-1, url, requestParams);
 }
 
 var ctrlPressed = false;
@@ -431,7 +455,10 @@ function updateWindowPane() {
 							'<p>Sensor: #' + selectedSensors[0].id + '</p><p><u><b>Latest Captured Value</b></u></p>';
 //							'Timestamp: ' + selectedSensors[0].timeValue + '<br>' +
 //							'Value: ' + selectedSensors[0].value + '<br></div>';
-		showGraphof(quad_1_soilMoisture_1, "LMetrics");
+
+
+
+		showGraphof(getStreamByID(18704), "LMetrics");
 		populateGraphs(1);
 		populateGraphs(2);
 		populateGraphs(3);
@@ -443,23 +470,23 @@ function updateWindowPane() {
 		for (sensor in selectedSensors) {
 			var updatedSensorInfo = '<div id="sensor-info"><h2>Showing data for multiple sensors</h2></div>';
 			console.log('updating info of sensor');
-			showGraphof(quad_1_soilMoisture_1, "LMetrics");
-			showGraphof(quad_1_soilMoisture_1);
-			showGraphof(quad_1_soilTemperature_1);
+//			showGraphof(quad-1_probe-1, "LMetrics");
+//			showGraphof(quad-1_probe-1);
+//			showGraphof(quad-1_temperature-1);
+//
+//			showGraphof(quad-2_probe-1);
+//			showGraphof(quad-2_probe-2);
+//			showGraphof(quad-2_temperature-1);
+//
+//			showGraphof(quad-3_probe-1);
+//			showGraphof(quad-3_probe-2);
+//			showGraphof(quad-3_temperature-1);
+//
+//			showGraphof(quad-4_probe-1);
+//			showGraphof(quad-4_probe-2);
+//			showGraphof(quad-4_temperature-1);
 
-			showGraphof(quad_2_soilMoisture_1);
-			showGraphof(quad_2_soilMoisture_2);
-			showGraphof(quad_2_soilTemperature_1);
-
-			showGraphof(quad_3_soilMoisture_1);
-			showGraphof(quad_3_soilMoisture_2);
-			showGraphof(quad_3_soilTemperature_1);
-
-			showGraphof(quad_4_soilMoisture_1);
-			showGraphof(quad_4_soilMoisture_2);
-			showGraphof(quad_4_soilTemperature_1);
-
-			$("#sensor-info").replaceWith(updatedSensorInfo);
+//			$("#sensor-info").replaceWith(updatedSensorInfo);
 		}
 	}
 }
@@ -586,6 +613,15 @@ function generateMixedGraphs() {
 	var data;
 	var labels;
 
+	var dataA = [];
+	for(q in quadrants) {
+		for (p in probes) {
+			console.log(quadrants[q] + "_" + probes[p]);
+			dataA.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
+		}
+	}
+
+
 	if ($.inArray('q-1', quadrants) > -1) {
 
 		var data1 = "2016-02-10T15:56:03.7783794,5\n" +
@@ -625,7 +661,7 @@ function generateMixedGraphs() {
 		labels = ["Date", "A", "B"];
 	}
 
-//	console.log("Test for data format: " + quad_1_soilMoisture_1.data);
+//	console.log("Test for data format: " + quad-1_probe-1.data);
 //	aggregateData(data1, data2);
 	var divElement = "plotArea";
 	var graphTitle = "Test";
@@ -765,24 +801,24 @@ function aggregateData(dataStreams) {
 function populateGraphs(quad) {
 	switch (parseInt(quad)) {
 		case 1:
-			showGraphof(quad_1_soilMoisture_1);
-			showGraphof(quad_1_soilMoisture_2);
-			showGraphof(quad_1_soilTemperature_1);
+			showGraphof(getStreamByName("quad-1_probe-1"));
+			showGraphof(getStreamByName("quad-1_probe-2"));
+			showGraphof(getStreamByName("quad-1_temperature-1"));
 			break;
 		case 2:
-			showGraphof(quad_2_soilMoisture_1);
-			showGraphof(quad_2_soilMoisture_2);
-			showGraphof(quad_2_soilTemperature_1);
+			showGraphof(getStreamByName("quad-2_probe-1"));
+			showGraphof(getStreamByName("quad-2_probe-2"));
+			showGraphof(getStreamByName("quad-2_temperature-1"));
 			break;
 		case 3:
-			showGraphof(quad_3_soilMoisture_1);
-			showGraphof(quad_3_soilMoisture_2);
-			showGraphof(quad_3_soilTemperature_1);
+			showGraphof(getStreamByName("quad-3_probe-1"));
+			showGraphof(getStreamByName("quad-3_probe-2"));
+			showGraphof(getStreamByName("quad-3_temperature-1"));
 			break;
 		case 4:
-			showGraphof(quad_4_soilMoisture_1);
-			showGraphof(quad_4_soilMoisture_2);
-			showGraphof(quad_4_soilTemperature_1);
+			showGraphof(getStreamByName("quad-4_probe-1"));
+			showGraphof(getStreamByName("quad-4_probe-2"));
+			showGraphof(getStreamByName("quad-4_temperature-1"));
 			break;
 		default:
 	}
@@ -800,4 +836,14 @@ function concatenateUrlAndParams(url, requestParams) {
 		url += "?" + params.slice(0, -1);
 	}
 	return url;
+}
+
+function getStreamByID(id) {
+	var results = $.grep(streams, function(e){ return e.streamId === id; });
+	return (results.length === 0) ? null : results[0];
+}
+
+function getStreamByName(name) {
+	var results = $.grep(streams, function(e){ return e.name === name; });
+	return (results.length === 0) ? null : results[0];
 }
