@@ -621,7 +621,7 @@ function generateMixedGraphs() {
 				"2016-02-10T15:59:10.4915719,20\n" +
 				"2016-02-10T15:49:10.4915719,20\n" +
 				"2016-02-10T15:51:03.1974357,20";
-		data = aggregateData(data1, data2);
+		data = aggregateData([data1, data2]);
 		labels = ["Date", "A", "B"];
 	}
 
@@ -695,7 +695,7 @@ function sortByDate( date1, date2 ) {
     return date2_ > date1_ ? 1 : -1;
 }
 
-function aggregateData() {
+function aggregateData(dataStreams) {
 
 	var T = [];
 	var D = [];
@@ -703,12 +703,12 @@ function aggregateData() {
 	var aggregatedData = "";
 
 	// Iterate Data args
-	for (var i = 0; i < arguments.length; i++) {
+	for (var i = 0; i < dataStreams.length; i++) {
 
 		T[i] = [], D[i] = [];
 
 		// Convert strings to arrays
-		var dataArray = arguments[i].split("\n");
+		var dataArray = dataStreams[i].split("\n");
 
 		console.log("dataArray: " + dataArray);
 
