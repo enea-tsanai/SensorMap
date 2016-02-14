@@ -209,7 +209,6 @@ function showGraphof(site, divElement) {
 		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
 		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized
 
-		console.log("divElement: " + divElement);
 		graphs[divElement] = new Dygraph(document.getElementById(divElement), site.data, {
 //		"animatedZooms": true,
 			"connectSeparatedPoints": true,
@@ -234,7 +233,6 @@ function showGraphof(site, divElement) {
 			"showRangeSelector": true
 		});
 	} else {
-		console.log(graphs[divElement]);
 		if (sidebarState.localeCompare("minimized") == 0) {
 			resizeGraphs(gWidthRatioWhenMinimized, gHeightRatioWhenMinimized);
 //			graphs[divElement].width_ = 100;
@@ -598,7 +596,7 @@ $(document).ready(function() {
 function generateMixedGraphs() {
 	var quadrants = [];
 	var probes = [];
-	var temps = [];
+	var temperatures = [];
 	$.each($("input[name='Quadrant']:checked"), function(){
 		quadrants.push($(this).val());
 	});
@@ -606,21 +604,38 @@ function generateMixedGraphs() {
 		probes.push($(this).val());
 	});
 	$.each($("input[name='Temp']:checked"), function(){
-		temps.push($(this).val());
+		temperatures.push($(this).val());
 	});
-	console.log(quadrants + " " + probes + " " + temps );
+	console.log(quadrants + " " + probes + " " + temperatures );
 
 	var data;
 	var labels;
 
-	var dataA = [];
+	var probesData = [];
 	for(q in quadrants) {
 		for (p in probes) {
 			console.log(quadrants[q] + "_" + probes[p]);
-			dataA.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
+			probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
 		}
 	}
+	console.log(probesData);
 
+	var temperaturesData = [];
+	for(q in quadrants) {
+		for (t in temperatures) {
+			console.log(quadrants[q] + "_" + temperatures[p]);
+			temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[p]).data);
+		}
+	}
+	console.log(temperaturesData);
+
+	if(probesData.length > 0) {
+//		Plot
+	}
+
+	if(temperaturesData.length > 0) {
+//		Plot
+	}
 
 	if ($.inArray('q-1', quadrants) > -1) {
 
@@ -746,8 +761,6 @@ function aggregateData(dataStreams) {
 		// Convert strings to arrays
 		var dataArray = dataStreams[i].split("\n");
 
-		console.log("dataArray: " + dataArray);
-
 		// Split to T and D
 		for (var d = 0; d < dataArray.length; d++) {
 			// First data column
@@ -777,7 +790,7 @@ function aggregateData(dataStreams) {
 
 			var f = $.inArray(TimeCol[i], T[j]);
 			if (f > -1) {
-				console.log("Data found at: " + T[j][f] + " f: " + f);
+//				console.log("Data found at: " + T[j][f] + " f: " + f);
 				if (j === T.length - 1) {
 					datacol += D[j][f];
 				} else {
@@ -793,8 +806,6 @@ function aggregateData(dataStreams) {
 		}
 		aggregatedData += TimeCol[i] + "," + datacol + "\n";
 	};
-
-	console.log("aggregatedData: " + aggregatedData);
 	return aggregatedData;
 }
 
