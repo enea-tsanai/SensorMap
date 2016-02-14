@@ -24,6 +24,31 @@ var gWidthRatioWhenMaximized = 0.7;
 var gWidthRatioWhenMinimized = 1;
 var gHeightRatioWhenMaximized = 0.3;
 var gHeightRatioWhenMinimized = 0.9;
+var dygraphParams = {
+    //"animatedZooms": true,
+	"connectSeparatedPoints": true,
+	"rollPeriod": 14,
+	"width": 500,
+	"height": 350,
+	"strokeWidth": 1.2,
+	"showLabelsOnHighlight": true,
+	"highlightCircleSize": 2,
+	"highlightSeriesOpts": {
+		"strokeWidth": 1.4,
+		"highlightCircleSize": 5
+	},
+	"labelsDivStyles": {
+		'text-align': 'right',
+		'background': 'none'
+	},
+	"labels": "",
+	"drawPoints": true,
+	"title": "",
+	"showRoller": false,
+	"showRangeSelector": true
+}
+
+
 
 var pages = 0;
 var totalCount = 0;
@@ -594,6 +619,13 @@ $(document).ready(function() {
 });
 
 function generateMixedGraphs() {
+//	$("#mixed-probes").empty();
+	$("#mixed-probes").remove();
+	$("#mixed-temperatures").remove();
+	$("#all-quads").append("<div id=mixed-probes></div>");
+	$("#all-quads").append("<div id=mixed-temperatures></div>");
+
+
 	var quadrants = [];
 	var probes = [];
 	var temperatures = [];
@@ -606,40 +638,12 @@ function generateMixedGraphs() {
 	$.each($("input[name='Temp']:checked"), function(){
 		temperatures.push($(this).val());
 	});
-	console.log(quadrants + " " + probes + " " + temperatures );
 
-	var data;
-	var labels;
+	var probeLabels = ['Time'];
+	var temperatureLabels = ['Time'];
 
-	var probesData = [];
-	for(q in quadrants) {
-		for (p in probes) {
-			console.log(quadrants[q] + "_" + probes[p]);
-			probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
-		}
-	}
-	console.log(probesData);
-
-	var temperaturesData = [];
-	for(q in quadrants) {
-		for (t in temperatures) {
-			console.log(quadrants[q] + "_" + temperatures[p]);
-			temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[p]).data);
-		}
-	}
-	console.log(temperaturesData);
-
-	if(probesData.length > 0) {
-//		Plot
-	}
-
-	if(temperaturesData.length > 0) {
-//		Plot
-	}
-
-	if ($.inArray('q-1', quadrants) > -1) {
-
-		var data1 = "2016-02-10T15:56:03.7783794,5\n" +
+	// Test
+	var data1 = "2016-02-10T15:56:03.7783794,5\n" +
 				"2016-02-10T15:57:10.4915719,5\n" +
 				"2016-02-10T15:55:10.4915719,5\n" +
 				"2016-02-10T15:54:10.4915719,5\n" +
@@ -647,72 +651,130 @@ function generateMixedGraphs() {
 				"2016-02-10T15:52:10.4915719,5\n" +
 				"2016-02-10T15:51:03.1974357,5";
 
-		var data2 = "2016-02-10T15:56:03.7783794,10\n" +
+	var data2 = "2016-02-10T15:56:03.7783794,10\n" +
 				"2016-02-10T15:57:10.4915719,10\n" +
 				"2016-02-10T15:50:10.4915719,10\n" +
 				"2016-02-10T15:52:10.4915719,10\n" +
 				"2016-02-10T15:59:10.4915719,10\n" +
 				"2016-02-10T15:49:10.4915719,10\n" +
 				"2016-02-10T15:51:03.1974357,10";
-		data = aggregateData(data1, data2);
-		labels = ["Date", "a", "b"];
-	} else {
-		var data1 = "2016-02-10T15:56:03.7783794,15\n" +
+
+	var data3 = "2016-02-10T15:56:03.7783794,15\n" +
 				"2016-02-10T15:57:10.4915719,15\n" +
-				"2016-02-10T15:55:10.4915719,15\n" +
-				"2016-02-10T15:54:10.4915719,15\n" +
-				"2016-02-10T15:53:10.4915719,15\n" +
+				"2016-02-10T15:50:10.4915719,15\n" +
 				"2016-02-10T15:52:10.4915719,15\n" +
+				"2016-02-10T15:59:10.4915719,15\n" +
+				"2016-02-10T15:49:10.4915719,15\n" +
 				"2016-02-10T15:51:03.1974357,15";
 
-		var data2 = "2016-02-10T15:56:03.7783794,10\n" +
+	var data4 = "2016-02-10T15:56:03.7783794,20\n" +
 				"2016-02-10T15:57:10.4915719,20\n" +
 				"2016-02-10T15:50:10.4915719,20\n" +
 				"2016-02-10T15:52:10.4915719,20\n" +
 				"2016-02-10T15:59:10.4915719,20\n" +
 				"2016-02-10T15:49:10.4915719,20\n" +
 				"2016-02-10T15:51:03.1974357,20";
-		data = aggregateData([data1, data2]);
-		labels = ["Date", "A", "B"];
+
+	getStreamByName("quad-1_probe-1").data = data1;
+	getStreamByName("quad-1_probe-2").data = data2;
+	getStreamByName("quad-2_probe-1").data = data3;
+	getStreamByName("quad-2_probe-2").data = data4;
+
+
+	var probesData = [];
+	for(q in quadrants) {
+		for (p in probes) {
+			console.log(quadrants[q] + "_" + probes[p]);
+			probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
+			probeLabels.push(getStreamByName(quadrants[q] + "_" + probes[p]).name);
+		}
 	}
+//	console.log(probesData);
+
+	var temperaturesData = [];
+	for(q in quadrants) {
+		for (t in temperatures) {
+			console.log(quadrants[q] + "_" + temperatures[p]);
+			temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).data);
+			temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
+		}
+	}
+//	console.log(temperaturesData);
+
+	var divElement = "mixed-probes";
+	var params = jQuery.extend({}, dygraphParams);
+	params.x = (sidebarState.localeCompare("minimized") == 0) ?
+		("#"+divEleme$nt).parent().width() * gWidthRatioWhenMinimized:
+		$("#"+divElement).parent().width() * gWidthRatioWhenMaximized;
+	params.y = (sidebarState.localeCompare("minimized") == 0) ?
+		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
+		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized;
+
+	if(probesData.length > 0) {
+		var data = aggregateData(probesData);
+		params.title = "Soil Moisture Probes";
+		params.labels = probeLabels;
+		console.log("Probes: " + data);
+		console.log("Probes Labels: " + probeLabels);
+		dygraphPlot("mixed-probes", data, params);
+	}
+
+	if(temperaturesData.length > 0) {
+		var data = aggregateData(temperaturesData);
+		params.title = "Temperature";
+		params.labels = temperatureLabels;
+		dygraphPlot("mixed-temperatures", data, params);
+	}
+
+//	if ($.inArray('q-1', quadrants) > -1) {
+//
+//		var data1 = "2016-02-10T15:56:03.7783794,5\n" +
+//				"2016-02-10T15:57:10.4915719,5\n" +
+//				"2016-02-10T15:55:10.4915719,5\n" +
+//				"2016-02-10T15:54:10.4915719,5\n" +
+//				"2016-02-10T15:53:10.4915719,5\n" +
+//				"2016-02-10T15:52:10.4915719,5\n" +
+//				"2016-02-10T15:51:03.1974357,5";
+//
+//		var data2 = "2016-02-10T15:56:03.7783794,10\n" +
+//				"2016-02-10T15:57:10.4915719,10\n" +
+//				"2016-02-10T15:50:10.4915719,10\n" +
+//				"2016-02-10T15:52:10.4915719,10\n" +
+//				"2016-02-10T15:59:10.4915719,10\n" +
+//				"2016-02-10T15:49:10.4915719,10\n" +
+//				"2016-02-10T15:51:03.1974357,10";
+//		data = aggregateData(data1, data2);
+//		labels = ["Date", "a", "b"];
+//	} else {
+//		var data1 = "2016-02-10T15:56:03.7783794,15\n" +
+//				"2016-02-10T15:57:10.4915719,15\n" +
+//				"2016-02-10T15:55:10.4915719,15\n" +
+//				"2016-02-10T15:54:10.4915719,15\n" +
+//				"2016-02-10T15:53:10.4915719,15\n" +
+//				"2016-02-10T15:52:10.4915719,15\n" +
+//				"2016-02-10T15:51:03.1974357,15";
+//
+//		var data2 = "2016-02-10T15:56:03.7783794,10\n" +
+//				"2016-02-10T15:57:10.4915719,20\n" +
+//				"2016-02-10T15:50:10.4915719,20\n" +
+//				"2016-02-10T15:52:10.4915719,20\n" +
+//				"2016-02-10T15:59:10.4915719,20\n" +
+//				"2016-02-10T15:49:10.4915719,20\n" +
+//				"2016-02-10T15:51:03.1974357,20";
+//		data = aggregateData([data1, data2]);
+//		labels = ["Date", "A", "B"];
+//	}
 
 //	console.log("Test for data format: " + quad-1_probe-1.data);
 //	aggregateData(data1, data2);
-	var divElement = "plotArea";
-	var graphTitle = "Test";
-	var x = (sidebarState.localeCompare("minimized") == 0) ?
-		$("#"+divElement).parent().width() * gWidthRatioWhenMinimized:
-		$("#"+divElement).parent().width() * gWidthRatioWhenMaximized;
 
-	var y = (sidebarState.localeCompare("minimized") == 0) ?
-	$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
-	$("#"+divElement).parent().width() * gHeightRatioWhenMaximized;
-
-	var g = new Dygraph(document.getElementById(divElement), data, {
-//		"animatedZooms": true,
-		"connectSeparatedPoints": true,
-		"titleHeight": 32,
-		"rollPeriod": 14,
-		"width": x,
-		"height": y,
-		"strokeWidth": 1.2,
-		"showLabelsOnHighlight": true,
-		"highlightCircleSize": 2,
-		"highlightSeriesOpts": {
-			"strokeWidth": 1.4,
-			"highlightCircleSize": 5
-		},
-		"labelsDivStyles": {
-                'text-align': 'right',
-                'background': 'none'
-        },
-		"labels": labels,
-		"drawPoints": true,
-		"title": graphTitle,
-		"showRoller": false,
-		"showRangeSelector": true
-	});
 }
+
+function dygraphPlot(divElement, data, params) {
+	graphs[divElement] = new Dygraph(document.getElementById(divElement), data, params);
+}
+
+
 
 Date.prototype.setISO8601 = function (string) {
     var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +

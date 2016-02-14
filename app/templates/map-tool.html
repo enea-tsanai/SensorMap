@@ -101,51 +101,53 @@
 				</div>
 				<div id="all-quads" class="tab-pane fade">
 
-				<div id="combined-graphs-menu" class="row">
-					<div class="col-sm-4 combined-graphs-menu-item">
-						<div><h6>Quadrants</h6></div>
-						<div>
-							<label class="checkbox-inline">
-								<input type="checkbox" name="Quadrant" value="quad-1">1
-							</label>
-							<label class="checkbox-inline">
-								<input type="checkbox" name="Quadrant" value="quad-2">2
-							</label>
-							<label class="checkbox-inline">
-								<input type="checkbox" name="Quadrant" value="quad-3">3
-							</label>
-							<label class="checkbox-inline">
-								<input type="checkbox" name="Quadrant" value="quad-4">4
-							</label>
-						</div>
-					</div>
+					<div id="combined-graphs-menu" class="row">
 
-					<div class="col-sm-4 combined-graphs-menu-item">
-						<div><h6>Probes</h6></div>
-						<div>
-							<label class="checkbox-inline">
-									<input type="checkbox" name="Probe" value="probe-1">1
-							</label>
-							<label class="checkbox-inline">
-								<input type="checkbox" name="Probe" value="probe-2">2
-							</label>
+						<div class="col-sm-4 combined-graphs-menu-item">
+							<div><h6>Quadrants</h6></div>
+							<div>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="Quadrant" value="quad-1">1
+								</label>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="Quadrant" value="quad-2">2
+								</label>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="Quadrant" value="quad-3">3
+								</label>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="Quadrant" value="quad-4">4
+								</label>
+							</div>
 						</div>
-					</div>
 
-					<div class="col-sm-4 combined-graphs-menu-item">
-						<div><h6>Temp</h6></div>
-						<div>
-							<label class="checkbox-inline">
-									<input type="checkbox" name="Temp" value="temperature-1">1
-							</label>
+						<div class="col-sm-4 combined-graphs-menu-item">
+							<div><h6>Probes</h6></div>
+							<div>
+								<label class="checkbox-inline">
+										<input type="checkbox" name="Probe" value="probe-1">1
+								</label>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="Probe" value="probe-2">2
+								</label>
+							</div>
 						</div>
-					</div>
 
-				</div>
-				<div class="text-center">
-					<button id="combined-graphs-plot-button" type="button" class="btn btn-primary btn-xs" onclick="generateMixedGraphs()">Plot Graphs</button>
-				</div>
-				<div id="plotArea"></div>
+						<div class="col-sm-4 combined-graphs-menu-item">
+							<div><h6>Temp</h6></div>
+							<div>
+								<label class="checkbox-inline">
+										<input type="checkbox" name="Temp" value="temperature-1">1
+								</label>
+							</div>
+						</div>
+
+					</div>
+					<div class="text-center">
+						<button id="combined-graphs-plot-button" type="button" class="btn btn-primary btn-xs" onclick="generateMixedGraphs()">Plot Graphs</button>
+					</div>
+					<div id="mixed-probes"></div>
+					<div id="mixed-temperatures"></div>
 
 				</div>
 			</div>
