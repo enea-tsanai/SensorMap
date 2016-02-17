@@ -17,6 +17,11 @@ def map_render():
 	return render_template('map-tool.html')
 
 
+@app.route('/test')
+def test_render():
+	return render_template('dygraphCssTest.html')
+
+
 @app.route('/sensor_search', methods=['POST', 'GET'])
 def sensor_search():
 	return db_test()
@@ -37,7 +42,7 @@ def findSensors():
 def getDataStream():
 	dataStreamId = int(request.args['dataStreamId'])
 	cursor = mongo.db.streams.find({"StreamId": dataStreamId})
-	records = dict(("Items", record['Items']) for record in cursor)
+	records = dict(("Items", record['items']) for record in cursor)
 	return jsonify(records)
 
 

@@ -28,8 +28,6 @@ var dygraphParams = {
     //"animatedZooms": true,
 	"connectSeparatedPoints": true,
 	"rollPeriod": 14,
-	"width": 500,
-	"height": 350,
 	"strokeWidth": 1.2,
 	"showLabelsOnHighlight": true,
 	"highlightCircleSize": 2,
@@ -303,7 +301,7 @@ function populateQuads() {
 
 	for(var stream in streams) {
 		requestParams.dataStreamId = streams[stream].streamId;
-		getStreamData(stream, url, requestParams);
+		getStreamData(streams[stream], url, requestParams);
 		resetCounters();
 	}
 //	getStreamData(quad-1_probe-1, url, requestParams);
@@ -517,7 +515,8 @@ function updateWindowPane() {
 function resizeGraphs(x, y) {
 	setTimeout(function() {
 		for (var gKey in graphs) {
-			graphs[gKey].resize($("#"+gKey).parent().width() * x, $("#"+gKey).parent().width() * y);
+			graphs[gKey].resize();
+//			graphs[gKey].resize($("#"+gKey).parent().width() * x, $("#"+gKey).parent().width() * y);
 		}}, 200);
 }
 
@@ -619,12 +618,12 @@ $(document).ready(function() {
 });
 
 function generateMixedGraphs() {
-//	$("#mixed-probes").empty();
-	$("#mixed-probes").remove();
-	$("#mixed-temperatures").remove();
-	$("#all-quads").append("<div id=mixed-probes></div>");
-	$("#all-quads").append("<div id=mixed-temperatures></div>");
-
+	$("#mixed-probes").empty();
+	$("#mixed-temperatures").empty();
+//	$("#mixed-probes").remove();
+//	$("#mixed-temperatures").remove();
+//	$("#all-quads").append("<div id=mixed-probes></div>");
+//	$("#all-quads").append("<div id=mixed-temperatures></div>");
 
 	var quadrants = [];
 	var probes = [];
@@ -675,10 +674,10 @@ function generateMixedGraphs() {
 				"2016-02-10T15:49:10.4915719,20\n" +
 				"2016-02-10T15:51:03.1974357,20";
 
-	getStreamByName("quad-1_probe-1").data = data1;
-	getStreamByName("quad-1_probe-2").data = data2;
-	getStreamByName("quad-2_probe-1").data = data3;
-	getStreamByName("quad-2_probe-2").data = data4;
+//	getStreamByName("quad-1_probe-1").data = data1;
+//	getStreamByName("quad-1_probe-2").data = data2;
+//	getStreamByName("quad-2_probe-1").data = data3;
+//	getStreamByName("quad-2_probe-2").data = data4;
 
 
 	var probesData = [];
@@ -694,7 +693,7 @@ function generateMixedGraphs() {
 	var temperaturesData = [];
 	for(q in quadrants) {
 		for (t in temperatures) {
-			console.log(quadrants[q] + "_" + temperatures[p]);
+			console.log(quadrants[q] + "_" + temperatures[t]);
 			temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).data);
 			temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
 		}
@@ -703,12 +702,12 @@ function generateMixedGraphs() {
 
 	var divElement = "mixed-probes";
 	var params = jQuery.extend({}, dygraphParams);
-	params.x = (sidebarState.localeCompare("minimized") == 0) ?
-		("#"+divEleme$nt).parent().width() * gWidthRatioWhenMinimized:
-		$("#"+divElement).parent().width() * gWidthRatioWhenMaximized;
-	params.y = (sidebarState.localeCompare("minimized") == 0) ?
-		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
-		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized;
+//	params.x = (sidebarState.localeCompare("minimized") == 0) ?
+//		("#"+divEleme$nt).parent().width() * gWidthRatioWhenMinimized:
+//		$("#"+divElement).parent().width() * gWidthRatioWhenMaximized;
+//	params.y = (sidebarState.localeCompare("minimized") == 0) ?
+//		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
+//		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized;
 
 	if(probesData.length > 0) {
 		var data = aggregateData(probesData);
@@ -772,6 +771,7 @@ function generateMixedGraphs() {
 
 function dygraphPlot(divElement, data, params) {
 	graphs[divElement] = new Dygraph(document.getElementById(divElement), data, params);
+	graphs[divElement].resize();
 }
 
 
@@ -822,11 +822,18 @@ function aggregateData(dataStreams) {
 
 		// Convert strings to arrays
 		var dataArray = dataStreams[i].split("\n");
+		// Check if the last element is empty
+		if (dataArray[dataArray.length - 1].split(",").length === 1) {
+			dataArray = dataArray.slice(0, dataArray.length - 1);
+		}
 
 		// Split to T and D
 		for (var d = 0; d < dataArray.length; d++) {
 			// First data column
 			var t = dataArray[d].split(",")[0];
+			if (t == "") {
+				console.log("Problem at : " + d + " elemnt: " + dataArray[d]);
+			}
 			T[i].push(t);
 
 			// Second data column
