@@ -22,7 +22,20 @@ LMetrics {
 
 
 
-#mixed-probes, #mixed-temperatures, #quad-1_probe-1, #quad-2_probe-1, #quad-3_probe-1, #quad-4_probe-1 {
+#mixed-probes,
+#mixed-temperatures,
+#quad-1_probe-1,
+#quad-1_probe-2,
+#quad-1_temperature-1,
+#quad-2_probe-1,
+#quad-2_probe-2,
+#quad-2_temperature-1,
+#quad-3_probe-1,
+#quad-3_probe-2,
+#quad-3_temperature-1,
+#quad-4_probe-1,
+#quad-4_probe-2,
+#quad-4_temperature-1,{
     position: absolute;
     left: 10px;
     right: 10px;
@@ -30,3 +43,8 @@ LMetrics {
     bottom: 1px;
 }
 .graph-container { height: 300px; }
+
+.dygraph-plot-row-wrapper {
+	padding-top: 5%;
+	padding-bottom: 5%;
+}
