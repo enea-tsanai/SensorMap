@@ -46,8 +46,6 @@ var dygraphParams = {
 	"showRangeSelector": true
 }
 
-
-
 var pages = 0;
 var totalCount = 0;
 
@@ -233,8 +231,8 @@ function showGraphof(site, divElement) {
 //		"animatedZooms": true,
 			"connectSeparatedPoints": true,
 			"rollPeriod": 54,
-			"width": x,
-			"height": y,
+//			"width": x,
+//			"height": y,
 			"strokeWidth": 1.2,
 			"showLabelsOnHighlight": true,
 			"highlightCircleSize": 2,
@@ -258,10 +256,11 @@ function showGraphof(site, divElement) {
 //			graphs[divElement].width_ = 100;
 //			graphs[divElement].height_ = 100;
 		}
-		else if (sidebarState.localeCompare("maximized") == 0)
+		else if (sidebarState.localeCompare("maximized") == 0)  {
 			resizeGraphs(gWidthRatioWhenMaximized, gHeightRatioWhenMaximized);
 //			graphs[divElement].width = 500;
 //			graphs[divElement].height = 500;
+		}
 	}
 }
 
@@ -278,9 +277,17 @@ function stopLoading() {
 	$("#loader").remove();
 }
 
+
+
 function initializeQuadrantsDomElements() {
 	for(var i=0; i<streams.length; i++) {
-		$("#quad-" + streams[i].quad).append('<div id=' + streams[i].name + '></div>');
+		$("#quad-" + streams[i].quad).append('<div class="row">' +
+						'<div class="col-sm-2 text-center"></div>' +
+						'<div class="col-sm-8 text-center graph-container">' +
+							'<div id=' + streams[i].name + '></div>' +
+						'</div>' +
+						'<div class="col-sm-2 text-center"></div>' +
+					'</div>');
 	}
 }
 
@@ -510,6 +517,8 @@ function updateWindowPane() {
 }
 
 function resizeGraphs(x, y) {
+//	for (var gKey in graphs)
+//			graphs[gKey].resize();
 	setTimeout(function() {
 		for (var gKey in graphs) {
 			graphs[gKey].resize();
@@ -605,12 +614,58 @@ $(document).ready(function() {
 	initializeQuadrantsDomElements();
 	populateQuads();
 
-    $(".nav-tabs a").click(function(){
-        $(this).tab('show');
-    });
-    $('.nav-tabs a').on('shown.bs.tab', function(event) {
-        var x = $(event.target).text();
-        populateGraphs(x.split(" ")[1]);
+	$(".nav-tabs a").click(function() {
+		$(this).tab('show');
+	});
+
+
+	$('#selection-tabs a[href="#quad-1"]').on('shown.bs.tab', function(event) {
+		if (graphs['quad-1_probe-1'] != undefined) {
+			graphs['quad-1_probe-1'].resize();
+		}
+		if (graphs['quad-1_probe-2'] != undefined) {
+			graphs['quad-1_probe-2'].resize();
+		}
+		if (graphs['quad-1_temperature-1'] != undefined) {
+			graphs['quad-1_temperature-1'].resize();
+		}
+	});
+
+	$('#selection-tabs a[href="#quad-2"]').on('shown.bs.tab', function(event) {
+		if (graphs['quad-2_probe-1'] != undefined) {
+			graphs['quad-2_probe-1'].resize();
+		}
+		if (graphs['quad-2_probe-2'] != undefined) {
+			graphs['quad-2_probe-2'].resize();
+		}
+		if (graphs['quad-2_temperature-1'] != undefined) {
+			graphs['quad-2_temperature-1'].resize();
+		}
+	});
+
+	$('#selection-tabs a[href="#quad-3"]').on('shown.bs.tab', function(event) {
+		if (graphs['quad-3_probe-1'] != undefined) {
+			graphs['quad-3_probe-1'].resize();
+		}
+		if (graphs['quad-3_probe-2'] != undefined) {
+			graphs['quad-3_probe-2'].resize();
+		}
+		if (graphs['quad-3_temperature-1'] != undefined) {
+			graphs['quad-3_temperature-1'].resize();
+		}
+	});
+
+	$('#selection-tabs a[href="#all-quads"]').on('shown.bs.tab', function(event) {
+		if (graphs['mixed-probes'] != undefined) {
+			graphs['mixed-probes'].resize();
+		}
+		if (graphs['mixed-temperatures'] != undefined) {
+			graphs['mixed-temperatures'].resize();
+		}
+	});
+
+	$('.nav-tabs a').on('shown.bs.tab', function(event) {
+		populateGraphs($(event.target).text().split(" ")[1]);
     });
 });
 

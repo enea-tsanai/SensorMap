@@ -53,21 +53,6 @@
 	overflow-y: scroll;
 }
 
-LMetrics {
-    margin: 10px auto;
-    margin-bottom: 30px;
-    width: 240px;
-    height: 240px;
-}
-
-#quad-1>div, #quad-2>div, #quad-3>div, #quad-4>div, #all-quads>div {
-    margin: 10px auto;
-    margin-bottom: 30px;
-    position: relative;
-}
-
-.dygraph-title { font-size: 15px;}
-
 /*
 Circle loading
 */
