@@ -670,10 +670,6 @@ $(document).ready(function() {
 function generateMixedGraphs() {
 	$("#mixed-probes").empty();
 	$("#mixed-temperatures").empty();
-//	$("#mixed-probes").remove();
-//	$("#mixed-temperatures").remove();
-//	$("#all-quads").append("<div id=mixed-probes></div>");
-//	$("#all-quads").append("<div id=mixed-temperatures></div>");
 
 	var quadrants = [];
 	var probes = [];
@@ -724,12 +720,6 @@ function generateMixedGraphs() {
 				"2016-02-10T15:49:10.4915719,20\n" +
 				"2016-02-10T15:51:03.1974357,20";
 
-//	getStreamByName("quad-1_probe-1").data = data1;
-//	getStreamByName("quad-1_probe-2").data = data2;
-//	getStreamByName("quad-2_probe-1").data = data3;
-//	getStreamByName("quad-2_probe-2").data = data4;
-
-
 	var probesData = [];
 	for(q in quadrants) {
 		for (p in probes) {
@@ -738,7 +728,6 @@ function generateMixedGraphs() {
 			probeLabels.push(getStreamByName(quadrants[q] + "_" + probes[p]).name);
 		}
 	}
-//	console.log(probesData);
 
 	var temperaturesData = [];
 	for(q in quadrants) {
@@ -748,83 +737,40 @@ function generateMixedGraphs() {
 			temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
 		}
 	}
-//	console.log(temperaturesData);
 
 	var divElement = "mixed-probes";
 	var params = jQuery.extend({}, dygraphParams);
-//	params.x = (sidebarState.localeCompare("minimized") == 0) ?
-//		("#"+divEleme$nt).parent().width() * gWidthRatioWhenMinimized:
-//		$("#"+divElement).parent().width() * gWidthRatioWhenMaximized;
-//	params.y = (sidebarState.localeCompare("minimized") == 0) ?
-//		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
-//		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized;
 
 	if(probesData.length > 0) {
-		var data = aggregateData(probesData);
+//		var testData = [];
+//		testData.push(data1);
+//		testData.push(data2);
+//		testData.push(data3);
+//		testData.push(data4);
+
+		start2 = performance.now();
+		var dataToPlot = aggregateDataMod(probesData);
+		var end2 = performance.now();
+		var duration2 = end2 - start2;
+		console.log("New: " + duration2);
+
 		params.title = "Soil Moisture Probes";
 		params.labels = probeLabels;
-		console.log("Probes: " + data);
-		console.log("Probes Labels: " + probeLabels);
-		dygraphPlot("mixed-probes", data, params);
+		dygraphPlot("mixed-probes", dataToPlot, params);
 	}
 
 	if(temperaturesData.length > 0) {
-		var data = aggregateData(temperaturesData);
+		var dataToPlot = aggregateDataMod(temperaturesData);
 		params.title = "Temperature";
 		params.labels = temperatureLabels;
-		dygraphPlot("mixed-temperatures", data, params);
+		dygraphPlot("mixed-temperatures", dataToPlot, params);
 	}
-
-//	if ($.inArray('q-1', quadrants) > -1) {
-//
-//		var data1 = "2016-02-10T15:56:03.7783794,5\n" +
-//				"2016-02-10T15:57:10.4915719,5\n" +
-//				"2016-02-10T15:55:10.4915719,5\n" +
-//				"2016-02-10T15:54:10.4915719,5\n" +
-//				"2016-02-10T15:53:10.4915719,5\n" +
-//				"2016-02-10T15:52:10.4915719,5\n" +
-//				"2016-02-10T15:51:03.1974357,5";
-//
-//		var data2 = "2016-02-10T15:56:03.7783794,10\n" +
-//				"2016-02-10T15:57:10.4915719,10\n" +
-//				"2016-02-10T15:50:10.4915719,10\n" +
-//				"2016-02-10T15:52:10.4915719,10\n" +
-//				"2016-02-10T15:59:10.4915719,10\n" +
-//				"2016-02-10T15:49:10.4915719,10\n" +
-//				"2016-02-10T15:51:03.1974357,10";
-//		data = aggregateData(data1, data2);
-//		labels = ["Date", "a", "b"];
-//	} else {
-//		var data1 = "2016-02-10T15:56:03.7783794,15\n" +
-//				"2016-02-10T15:57:10.4915719,15\n" +
-//				"2016-02-10T15:55:10.4915719,15\n" +
-//				"2016-02-10T15:54:10.4915719,15\n" +
-//				"2016-02-10T15:53:10.4915719,15\n" +
-//				"2016-02-10T15:52:10.4915719,15\n" +
-//				"2016-02-10T15:51:03.1974357,15";
-//
-//		var data2 = "2016-02-10T15:56:03.7783794,10\n" +
-//				"2016-02-10T15:57:10.4915719,20\n" +
-//				"2016-02-10T15:50:10.4915719,20\n" +
-//				"2016-02-10T15:52:10.4915719,20\n" +
-//				"2016-02-10T15:59:10.4915719,20\n" +
-//				"2016-02-10T15:49:10.4915719,20\n" +
-//				"2016-02-10T15:51:03.1974357,20";
-//		data = aggregateData([data1, data2]);
-//		labels = ["Date", "A", "B"];
-//	}
-
-//	console.log("Test for data format: " + quad-1_probe-1.data);
-//	aggregateData(data1, data2);
-
 }
 
 function dygraphPlot(divElement, data, params) {
 	graphs[divElement] = new Dygraph(document.getElementById(divElement), data, params);
 	graphs[divElement].resize();
 }
-
-
 
 Date.prototype.setISO8601 = function (string) {
     var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
@@ -856,6 +802,66 @@ function sortByDate( date1, date2 ) {
     var date1_ = (new Date()).setISO8601(date1);
     var date2_ = (new Date()).setISO8601(date2);
     return date2_ > date1_ ? 1 : -1;
+}
+
+function aggregateDataMod(dataStreams) {
+
+	var dataHashMap = {};
+	var values = [];
+
+    for (var i = 0; i < dataStreams.length; i++) {
+        values.push("");
+    }
+
+	for (var i = 0; i < dataStreams.length; i++) {
+
+		var dataArray = dataStreams[i].split("\n");
+
+    	// Check if the last element is empty
+    	if (dataArray[dataArray.length - 1].split(",").length === 1) {
+    		dataArray = dataArray.slice(0, dataArray.length - 1);
+    	}
+
+    	// Populate hashmap
+    	for (var d = 0; d < dataArray.length; d++) {
+
+    		var sp = dataArray[d].split(",");
+    		key = sp[0], val = sp[1];
+
+    		if (key !== "") {
+    			if (dataHashMap[key] != undefined) {
+    				dataHashMap[key][i] = val;
+    				// console.log("Updated at: " + key + " the val: " + val);
+    			} else {
+    				dataHashMap[key] = [].concat(values);
+    				dataHashMap[key][i] = val;
+    				// console.log("inserted at: " + key + " the val: " + val);
+    			}
+    		}
+    		else
+    			console.log("Problem at : " + d + " elemnt: " + dataArray[d]);
+    	}
+	}
+
+	var dataToPlot = "";
+	var sorted_keys = [];
+
+	for (k in dataHashMap) {
+//		sorted_keys.push(k);
+		dataToPlot += k + "," + dataHashMap[k].join() + "\n";
+	}
+
+//	console.log(sorted_keys.length);
+//	sorted_keys.sort(sortByDate);
+//	console.log(sorted_keys.length);
+//
+//	for (k in sorted_keys) {
+//		var key = sorted_keys[k];
+//		dataToPlot += key + "," + dataHashMap[key].join() + "\n";
+//	}
+
+	dataToPlot = dataToPlot.substr(0, dataToPlot.length - 1);
+	return dataToPlot;
 }
 
 function aggregateData(dataStreams) {
