@@ -74,7 +74,7 @@ var streams = [
 	{streamId: 18762, name: "quad-1_temperature-1", quad: "1", labels: ["Date", "Temperature C"], data: ""},
 
 	{streamId: 18718, name: "quad-2_probe-1", quad: "2", probe: "1", labels: ["Date", "Cubic Meters"], data: ""},
-	{streamId: 18725, name: "quad-2_probe-2", quad: "2", labels: ["Date", "Cubic Meters"], data: ""},
+	{streamId: 18725, name: "quad-2_probe-2", quad: "2", probe: "2", labels: ["Date", "Cubic Meters"], data: ""},
 	{streamId: 18767, name: "quad-2_temperature-1", quad: "2", labels: ["Date", "Temperature C"], data: ""},
 
 	{streamId: 18732, name: "quad-3_probe-1", quad: "3", probe: "1", labels: ["Date", "Cubic Meters"], data: ""},
@@ -423,6 +423,8 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 										'</div>' +
 										'<div id="AboutSite" class="tab-pane fade">' +
 											'<p>' + sensor.Description + '</p>'+
+
+
 										'</div>' +
 									'</div>' +
 								'</div>';
@@ -473,6 +475,56 @@ function toggleBounce() {
 	}
 }
 
+function reduceData(strData, numOfLines, rev) {
+	lines = 0;
+	if (rev) {
+		downTo = 0;
+		for (var i = strData.length; i > 0; i--) {
+			if (lines == numOfLines) {
+				downTo = i;
+				break;
+			}
+			if (strData[i] === "\n")
+				lines ++;
+		}
+		return strData.substring(downTo+2, strData.length);
+	} else {
+		upTo = strData.lenght;
+		for (var i in strData) {
+			if (lines == numOfLines) {
+				upTo = i;
+				break;
+			}
+			if (strData[i] === "\n")
+				lines ++;
+		}
+		return strData.substring(0, upTo-1);
+	}
+}
+
+function populateLastMetricsTab() {
+	var probesData = [];
+	var probesLabels = ['Time'];
+	var params = jQuery.extend({}, dygraphParams);
+	params.title = "Soil Moisture Probes";
+
+	quadrants = ["quad-1", "quad-2", "quad-3", "quad-4"];
+	probes = ["probe-1", "probe-2"];
+
+	for(q in quadrants) {
+		for (p in probes) {
+			console.log(quadrants[q] + "_" + probes[p]);
+			probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
+			probesLabels.push(getStreamByName(quadrants[q] + "_" + probes[p]).name);
+		}
+	}
+
+	params.labels = probesLabels;
+	var dataToPlot = aggregateDataMod(probesData);
+	dataToPlot = reduceData(dataToPlot, 4000, true);
+	dygraphPlot("LMetrics", dataToPlot, params);
+}
+
 function updateWindowPane() {
 	var sensorsData = [];
 	if (selectedSensors.length == 1) {
@@ -482,8 +534,7 @@ function updateWindowPane() {
 //							'Value: ' + selectedSensors[0].value + '<br></div>';
 
 
-
-		showGraphof(getStreamByID(18704), "LMetrics");
+		populateLastMetricsTab();
 		populateGraphs(1);
 		populateGraphs(2);
 		populateGraphs(3);
@@ -756,6 +807,9 @@ function generateMixedGraphs() {
 
 		params.title = "Soil Moisture Probes";
 		params.labels = probeLabels;
+		console.log("Rows: " + dataToPlot.split("\n").length + 1);
+//		dataToPlot = reduceData(dataToPlot, 10000, true);
+		console.log("sorted: " + dataToPlot);
 		dygraphPlot("mixed-probes", dataToPlot, params);
 	}
 
@@ -847,18 +901,16 @@ function aggregateDataMod(dataStreams) {
 	var sorted_keys = [];
 
 	for (k in dataHashMap) {
-//		sorted_keys.push(k);
-		dataToPlot += k + "," + dataHashMap[k].join() + "\n";
+		sorted_keys.push(k);
+//		dataToPlot += k + "," + dataHashMap[k].join() + "\n";
 	}
 
-//	console.log(sorted_keys.length);
-//	sorted_keys.sort(sortByDate);
-//	console.log(sorted_keys.length);
-//
-//	for (k in sorted_keys) {
-//		var key = sorted_keys[k];
-//		dataToPlot += key + "," + dataHashMap[key].join() + "\n";
-//	}
+	sorted_keys.sort();
+
+	for (k in sorted_keys) {
+		var key = sorted_keys[k];
+		dataToPlot += key + "," + dataHashMap[key].join() + "\n";
+	}
 
 	dataToPlot = dataToPlot.substr(0, dataToPlot.length - 1);
 	return dataToPlot;

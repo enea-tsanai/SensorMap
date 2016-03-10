@@ -17,9 +17,9 @@ def map_render():
 	return render_template('map-tool.html')
 
 
-@app.route('/test')
-def test_render():
-	return render_template('dygraphCssTest.html')
+@app.route('/tests/<int:test_id>')
+def test_render(test_id):
+	return render_template('tests/' + str(test_id) + '.html')
 
 
 @app.route('/sensor_search', methods=['POST', 'GET'])

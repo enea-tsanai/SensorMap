@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<!-- Dygraphs -->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+	<!-- Bootstrap Core CSS -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
+	<link href="../static/css/test.css" rel="stylesheet">
+</head>
+<body>
+
+	<form name="myform">
+		<input type="text" name="stage" size="20"/>
+	</form>
+
+	<!-- Create  Mappings -->
+	<img src="img/villanova-1.jpg" alt="HTML Map" border="0" usemap="#tutorials"/>
+
+	<map name="tutorials">
+		<area shape="poly"
+			  coords="74,0,113,29,98,72,52,72,38,27"
+			  href="/perl/index.htm" alt="Perl Tutorial"
+			  target="_self"
+			  onMouseOver="showTutorial('perl')"
+			  onMouseOut="showTutorial('')"/>
+
+		<area shape="rect"
+			  coords="22,83,126,125"
+			  href="/html/index.htm" alt="HTML Tutorial"
+			  target="_self"
+			  onMouseOver="showTutorial('html')"
+			  onMouseOut="showTutorial('')"/>
+
+		<area shape="circle"
+			  coords="73,168,32"
+			  href="/php/index.htm" alt="PHP Tutorial"
+			  target="_self"
+			  onMouseOver="showTutorial('php')"
+			  onMouseOut="showTutorial('')"/>
+	</map>
+
+
+</body>
+</html>
