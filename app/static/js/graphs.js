@@ -292,6 +292,7 @@ function generateMixedGraphs() {
 	var quadrants = [];
 	var probes = [];
 	var temperatures = [];
+	var combined = false;
 	$.each($("input[name='Quadrant']:checked"), function(){
 		quadrants.push($(this).val());
 	});
@@ -301,6 +302,10 @@ function generateMixedGraphs() {
 	$.each($("input[name='Temp']:checked"), function(){
 		temperatures.push($(this).val());
 	});
+	$.each($("input[name='Combine']:checked"), function(){
+		combined = true;
+	});
+
 
 	var probeLabels = ['Time'];
 	var temperatureLabels = ['Time'];
@@ -359,32 +364,42 @@ function generateMixedGraphs() {
 	var divElement = "mixed-probes";
 	var params = jQuery.extend({}, dygraphParams);
 
-	if(probesData.length > 0) {
-//		var testData = [];
-//		testData.push(data1);
-//		testData.push(data2);
-//		testData.push(data3);
-//		testData.push(data4);
+	if (combined === true) {
 
-		start2 = performance.now();
-		var dataToPlot = aggregateDataMod(probesData);
-		var end2 = performance.now();
-		var duration2 = end2 - start2;
-		console.log("New: " + duration2);
+		if(probesData.length > 0 || temperaturesData.length > 0) {
+			var dataToPlot = aggregateDataMod(probesData.concat(temperaturesData));
+			params.title = "Combined";
+			params.labels = probeLabels.concat(temperatureLabels);
+			dygraphPlot("mixed-probes", dataToPlot, params);
+		}
+	} else {
+		if(probesData.length > 0) {
+	//		var testData = [];
+	//		testData.push(data1);
+	//		testData.push(data2);
+	//		testData.push(data3);
+	//		testData.push(data4);
 
-		params.title = "Soil Moisture Probes";
-		params.labels = probeLabels;
-		console.log("Rows: " + dataToPlot.split("\n").length + 1);
-//		dataToPlot = reduceData(dataToPlot, 10000, true);
-		console.log("sorted: " + dataToPlot);
-		dygraphPlot("mixed-probes", dataToPlot, params);
-	}
+			start2 = performance.now();
+			var dataToPlot = aggregateDataMod(probesData);
+			var end2 = performance.now();
+			var duration2 = end2 - start2;
+			console.log("New: " + duration2);
 
-	if(temperaturesData.length > 0) {
-		var dataToPlot = aggregateDataMod(temperaturesData);
-		params.title = "Temperature";
-		params.labels = temperatureLabels;
-		dygraphPlot("mixed-temperatures", dataToPlot, params);
+			params.title = "Soil Moisture Probes";
+			params.labels = probeLabels;
+	//		console.log("Rows: " + dataToPlot.split("\n").length + 1);
+	//		dataToPlot = reduceData(dataToPlot, 10000, true);
+	//		console.log("sorted: " + dataToPlot);
+			dygraphPlot("mixed-probes", dataToPlot, params);
+		}
+
+		if(temperaturesData.length > 0) {
+			var dataToPlot = aggregateDataMod(temperaturesData);
+			params.title = "Temperature";
+			params.labels = temperatureLabels;
+			dygraphPlot("mixed-temperatures", dataToPlot, params);
+		}
 	}
 }
 
