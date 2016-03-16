@@ -30,6 +30,7 @@
 	<script type="text/javascript"
 			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyHouJvIaHwiAcMpxP152Vfd0INgbawjo"></script>
 	<script type="text/javascript" src="../static/js/google-maps.js"></script>
+	<script type="text/javascript" src="../static/js/dashboard.js"></script>
 	<link rel="stylesheet" href="../static/css/maps.css"/>
 
 </head>
@@ -209,18 +210,18 @@
 </div>
 <!-- /#wrapper -->
 
-
 <!-- Bootstrap Core JavaScript -->
 <!--<script src="../static/js/bootstrap.min.js"></script>-->
 
 <!-- Menu Toggle Script -->
 <script>
 
-	$(window).resize(function () {
-		var h = $(window).height(),
-			offsetTop = 52; // Calculate the top offset
-		$('#map-canvas').css('height', (h - offsetTop));
-	}).resize();
+		$(window).resize(function () {
+			var h = $(window).height(),
+				offsetTop = 52; // Calculate the top offset
+			$('#map-canvas').css('height', (h - offsetTop));
+		}).resize();
+
 
 </script>
 
