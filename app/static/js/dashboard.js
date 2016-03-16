@@ -1,3 +1,5 @@
+var sidebarState="closed";
+
 function maximizeToolbar() {
 	if (sidebarState.localeCompare("minimized") == 0) {
 		sidebarState="maximized";
@@ -53,3 +55,14 @@ function closeToolbar() {
 		 '<span class="glyphicon glyphicon-resize-full"></span></a>');
 	}
 }
+
+function clearDashboardSelectedSensors() {
+	$("#sensors-charts").empty();
+	$("#sensors-charts").replaceWith('<div id="sensors-charts"></div>');
+}
+
+$(document).ready(function() {
+	$(".nav-tabs a").click(function() {
+		$(this).tab('show');
+	});
+});
