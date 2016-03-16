@@ -2,7 +2,6 @@
 <html lang="en" xmlns:width="http://www.w3.org/1999/xhtml">
 
 <head>
-
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,13 +10,14 @@
 
 	<title>Simple Sidebar - Start Bootstrap Template</title>
 
-	<!-- Dynographs -->
+	<!-- Dygraph -->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
 	<!-- Bootstrap Core CSS -->
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet"
+		  href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<!--<link href="../static/css/bootstrap.min.css" rel="stylesheet">-->
 
@@ -27,178 +27,202 @@
 	<![endif]-->
 
 	<!-- Maps information goes here -->
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyHouJvIaHwiAcMpxP152Vfd0INgbawjo"></script>
+	<script type="text/javascript"
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyHouJvIaHwiAcMpxP152Vfd0INgbawjo"></script>
 	<script type="text/javascript" src="../static/js/google-maps.js"></script>
-	<link rel="stylesheet" href="../static/css/maps.css" />
+	<link rel="stylesheet" href="../static/css/maps.css"/>
 
 </head>
 
 <body>
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="/">GeoSync OptiRTC</a>
-			</div>
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="#">Map</a></li>
-				<li><a href="#">Help</a></li>
-			</ul>
-			<a class="navbar-text navbar-right" id="map-tool">Map Tool</a>
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="/">GeoSync OptiRTC</a>
 		</div>
-	</nav>
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="#">Map</a></li>
+			<li><a href="#">Help</a></li>
+		</ul>
+		<a class="navbar-text navbar-right" id="map-tool">Map Tool</a>
+	</div>
+</nav>
 
-	<div id="wrapper" class="toggled">
+<div id="wrapper" class="toggled">
 
-		<!-- Sidebar -->
-		<div id="sidebar-wrapper">
+	<!-- Sidebar -->
+	<div id="sidebar-wrapper">
 
-			<div id="sidebar-header">
-				<nav class="navbar-default">
-					<div class="container-fluid">
+		<div id="sidebar-header">
+			<nav class="navbar-default">
+				<div class="container-fluid">
 					<ul class="nav navbar-nav">
-				  <li><a id="sidebar-title" href="#"><span id="sidebar-title-icon"
-														   class="glyphicon glyphicon-dashboard"></span>Dashboard
-				  </a></li>
-				</ul>
+						<li><a id="sidebar-title" href="#"><span
+								id="sidebar-title-icon"
+								class="glyphicon glyphicon-dashboard"></span>Dashboard
+						</a></li>
+					</ul>
 					<ul class="nav navbar-nav navbar-right">
 
-					<li>
-						<a href="#" id="maximize" class="btn btn-link btn-sm" onclick="maximizeToolbar()"
-						   data-toggle="tooltip" data-placement="right" title="Maximize Toolbar">
-							<span class="glyphicon glyphicon-resize-full"></span>
-						</a>
-					</li>
-				  <li>
-					<a href="#" id="close" class="btn btn-link btn-sm" onclick="closeToolbar()"
-						data-toggle="tooltip" data-placement="right" title="Close Toolbar">
-						<span class="glyphicon glyphicon-chevron-left"></span>
-					</a>
-				  </li>
-				</ul>
-					</div>
-				</nav>
+						<li>
+							<a href="#" id="maximize"
+							   class="btn btn-link btn-sm"
+							   onclick="maximizeToolbar()"
+							   data-toggle="tooltip" data-placement="right"
+							   title="Maximize Toolbar">
+								<span class="glyphicon glyphicon-resize-full"></span>
+							</a>
+						</li>
+						<li>
+							<a href="#" id="close" class="btn btn-link btn-sm"
+							   onclick="closeToolbar()"
+							   data-toggle="tooltip" data-placement="right"
+							   title="Close Toolbar">
+								<span class="glyphicon glyphicon-chevron-left"></span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</div>
+
+		<div>
+			<h4>Quadrants</h4>
+			<ul class="nav nav-tabs" id="selection-tabs">
+				<li class="active"><a href="#quad-1">Quad 1</a></li>
+				<li><a href="#quad-2">Quad 2</a></li>
+				<li><a href="#quad-3">Quad 3</a></li>
+				<li><a href="#quad-4">Quad 4</a></li>
+				<li><a href="#all-quads">All</a></li>
+			</ul>
+		</div>
+
+		<div class="tab-content">
+			<div id="quad-1" class="tab-pane fade in active">
 			</div>
-
-			<div>
-				<h4>Quadrants</h4>
-				<ul class="nav nav-tabs" id="selection-tabs">
-					<li class="active"><a href="#quad-1">Quad 1</a></li>
-					<li><a href="#quad-2">Quad 2</a></li>
-					<li><a href="#quad-3">Quad 3</a></li>
-					<li><a href="#quad-4">Quad 4</a></li>
-					<li><a href="#all-quads">All</a></li>
-				</ul>
+			<div id="quad-2" class="tab-pane fade">
 			</div>
-
-			<div class="tab-content">
-				<div id="quad-1" class="tab-pane fade in active">
-				</div>
-				<div id="quad-2" class="tab-pane fade">
-				</div>
-				<div id="quad-3" class="tab-pane fade">
-				</div>
-				<div id="quad-4" class="tab-pane fade">
-				</div>
-				<div id="all-quads" class="tab-pane fade">
-
-					<div id="combined-graphs-menu" class="row">
-
-						<div class="col-sm-4 combined-graphs-menu-item">
-							<div><h6>Quadrants</h6></div>
-							<div>
-								<label class="checkbox-inline">
-									<input type="checkbox" name="Quadrant" value="quad-1">1
-								</label>
-								<label class="checkbox-inline">
-									<input type="checkbox" name="Quadrant" value="quad-2">2
-								</label>
-								<label class="checkbox-inline">
-									<input type="checkbox" name="Quadrant" value="quad-3">3
-								</label>
-								<label class="checkbox-inline">
-									<input type="checkbox" name="Quadrant" value="quad-4">4
-								</label>
-							</div>
-						</div>
-
-						<div class="col-sm-4 combined-graphs-menu-item">
-							<div><h6>Probes</h6></div>
-							<div>
-								<label class="checkbox-inline">
-										<input type="checkbox" name="Probe" value="probe-1">1
-								</label>
-								<label class="checkbox-inline">
-									<input type="checkbox" name="Probe" value="probe-2">2
-								</label>
-							</div>
-						</div>
-
-						<div class="col-sm-4 combined-graphs-menu-item">
-							<div><h6>Temp</h6></div>
-							<div>
-								<label class="checkbox-inline">
-										<input type="checkbox" name="Temp" value="temperature-1">1
-								</label>
-							</div>
-						</div>
-
-					</div>
-					<div class="text-center">
-						<button id="combined-graphs-plot-button" type="button" class="btn btn-primary btn-xs" onclick="generateMixedGraphs()">Plot Graphs</button>
-					</div>
-
-					<div class="row dygraph-plot-row-wrapper">
-						<div class="col-sm-2 text-center"></div>
-						<div class="col-sm-8 text-center graph-container">
-							<div id="mixed-probes" style="width:100%"></div>
-						</div>
-						<div class="col-sm-2 text-center"></div>
-					</div>
-
-					<div class="row dygraph-plot-row-wrapper">
-						<div class="col-sm-2"></div>
-						<div class="col-sm-8 text-center graph-container">
-							<div id="mixed-temperatures" style="width:100%"></div>
-						</div>
-						<div class="col-sm-2"></div>
-					</div>
-
-				</div>
+			<div id="quad-3" class="tab-pane fade">
 			</div>
+			<div id="quad-4" class="tab-pane fade">
 			</div>
-		<!-- End of Sidebar -->
+			<div id="all-quads" class="tab-pane fade">
 
-		<!-- Page Content -->
-		<div id="page-content-wrapper">
-			<div id="map-area" class="container-fluid">
-				<div style="position: absolute; left: 50%;">
-					<div id="controller-pane" class="btn-group">
-						<button type="button" class="btn btn-default" onclick="openToolbar()">Dashboard</button>
-						<button type="button" class="btn btn-default" onclick="showSites()">Show Sites</button>
-						<button type="button" class="btn btn-default" onclick="clearMap()">Clear Map</button>
+				<div id="combined-graphs-menu" class="row">
+
+					<div class="col-sm-4 combined-graphs-menu-item">
+						<div><h6>Quadrants</h6></div>
+						<div>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="Quadrant"
+									   value="quad-1">1
+							</label>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="Quadrant"
+									   value="quad-2">2
+							</label>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="Quadrant"
+									   value="quad-3">3
+							</label>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="Quadrant"
+									   value="quad-4">4
+							</label>
+						</div>
 					</div>
+
+					<div class="col-sm-4 combined-graphs-menu-item">
+						<div><h6>Probes</h6></div>
+						<div>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="Probe"
+									   value="probe-1">1
+							</label>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="Probe"
+									   value="probe-2">2
+							</label>
+						</div>
+					</div>
+
+					<div class="col-sm-4 combined-graphs-menu-item">
+						<div><h6>Temp</h6></div>
+						<div>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="Temp"
+									   value="temperature-1">1
+							</label>
+						</div>
+					</div>
+
 				</div>
-				<div id="map-canvas"></div>
+				<div class="text-center">
+					<button id="combined-graphs-plot-button" type="button"
+							class="btn btn-primary btn-xs"
+							onclick="generateMixedGraphs()">Plot Graphs
+					</button>
+				</div>
+
+				<div class="row dygraph-plot-row-wrapper">
+					<div class="col-sm-2 text-center"></div>
+					<div class="col-sm-8 text-center graph-container">
+						<div id="mixed-probes" style="width:100%"></div>
+					</div>
+					<div class="col-sm-2 text-center"></div>
+				</div>
+
+				<div class="row dygraph-plot-row-wrapper">
+					<div class="col-sm-2"></div>
+					<div class="col-sm-8 text-center graph-container">
+						<div id="mixed-temperatures" style="width:100%"></div>
+					</div>
+					<div class="col-sm-2"></div>
+				</div>
+
 			</div>
 		</div>
-		<!-- End of Page Content -->
-
 	</div>
-	<!-- /#wrapper -->
+	<!-- End of Sidebar -->
+
+	<!-- Page Content -->
+	<div id="page-content-wrapper">
+		<div id="map-area" class="container-fluid">
+			<div style="position: absolute; left: 50%;">
+				<div id="controller-pane" class="btn-group">
+					<button type="button" class="btn btn-default"
+							onclick="openToolbar()">Dashboard
+					</button>
+					<button type="button" class="btn btn-default"
+							onclick="showSites()">Show Sites
+					</button>
+					<button type="button" class="btn btn-default"
+							onclick="clearMap()">Clear Map
+					</button>
+				</div>
+			</div>
+			<div id="map-canvas"></div>
+		</div>
+	</div>
+	<!-- End of Page Content -->
+
+</div>
+<!-- /#wrapper -->
 
 
-	<!-- Bootstrap Core JavaScript -->
-	<!--<script src="../static/js/bootstrap.min.js"></script>-->
+<!-- Bootstrap Core JavaScript -->
+<!--<script src="../static/js/bootstrap.min.js"></script>-->
 
-	<!-- Menu Toggle Script -->
-	<script>
+<!-- Menu Toggle Script -->
+<script>
 
 	$(window).resize(function () {
 		var h = $(window).height(),
 			offsetTop = 52; // Calculate the top offset
 		$('#map-canvas').css('height', (h - offsetTop));
 	}).resize();
-	</script>
+
+</script>
 
 </body>
 
