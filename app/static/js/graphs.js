@@ -370,6 +370,7 @@ function generateMixedGraphs() {
 			var dataToPlot = aggregateDataMod(probesData.concat(temperaturesData));
 			params.title = "Combined";
 			params.labels = probeLabels.concat(temperatureLabels.slice(1, temperatureLabels.length));
+			console.log("Combined: " + dataToPlot);
 			dygraphPlot("mixed-probes", dataToPlot, params);
 		}
 	} else {
