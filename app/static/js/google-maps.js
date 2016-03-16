@@ -415,16 +415,16 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 									'<div id="site-overview-header">' +
 										'<h4>' + sensor.Name + '</h4>' +
 										'<ul class="nav nav-tabs nav-justified">' +
-										'<li class="active"><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>' +
-										'<li><a href="#AboutSite" data-toggle="tab">About this site</a></li></ul>' +
+											'<li class="active"><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>' +
+											'<li><a href="#AboutSite" data-toggle="tab">About this site</a></li>' +
+
+										'</ul>' +
 									'</div>' +
 									'<div id="SiteOverview" class="tab-content">' +
-										'<div id="LMetrics" class="tab-pane fade in active">' +
-										'</div>' +
+										'<div id="LMetrics" class="tab-pane fade in active"></div>' +
 										'<div id="AboutSite" class="tab-pane fade">' +
+											'<iframe src="https://3dwarehouse.sketchup.com/embed.html?mid=ua7d24fd4-10c8-4ba4-8202-83a5b0de4135" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" allowfullscreen></iframe>'+
 											'<p>' + sensor.Description + '</p>'+
-
-
 										'</div>' +
 									'</div>' +
 								'</div>';
