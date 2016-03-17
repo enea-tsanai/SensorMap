@@ -16325,36 +16325,74 @@ var d = "2016-02-29T06:17:45.3143909,,,0.402049398623357,0.382311721089925,,,,,,
 
 var dygraphParams = {
 	"labels" : ["Time","a","b","c","d","e","f","g","h","i","j","k","l"],
-    "animatedZooms": true,
 	"connectSeparatedPoints": true,
 	"rollPeriod": 15,
 //	"strokeWidth": 1.2,
 	"showLabelsOnHighlight": true,
 //	"highlightCircleSize": 1.2,
-	"highlightSeriesOpts": {
-		"strokeWidth": 1.4,
-		"highlightCircleSize": 5
-	},
+//	"highlightSeriesOpts": {
+//		"strokeWidth": 1.4,
+//		"highlightCircleSize": 5
+//	},
 	"labelsDivStyles": {
 		'text-align': 'right',
 		'background': 'none'
 	},
-	"drawPoints": false,
+	"drawPoints": false, //Making this true really affects the performance
 	"title": "",
 	"showRoller": false,
 	"showRangeSelector": true,
-
+	"fillGraph": false,
 	series: {
 		'i': {axis: 'y2'},
 		'j': {axis: 'y2'},
 		'k': {axis: 'y2'},
 		'l': {axis: 'y2'},
 	},
-	axes: {
-		y2: {labelsKMB: true}
-	},
+//	axes: {
+//		y2: {labelsKMB: true}
+//	},
 	"ylabel": 'Primary y-axis',
 	"y2label": 'Secondary y-axis',
 }
 
-g = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
+//g1 = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
+g2 = new Dygraph(document.getElementById("dygraph-2"),d, dygraphParams);
+
+
+
+var desired_range = null, animate;
+
+function approach_range() {
+	g2.updateOptions({dateWindow: desired_range});
+}
+
+animate = function() {
+	approach_range();
+};
+
+var zoom = function(res) {
+	var w = g2.xAxisRange();
+	desired_range = [ w[0], w[0] + res * 1000 ];
+	animate();
+};
+
+var reset = function() {
+	g2.resetZoom();
+};
+
+var pan = function(dir) {
+	var w = g2.xAxisRange();
+	var scale = w[1] - w[0];
+	var amount = scale * 1 * dir; // 1 is the percentage to shift
+	desired_range = [ w[0] + amount, w[1] + amount ];
+	animate();
+};
+
+$('#hour').on('click', function (e) { zoom(3600); })
+$('#day').on('click', function (e) { zoom(86400); })
+$('#week').on('click', function (e) { zoom(604800); })
+$('#month').on('click', function (e) { zoom(30 * 86400); })
+$('#full').on('click', function (e) { reset(); })
+$('#left').on('click', function (e) { pan(-1); })
+$('#right').on('click', function (e) { pan(+1); })

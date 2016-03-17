@@ -3,13 +3,59 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Dygraphs Benchmark</title>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<!-- Bootstrap Core CSS -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
-	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>-->
 </head>
 <body>
-	<div id="dygraph-1" class="col-sm-8 text-center"></div>
-	<div id="dygraph-2" class="col-sm-8 text-center"></div>
-	<div id="dygraph-3" class="col-sm-8 text-center"></div>
+	<div id="dygraph-1"></div>
+
+	<h1>Performance Tests</h1>
+	<div class="text-center">
+		<div class="row dygraph-plot-row-wrapper">
+			<div class="col-sm-2 text-center"></div>
+			<div class="col-sm-8 text-center graph-container">
+				<div id="dygraph-2" style="width:100%"></div>
+			</div>
+			<div class="col-sm-2 text-center"></div>
+		</div>
+		<div class="text-center">
+			<b>Zoom:</b>
+			<!--<a href="#" id="hour">hour</a>-->
+			<!--<a href="#" id="day">day</a>-->
+			<!--<a href="#" id="week">week</a>-->
+			<!--<a href="#" id="month">month</a>-->
+			<!--<a href="#" id="full">full</a>-->
+
+			<!--<a href="#" id="left" class="glyphicon glyphicon-circle-arrow-left"></a>-->
+			<!--<a href="#" id="right" class="glyphicon glyphicon-circle-arrow-right"></a>-->
+
+			<div class="btn-group" role="group" aria-label="...">
+				<button id="hour" type="button" class="btn btn-default">hour</button>
+				<button id="day" type="button" class="btn btn-default">day</button>
+				<button id="week" type="button" class="btn btn-default">week</button>
+				<button id="month" type="button" class="btn btn-default">month</button>
+				<button id="full" type="button" class="btn btn-default">full</button>
+			</div>
+			<b>Pan:</b>
+			<div class="btn-group" role="group" aria-label="...">
+				<button id="left" type="button" class="btn btn-default">
+					<span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></button>
+				<button id="right" type="button" class="btn btn-default">
+					<span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+				</button>
+			</div>
+
+			<!--<button type="button" class="btn btn-default" aria-label="Left Align">-->
+  				<!--<span id="right"  class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>-->
+			<!--</button>-->
+		</div>
+	</div>
+
+	<div id="dygraph-3"></div>
 </body>
 <script type="text/javascript" src="../../static/js/tests/4.js"></script>
 </html>
