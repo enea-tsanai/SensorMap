@@ -9,53 +9,72 @@
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+	<script src="http://dygraphs.com/extras/synchronizer.js"></script>
 </head>
 <body>
 	<div id="dygraph-1"></div>
 
-	<h1>Performance Tests</h1>
-	<div class="text-center">
+	<h1>Dygraph Tests</h1>
+	<h2>Performance</h2>
+
+	<h2>Toolbar</h2>
+	<form class="text-center dygraph-plot-and-toolbar-wrapper">
 		<div class="row dygraph-plot-row-wrapper">
 			<div class="col-sm-2 text-center"></div>
 			<div class="col-sm-8 text-center graph-container">
-				<div id="dygraph-2" style="width:100%"></div>
+				<div id="dygraph-2" style="width:100%" class="dygraph-plot"></div>
 			</div>
 			<div class="col-sm-2 text-center"></div>
 		</div>
 		<div class="text-center">
 			<b>Zoom:</b>
-			<!--<a href="#" id="hour">hour</a>-->
-			<!--<a href="#" id="day">day</a>-->
-			<!--<a href="#" id="week">week</a>-->
-			<!--<a href="#" id="month">month</a>-->
-			<!--<a href="#" id="full">full</a>-->
-
-			<!--<a href="#" id="left" class="glyphicon glyphicon-circle-arrow-left"></a>-->
-			<!--<a href="#" id="right" class="glyphicon glyphicon-circle-arrow-right"></a>-->
-
 			<div class="btn-group" role="group" aria-label="...">
-				<button id="hour" type="button" class="btn btn-default">hour</button>
-				<button id="day" type="button" class="btn btn-default">day</button>
-				<button id="week" type="button" class="btn btn-default">week</button>
-				<button id="month" type="button" class="btn btn-default">month</button>
-				<button id="full" type="button" class="btn btn-default">full</button>
+				<button name="hour" type="button" class="btn btn-default">hour</button>
+				<button name="day" type="button" class="btn btn-default">day</button>
+				<button name="week" type="button" class="btn btn-default">week</button>
+				<button name="month" type="button" class="btn btn-default">month</button>
+				<button name="full" type="button" class="btn btn-default">full</button>
 			</div>
 			<b>Pan:</b>
 			<div class="btn-group" role="group" aria-label="...">
-				<button id="left" type="button" class="btn btn-default">
+				<button name="left" type="button" class="btn btn-default">
 					<span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></button>
-				<button id="right" type="button" class="btn btn-default">
+				<button name="right" type="button" class="btn btn-default">
 					<span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
 				</button>
 			</div>
-
-			<!--<button type="button" class="btn btn-default" aria-label="Left Align">-->
-  				<!--<span id="right"  class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>-->
-			<!--</button>-->
 		</div>
-	</div>
+	</form>
 
-	<div id="dygraph-3"></div>
+	<h2>Sync</h2>
+	<form class="text-center dygraph-plot-and-toolbar-wrapper">
+		<div class="row dygraph-plot-row-wrapper">
+			<div class="col-sm-2 text-center"></div>
+			<div class="col-sm-8 text-center graph-container">
+				<div id="dygraph-3" style="width:100%" class="dygraph-plot"></div>
+			</div>
+			<div class="col-sm-2 text-center"></div>
+		</div>
+		<div class="text-center">
+			<b>Zoom:</b>
+			<div class="btn-group" role="group" aria-label="...">
+				<button name="hour" type="button" class="btn btn-default">hour</button>
+				<button name="day" type="button" class="btn btn-default">day</button>
+				<button name="week" type="button" class="btn btn-default">week</button>
+				<button name="month" type="button" class="btn btn-default">month</button>
+				<button name="full" type="button" class="btn btn-default">full</button>
+			</div>
+			<b>Pan:</b>
+			<div class="btn-group" role="group" aria-label="...">
+				<button name="left" type="button" class="btn btn-default">
+					<span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></button>
+				<button name="right" type="button" class="btn btn-default">
+					<span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+				</button>
+			</div>
+		</div>
+	</form>
+
 </body>
 <script type="text/javascript" src="../../static/js/tests/4.js"></script>
 </html>

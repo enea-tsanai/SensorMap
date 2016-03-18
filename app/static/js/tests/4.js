@@ -16323,6 +16323,7 @@ var d = "2016-02-29T06:17:45.3143909,,,0.402049398623357,0.382311721089925,,,,,,
 2016-03-03T06:19:03.153807,,,,,0.126995016630365,0.159258606910657,,,,,3.11796923076926,\n\
 2016-03-03T06:19:05.7318553,,,,,,,0.186239315449168,0.195872560077286,,,,2.30527081807084";
 
+var dygraphs = {};
 var dygraphParams = {
 	"labels" : ["Time","a","b","c","d","e","f","g","h","i","j","k","l"],
 	"connectSeparatedPoints": true,
@@ -16355,44 +16356,74 @@ var dygraphParams = {
 	"ylabel": 'Primary y-axis',
 	"y2label": 'Secondary y-axis',
 }
-
-//g1 = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
-g2 = new Dygraph(document.getElementById("dygraph-2"),d, dygraphParams);
-
-
-
 var desired_range = null, animate;
 
-function approach_range() {
-	g2.updateOptions({dateWindow: desired_range});
+
+//g1 = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
+//dygraphs["dygraph-1"] = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
+dygraphs["dygraph-2"] = new Dygraph(document.getElementById("dygraph-2"),d, dygraphParams);
+dygraphs["dygraph-3"] = new Dygraph(document.getElementById("dygraph-3"),d, dygraphParams);
+
+function approach_range(graph) {
+	graph.updateOptions({dateWindow: desired_range});
 }
 
-animate = function() {
-	approach_range();
-};
-
-var zoom = function(res) {
-	var w = g2.xAxisRange();
+var zoom = function(graph, res) {
+	var w = graph.xAxisRange();
 	desired_range = [ w[0], w[0] + res * 1000 ];
-	animate();
+	approach_range(graph);
 };
 
-var reset = function() {
-	g2.resetZoom();
+var reset = function(graph) {
+	graph.resetZoom();
 };
 
-var pan = function(dir) {
-	var w = g2.xAxisRange();
+var pan = function(graph, dir) {
+	var w = graph.xAxisRange();
 	var scale = w[1] - w[0];
 	var amount = scale * 1 * dir; // 1 is the percentage to shift
 	desired_range = [ w[0] + amount, w[1] + amount ];
-	animate();
+	approach_range(graph);
 };
 
-$('#hour').on('click', function (e) { zoom(3600); })
-$('#day').on('click', function (e) { zoom(86400); })
-$('#week').on('click', function (e) { zoom(604800); })
-$('#month').on('click', function (e) { zoom(30 * 86400); })
-$('#full').on('click', function (e) { reset(); })
-$('#left').on('click', function (e) { pan(-1); })
-$('#right').on('click', function (e) { pan(+1); })
+dgs = [];
+for (g in dygraphs) {
+	dgs.push(dygraphs[g]);
+}
+//Dygraph.synchronize(dgs);
+
+
+
+$('button[name="hour"]').on('click', function (e) {
+	zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+	 3600);
+});
+
+$('button[name="day"]').on('click', function (e) {
+	zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+	 86400);
+});
+
+$('button[name="week"]').on('click', function (e) {
+	zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+	 604800);
+});
+
+$('button[name="month"]').on('click', function (e) {
+	zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+	 604830 * 8640000);
+});
+
+$('button[name="full"]').on('click', function (e) {
+	reset(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')]);
+});
+
+$('button[name="left"]').on('click', function (e) {
+	pan(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+	 -1);
+});
+
+$('button[name="right"]').on('click', function (e) {
+	pan(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+	 1);
+});
