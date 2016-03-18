@@ -16331,16 +16331,17 @@ var dygraphParams = {
 //	"strokeWidth": 1.2,
 	"showLabelsOnHighlight": true,
 //	"highlightCircleSize": 1.2,
-//	"highlightSeriesOpts": {
+	"highlightSeriesOpts": {
+//		strokeBorderWidth: 1.2,
 //		"strokeWidth": 1.4,
 //		"highlightCircleSize": 5
-//	},
+	},
 	"labelsDivStyles": {
 		'text-align': 'right',
 		'background': 'none'
 	},
 	"drawPoints": false, //Making this true really affects the performance
-	"title": "",
+	"title": "Test",
 	"showRoller": false,
 	"showRangeSelector": true,
 	"fillGraph": false,
@@ -16350,19 +16351,27 @@ var dygraphParams = {
 		'k': {axis: 'y2'},
 		'l': {axis: 'y2'},
 	},
-//	axes: {
-//		y2: {labelsKMB: true}
-//	},
+	axes: {
+//		y2: {"valueRange": [0, 30]}
+	},
+	"legend": 'always',
 	"ylabel": 'Primary y-axis',
 	"y2label": 'Secondary y-axis',
+	"labelsDivWidth": 150,
+    "labelsSeparateLines": true,
+	labelsDiv: document.getElementById('status')
+//	"valueRange": [],
 }
+
+
+
 var desired_range = null, animate;
 
 
 //g1 = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
 //dygraphs["dygraph-1"] = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
 dygraphs["dygraph-2"] = new Dygraph(document.getElementById("dygraph-2"),d, dygraphParams);
-dygraphs["dygraph-3"] = new Dygraph(document.getElementById("dygraph-3"),d, dygraphParams);
+//dygraphs["dygraph-3"] = new Dygraph(document.getElementById("dygraph-3"),d, dygraphParams);
 
 function approach_range(graph) {
 	graph.updateOptions({dateWindow: desired_range});
