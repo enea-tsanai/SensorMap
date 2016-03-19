@@ -10,6 +10,7 @@
 	<!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
 	<script src="http://dygraphs.com/extras/synchronizer.js"></script>
+    <link rel="stylesheet" href="../static/css/test.css"/>
 </head>
 <body>
 	<div id="dygraph-1"></div>
@@ -83,21 +84,24 @@
 </body>
 <script type="text/javascript" src="../../static/js/tests/4.js"></script>
 <style type="text/css">
-	.dygraph-legend > span.highlight { border: 1.5px solid grey; }
+	.dygraph-legend > span.highlight { border: 1px solid grey; border-radius: 2px; }
 	.dygraph-toolbar {
 		padding: 3px;
+	}
+	body {
+		background-color: white;
 	}
 	.dygraph-legend {
 		padding-left: 0px;
 	}
-	<!--.dygraph-legend {-->
-		<!--background-color: rgba(215, 227, 250, 1) !important;-->
-		<!--padding: 4px;-->
-		<!--border: 1px solid #000;-->
-		<!--border-radius: 10px;-->
-		<!--box-shadow: 4px 4px 4px #888;-->
-		<!--pointer-events: none;-->
-	<!--}-->
+	/*<!--.dygraph-legend {*/
+		/*<!--background-color: rgba(215, 227, 250, 1) !important;-->*/
+		/*<!--padding: 4px;-->*/
+		/*<!--border: 1px solid #000;-->*/
+		/*<!--border-radius: 10px;-->*/
+		/*<!--box-shadow: 4px 4px 4px #888;-->*/
+		/*<!--pointer-events: none;-->*/
+	/*<!--}-->*/
 
 	@media (max-width: 768px) {
 	  .btn-responsive {
@@ -115,6 +119,24 @@
 		line-height: 1.2;
 	  }
 	}
+
+	.sixteen-nine {
+  position: relative;
+}
+.sixteen-nine:before {
+  display: block;
+  content: "";
+  width: 100%;
+  padding-top: 56.25%;
+}
+.sixteen-nine > .content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 
 </style>
 </html>

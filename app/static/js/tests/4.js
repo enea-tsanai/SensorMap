@@ -16361,7 +16361,7 @@ var dygraphParams = {
     "labelsSeparateLines": true,
 	labelsDiv: document.getElementById('status')
 //	"valueRange": [],
-}
+};
 
 
 
@@ -16400,7 +16400,6 @@ for (g in dygraphs) {
 	dgs.push(dygraphs[g]);
 }
 //Dygraph.synchronize(dgs);
-
 
 
 $('button[name="hour"]').on('click', function (e) {
