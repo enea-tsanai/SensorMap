@@ -1,10 +1,12 @@
 #controller-pane {
 	z-index: 1;
-	position: relative;
-	left: -50%;
-	background: rgba(109, 107, 101, 0.28);
-	margin: 8px auto;
-	display:inline-block;
+	background: transparent;
+	margin: 9px auto;
+}
+
+#controller-pane-wrapper {
+	position: absolute;
+	width: 100%;
 }
 
 #page-content-wrapper {

@@ -1,3 +1,23 @@
+var MAP_TOOLBAR_HANDHELD = '<div id="controller-pane" class="btn-group">\
+        <button type="button" class="btn btn-default" onclick="openToolbar()">Dashboard\
+        </button>\
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">\
+        <span class="caret"></span>\
+        </button>\
+        <ul class="dropdown-menu" role="menu">\
+        <li><a href="#"onclick="showSites()">Show Sites</a></li>\
+        <li><a href="#"onclick="clearMap()">Clear Map</a></li>\
+        </ul>\
+        </div>'
+
+var MAP_TOOLBAR_NORMAL = 
+    '<div id="controller-pane" class="btn-group">\
+            <button type="button" class="btn btn-default" onclick="openToolbar()">Dashboard</button>\
+            <button type="button" class="btn btn-default" onclick="showSites()">Show Sites</button>\
+            <button type="button" class="btn btn-default" onclick="clearMap()">Clear Map</button>\
+     </div>';
+
+
 function initializeQuadrantsDomElements() {
 	// for(var i=0; i<streams.length; i++) {
 	// 	$("#quad-" + streams[i].quad).append('<div class="row dygraph-plot-row-wrapper">' +
@@ -10,11 +30,28 @@ function initializeQuadrantsDomElements() {
 	// }
 }
 
+function showMapToolbar() {
+    if ($(window).width() <= 500) {
+        mapToolbar("Handheld");
+    } else {
+        mapToolbar("Normal");
+    }
+}
+
+function mapToolbar(screenSize) {
+    if (screenSize === "Handheld") {
+        $("#controller-pane").replaceWith(MAP_TOOLBAR_HANDHELD);
+    } else {
+        $("#controller-pane").replaceWith(MAP_TOOLBAR_NORMAL);
+    }
+
+}
+
 function populateQuads() {
 	var url = "https://public.optirtc.com/api/datapoint/";
 	var requestParams = {
 		"key": "z5ywCWZ4rLh3lu*3i234StqF",
-		"dataStreamId": 18704,
+		"dataStreamId": 18704
 	};
 
 	for(var stream in streams) {
@@ -71,4 +108,12 @@ function populateQuads() {
 
 $(document).ready(function() {
 	initializeQuadrantsDomElements();
+    showMapToolbar();
+    $(window).resize(function() {
+        if ($(window).width() <= 500) {
+            mapToolbar("Handheld");
+        } else {
+            mapToolbar("Normal");
+        }
+    });
 });
