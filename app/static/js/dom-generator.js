@@ -1,13 +1,13 @@
 function initializeQuadrantsDomElements() {
-	for(var i=0; i<streams.length; i++) {
-		$("#quad-" + streams[i].quad).append('<div class="row dygraph-plot-row-wrapper">' +
-						'<div class="col-sm-2 text-center"></div>' +
-						'<div class="col-sm-8 text-center graph-container">' +
-							'<div id=' + streams[i].name + ' style="width:100%"></div>' +
-						'</div>' +
-						'<div class="col-sm-2 text-center"></div>' +
-					'</div>');
-	}
+	// for(var i=0; i<streams.length; i++) {
+	// 	$("#quad-" + streams[i].quad).append('<div class="row dygraph-plot-row-wrapper">' +
+	// 					'<div class="col-sm-2 text-center"></div>' +
+	// 					'<div class="col-sm-8 text-center graph-container">' +
+	// 						'<div id=' + streams[i].name + ' style="width:100%"></div>' +
+	// 					'</div>' +
+	// 					'<div class="col-sm-2 text-center"></div>' +
+	// 				'</div>');
+	// }
 }
 
 function populateQuads() {
