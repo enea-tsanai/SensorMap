@@ -1,4 +1,4 @@
-var MAP_TOOLBAR_HANDHELD = '<div id="controller-pane" class="btn-group">\
+var MAP_TOOLBAR_HANDHELD = '<div id="map-toolbar" class="btn-group">\
         <button type="button" class="btn btn-default" onclick="openToolbar()">Dashboard\
         </button>\
         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">\
@@ -11,7 +11,7 @@ var MAP_TOOLBAR_HANDHELD = '<div id="controller-pane" class="btn-group">\
         </div>'
 
 var MAP_TOOLBAR_NORMAL = 
-    '<div id="controller-pane" class="btn-group">\
+    '<div id="map-toolbar" class="btn-group">\
             <button type="button" class="btn btn-default" onclick="openToolbar()">Dashboard</button>\
             <button type="button" class="btn btn-default" onclick="showSites()">Show Sites</button>\
             <button type="button" class="btn btn-default" onclick="clearMap()">Clear Map</button>\
@@ -40,9 +40,9 @@ function showMapToolbar() {
 
 function mapToolbar(screenSize) {
     if (screenSize === "Handheld") {
-        $("#controller-pane").replaceWith(MAP_TOOLBAR_HANDHELD);
+        $("#map-toolbar").replaceWith(MAP_TOOLBAR_HANDHELD);
     } else {
-        $("#controller-pane").replaceWith(MAP_TOOLBAR_NORMAL);
+        $("#map-toolbar").replaceWith(MAP_TOOLBAR_NORMAL);
     }
 
 }

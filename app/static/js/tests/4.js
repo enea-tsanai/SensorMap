@@ -16369,9 +16369,9 @@ var desired_range = null, animate;
 
 
 //g1 = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
-//dygraphs["dygraph-1"] = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
+dygraphs["dygraph-1"] = new Dygraph(document.getElementById("dygraph-1"),d, dygraphParams);
 dygraphs["dygraph-2"] = new Dygraph(document.getElementById("dygraph-2"),d, dygraphParams);
-//dygraphs["dygraph-3"] = new Dygraph(document.getElementById("dygraph-3"),d, dygraphParams);
+// dygraphs["dygraph-3"] = new Dygraph(document.getElementById("dygraph-3"),d, dygraphParams);
 
 function approach_range(graph) {
 	graph.updateOptions({dateWindow: desired_range});
@@ -16399,7 +16399,7 @@ dgs = [];
 for (g in dygraphs) {
 	dgs.push(dygraphs[g]);
 }
-//Dygraph.synchronize(dgs);
+Dygraph.synchronize(dgs);
 
 
 $('button[name="hour"]').on('click', function (e) {

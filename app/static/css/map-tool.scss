@@ -1,0 +1,23 @@
+/* Google Maps */
+
+#map-area {
+  padding: 0px;
+}
+
+#map-canvas{
+  width: 100%;
+  height: 100%;
+}
+
+/* Map Toolbar */
+
+#controller-pane {
+  z-index: 1;
+  background: transparent;
+  margin: 9px auto;
+}
+
+#controller-pane-wrapper {
+  position: absolute;
+  width: 100%;
+}

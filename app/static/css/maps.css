@@ -1,26 +1,64 @@
-#controller-pane {
+/* Splitter */
+html, body {
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.main-split-pane-frame {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding-top: 51px;
+    background: silver;
+}
+
+.main-split-pane-frame .split-pane > .split-pane-divider.dragged.touch {
+    background: blue;
+    opacity: 0.25;
+}
+
+#left-component {
+    /*min-width: 350px;*/
+    background-color: #F8F8F8;
+    margin-right: 5px;
+}
+
+#my-divider {
+    width: 5px;
+}
+
+#right-component {
+    min-width: 395px;
+    width: 100%;
+}
+
+/* Dashboard */
+#dashboard-wrapper {
+    background: #F8F8F8;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus  {
+    background: #F8F8F8;
+}
+
+/* Map Area */
+#map-toolbar {
 	z-index: 1;
 	background: transparent;
 	margin: 9px auto;
 }
 
-#controller-pane-wrapper {
+#map-toolbar-wrapper {
 	position: absolute;
 	width: 100%;
 }
 
-#page-content-wrapper {
+#map-area {
     padding: 0px;
     margin: 0 auto;
     z-index: 1000;
-}
-
-.navbar {
-    margin-bottom: 0px;
-}
-
-#map-area {
-    padding: 0px;
 }
 
 #map-canvas{
@@ -28,32 +66,37 @@
     height: 100%;
 }
 
-#map-tool {
-    margin-right: 10px;
+.navbar {
+	margin-bottom: 0px;
 }
 
-#site-overview-header {
+/* Site Balloon */
+.site-overview-balloon {
+    width: 300px;
+    height: 350px;
+    overflow: hidden;
+}
+
+.site-overview-balloon-header {
 	position: relative;
 	width: inherit;
 	left: 0px;
 	background-color: white;
 }
 
-#balloon {
-	width: 300px;
-	height: 350px;
-	overflow: hidden;
-}
-
-#SiteOverview {
+.site-overview-balloon-tab {
 	padding: 14px;
 }
 
-#SiteOverview>div {
+.site-overview-balloon-tab>div {
 	width: 272px;
 	height: 250px;
 	overflow-y: scroll;
 }
+
+
+
+
 
 /*
 Circle loading

@@ -1,59 +1,27 @@
-var sidebarState="closed";
+var sidebarState="minimized";
 
 function maximizeToolbar() {
-	if (sidebarState.localeCompare("minimized") == 0) {
-		sidebarState="maximized";
-		resizeGraphs(gWidthRatioWhenMaximized, gHeightRatioWhenMaximized);
-		$("#wrapper").toggleClass("maximized");
-		$("#sidebar-header").toggleClass("maximized");
-		$("#maximize").replaceWith('<a href="#" id="maximize" class="btn btn-link btn-sm" onclick="minimizeToolbar()" data-toggle="tooltip" data-placement="right" title="Minimize Toolbar"><span class="glyphicon glyphicon-resize-small"></span></a>');
-	}
-}
-
-function minimizeToolbar() {
-	if (sidebarState.localeCompare("maximized") == 0) {
-		sidebarState="minimized";
-		resizeGraphs(gWidthRatioWhenMinimized, gHeightRatioWhenMinimized);
-		$("#wrapper").toggleClass("maximized");
-		$("#sidebar-header").toggleClass("maximized");
-		$("#maximize").replaceWith('<a href="#" id="maximize" class="btn btn-link btn-sm" onclick="maximizeToolbar()"' +
-		 'data-toggle="tooltip" data-placement="right" title="Maximize Toolbar">' +
-		 '<span class="glyphicon glyphicon-resize-full"></span></a>');
-	}
+    if (sidebarState === "minimized") {
+        $("#right-component").css("min-width", 0);
+        $('div.split-pane').splitPane('lastComponentSize', 0);
+        $("#maximize").find($("span")).replaceWith('<span class="glyphicon glyphicon-resize-small"></span>');
+        sidebarState = "maximized";
+    } else {
+        $("#right-component").css("min-width", 395);
+        $('div.split-pane').splitPane('firstComponentSize', 300);
+        $("#maximize").find($("span")).replaceWith('<span class="glyphicon glyphicon-resize-full"></span>');
+        sidebarState = "minimized";
+    }
 }
 
 function openToolbar() {
+    $('div.split-pane').splitPane('firstComponentSize', 300);
 	// Shift center of map to the right by half width of the sidebar
-	offsetCenter(map.getCenter(), -($(window).width() * 0.15), 0);
-	if (sidebarState.localeCompare("closed") == 0) {
-		sidebarState="minimized";
-		$("#wrapper").toggleClass("toggled");
-		$("#sidebar-header").toggleClass("toggled");
-		setTimeout(function(){ populateGraphs(1); }, 500);
-	} else {
-		closeToolbar();
-	}
+	// offsetCenter(map.getCenter(), -($(window).width() * 0.15), 0);
 }
 
 function closeToolbar() {
-	// Shift center of map to the left by half width of the sidebar
-	offsetCenter(map.getCenter(), $(window).width() * 0.15 , 0);
-	if (sidebarState.localeCompare("minimized") == 0) {
-		sidebarState="closed";
-		$("#wrapper").toggleClass("toggled");
-		$("#sidebar-header").toggleClass("toggled");
-		$("#maximize").replaceWith('<a href="#" id="maximize" class="btn btn-link btn-sm" onclick="maximizeToolbar()"' +
-		 'data-toggle="tooltip" data-placement="right" title="Maximize Toolbar">' +
-		 '<span class="glyphicon glyphicon-resize-full"></span></a>');
-	} else if (sidebarState.localeCompare("maximized") == 0) {
-		minimizeToolbar();
-		sidebarState="closed";
-		$("#wrapper").toggleClass("toggled");
-		$("#sidebar-header").toggleClass("toggled");
-		$("#maximize").replaceWith('<a href="#" id="maximize" class="btn btn-link btn-sm" onclick="maximizeToolbar()"' +
-		 'data-toggle="tooltip" data-placement="right" title="Maximize Toolbar">' +
-		 '<span class="glyphicon glyphicon-resize-full"></span></a>');
-	}
+	$('div.split-pane').splitPane('firstComponentSize', 0);
 }
 
 function clearDashboardSelectedSensors() {
@@ -65,4 +33,12 @@ $(document).ready(function() {
 	$(".nav-tabs a").click(function() {
 		$(this).tab('show');
 	});
+
+    $('button[id="maximize"]').on('click', function (e) {
+        maximizeToolbar();
+    });
+
+    $('button[id="close"]').on('click', function (e) {
+        closeToolbar();
+    });
 });
