@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="../static/css/split-pane.css"/>
     <script src="../static/js/split-pane.js"></script>
 
-	<link rel="stylesheet" href="../static/css/dygraphs.css">
+	<link rel="stylesheet" href="../static/css/dygraphs-old.css">
 	<![endif]-->
 
 	<!-- Maps information goes here -->
@@ -38,21 +38,6 @@
 	<script type="text/javascript" src="../static/js/google-maps.js"></script>
 
 	<link rel="stylesheet" href="../static/css/map-tool.css"/>
-
-    <script>
-        $(function() {
-            $('div.split-pane').splitPane();
-            $('#MaxTool').on('click', function() {
-                $('div.split-pane').splitPane('lastComponentSize', 0);
-            });
-            $('#MinTool').on('click', function() {
-                $('div.split-pane').splitPane('firstComponentSize', 300);
-            });
-            $('#CloseTool').on('click', function() {
-                $('div.split-pane').splitPane('firstComponentSize', 0);
-            });
-        });
-    </script>
 </head>
 
 <body>

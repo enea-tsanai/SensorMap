@@ -1,4 +1,15 @@
 /* Splitter */
+$splitter-transition-time: 0.4s;
+$dashboard-wrapper-padding-left: 0;
+$color-light-theme: #F8F8F8;
+
+@mixin dashboard-transition($time) {
+  -webkit-transition: all $time ease;
+  -moz-transition: all $time ease;
+  -o-transition: all $time ease;
+  transition: all $time ease;
+}
+
 html, body {
   height: 100%;
   min-height: 100%;
@@ -15,13 +26,16 @@ html, body {
 }
 
 .main-split-pane-frame .split-pane > .split-pane-divider.dragged.touch {
-  background: blue;
-  opacity: 0.25;
+  @include dashboard-transition(0s);
+}
+
+.split-pane-component, .split-pane-divider {
+  @include dashboard-transition($splitter-transition-time);
 }
 
 #left-component {
   /*min-width: 350px;*/
-  background-color: #F8F8F8;
+  background-color: $color-light-theme;
   margin-right: 5px;
 }
 
@@ -34,15 +48,13 @@ html, body {
   width: 100%;
 }
 
+div .fast-drag {
+  @include dashboard-transition(0s);
+}
 
 /* Dashboard */
-#dashboard-wrapper {
-  background: #F8F8F8;
-}
+@import "dashboard";
 
-.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus  {
-  background: #F8F8F8;
-}
 
 /* Map Area */
 #map-toolbar {
@@ -96,4 +108,12 @@ html, body {
 }
 
 
+/* Dygraphs */
+@import "dygraphs";
 
+
+/* Various */
+h3 .panel-heading { display: inline-block; }
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus  {
+  background: $color-light-theme;
+}

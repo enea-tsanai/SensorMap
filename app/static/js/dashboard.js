@@ -25,20 +25,41 @@ function closeToolbar() {
 }
 
 function clearDashboardSelectedSensors() {
-	$("#sensors-charts").empty();
-	$("#sensors-charts").replaceWith('<div id="sensors-charts"></div>');
+	$("#sensors-charts").empty().replaceWith('<div id="sensors-charts"></div>');
 }
 
+var sliderListener = function() {
+    $('div.split-pane').splitPane();
+
+    addFastDrag = function() {
+        console.log('addFastDrag');
+        $("div .split-pane-divider").addClass("fast-drag");
+        $("div .split-pane-component").addClass("fast-drag");
+    };
+
+    removeFastDrag = function () {
+        $("div .split-pane-divider").removeClass("fast-drag");
+        $("div .split-pane-component").removeClass("fast-drag");
+    };
+
+    // TODO: Check mouseup alternative
+    $("#my-divider").on("mousedown", addFastDrag);
+};
+
 $(document).ready(function() {
+    sliderListener();
+
 	$(".nav-tabs a").click(function() {
 		$(this).tab('show');
 	});
 
     $('button[id="maximize"]').on('click', function (e) {
+        removeFastDrag();
         maximizeToolbar();
     });
 
     $('button[id="close"]').on('click', function (e) {
+        removeFastDrag();
         closeToolbar();
     });
 });

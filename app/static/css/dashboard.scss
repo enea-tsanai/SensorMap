@@ -1,13 +1,4 @@
 $dashboard-width: 35%;
-$dashboard-transition-time: 0.2s;
-$dashboard-wrapper-padding-left: 0;
-
-@mixin dashboard-transition($transition-time) {
-  -webkit-transition: all $transition-time ease;
-  -moz-transition: all $transition-time ease;
-  -o-transition: all $transition-time ease;
-  transition: all $transition-time ease;
-}
 
 @mixin respond-to($media) {
   @if $media == handhelds {
@@ -21,101 +12,10 @@ $dashboard-wrapper-padding-left: 0;
   //}
 }
 
-#wrapper {
-  @include respond-to(handhelds) { padding-left: 0; }
-  @include respond-to(medium-screens) { padding-left: $dashboard-width; }
-  @include dashboard-transition($dashboard-transition-time);
+#dashboard-wrapper {
+  @include dashboard-transition($splitter-transition-time);
+  background: $color-light-theme;
 }
-
-#wrapper.toggled {
-  @include respond-to(handhelds) { padding-left: $dashboard-width; }
-  @include respond-to(medium-screens) { padding-left: 0; }
-}
-
-#sidebar-wrapper {
-  padding-top: 60px;
-  z-index: 1000;
-  position: fixed;
-  height: 100%;
-  overflow-y: auto;
-  background: #F8F8F8;
-  @include respond-to(handheld) {
-    width: 0;
-    left: $dashboard-width;
-    margin-left: -$dashboard-width;
-  }
-  @include respond-to(medium-screens) { width: $dashboard-width; }
-  @include dashboard-transition($dashboard-transition-time);
-}
-
-#wrapper.toggled #sidebar-wrapper {
-  @include respond-to(handhelds) { width: $dashboard-width; }
-  @include respond-to(medium-screens) { width: 0; }
-}
-
-#sidebar-header {
-  position: fixed;
-  left: 0px;
-  top: 52px;
-  z-index: 100;
-  border-bottom: dashed #E1E2E4;
-  @include dashboard-transition($dashboard-transition-time);
-}
-
-#sidebar-header.toggled {
-  @include respond-to(handhelds) { width: $dashboard-width; }
-  position: fixed;
-  left: 0px;
-  top: 52px;
-  z-index: 100;
-  border-bottom: dashed #E1E2E4;
-}
-
-#sidebar-header.maximized {
-  width: 100%;
-  position: fixed;
-  left: 0px;
-  top: 52px;
-  z-index: 100;
-  border-bottom: dashed #E1E2E4;
-}
-
-#page-content-wrapper {
-  padding: 15px;
-  @include respond-to(handhelds) { position: absolute; }
-  @include respond-to(medium-screens) { position: relative; }
-  @include respond-to(handhelds) { width: 100%; }
-}
-
-#wrapper.toggled #page-content-wrapper {
-  position: absolute;
-  @include respond-to(handhelds) { margin-right: -$dashboard-width; }
-}
-
-#wrapper.maximized {
-  @include respond-to(handhelds) { padding-left: 100%; }
-  @include respond-to(medium-screens) { padding-left: 0; }
-}
-
-#wrapper.maximized #sidebar-wrapper {
-  @include respond-to(handhelds) { width: 100%; }
-  @include respond-to(medium-screens) { width: $dashboard-width; }
-}
-
-#wrapper.maximized #page-content-wrapper {
-  position: fixed;
-  margin-right: -100%;
-}
-
-
-
-
-
-
-
-
-
-h3 .panel-heading { display: inline-block; }
 
 #sensor-data-viz, #sensor-data-viz-2 {
   border: dotted;
@@ -129,25 +29,7 @@ h3 .panel-heading { display: inline-block; }
   padding: 40px;
 }
 
-.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus  {
-  background: #F8F8F8;
-}
-/*
-#sensor-data-viz { position: relative; left: 5px; right: 30px; top: 30px; bottom: 30px; }
-
-/*
-#sensor-data-viz {
-    border-style: dotted;
-}*/
-
-#sidebar-title {
-  font-size: larger;
-}
-
-#sidebar-title-icon {
-  top: 2px;
-  margin-right: 5px;
-}
+/* Combined Graphs Area */
 
 .checkbox-toolbar {
   margin: 0 auto;
@@ -155,14 +37,8 @@ h3 .panel-heading { display: inline-block; }
   width:90%
 }
 
-
 .checkbox-toolbar div {
   margin: 0px 10px 10px 10px;
-}
-
-
-.col-sm-4 div {
-  margin: 0 auto;
 }
 
 #combined-graphs-menu div {
@@ -182,3 +58,6 @@ h3 .panel-heading { display: inline-block; }
   margin: 15px 15px;
 }
 
+.col-sm-4 div {
+  margin: 0 auto;
+}
