@@ -1,7 +1,9 @@
 /* Splitter */
 $splitter-transition-time: 0.4s;
-$dashboard-wrapper-padding-left: 0;
+$left-component-min-width: 320px;
+$right-component-min-width: 497px;
 $color-light-theme: #F8F8F8;
+$dashboard-desktop-min: 845px;
 
 @mixin dashboard-transition($time) {
   -webkit-transition: all $time ease;
@@ -33,18 +35,56 @@ html, body {
   @include dashboard-transition($splitter-transition-time);
 }
 
-#left-component {
-  /*min-width: 350px;*/
-  background-color: $color-light-theme;
+.invisible {
+  width: 0;
+  display: none;
+}
+
+.closed {
+  @extend .split-pane-component;
+  min-width: 0;
+}
+
+.minimized-l {
+  @extend .split-pane-component;
+  min-width: $left-component-min-width;
   margin-right: 5px;
 }
 
-#my-divider {
+.minimized-r {
+  @extend .split-pane-component;
+  min-width: $right-component-min-width;
+}
+
+.maximized-l {
+  @extend .split-pane-component;
+  @media screen and (min-width: $dashboard-desktop-min) {
+    min-width: $left-component-min-width;
+  }
+  @media screen and (max-width: $dashboard-desktop-min) {
+    width: 100%;
+  }
+}
+
+.maximized-r {
+  @extend .split-pane-component;
+  @media screen and (min-width: $dashboard-desktop-min) {
+    min-width: $right-component-min-width;
+  }
+  @media screen and (max-width: $dashboard-desktop-min) {
+    width: 100%;
+  }
+}
+
+#left-component {
+  background-color: $color-light-theme;
+}
+
+.split-pane-divider {
   width: 5px;
 }
 
 #right-component {
-  min-width: 395px;
   width: 100%;
 }
 

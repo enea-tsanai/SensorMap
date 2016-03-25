@@ -29,15 +29,18 @@
 	<link rel="stylesheet" href="../static/css/dygraphs-old.css">
 	<![endif]-->
 
-	<!-- Maps information goes here -->
+
+    <link rel="stylesheet" href="../static/css/map-tool.css"/>
+
+
+    <!-- Maps information goes here -->
 	<script type="text/javascript"
 			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyHouJvIaHwiAcMpxP152Vfd0INgbawjo"></script>
 	<script type="text/javascript" src="../static/js/dashboard.js"></script>
 	<script type="text/javascript" src="../static/js/dom-generator.js"></script>
 	<script type="text/javascript" src="../static/js/graphs.js"></script>
-	<script type="text/javascript" src="../static/js/google-maps.js"></script>
+    <script type="text/javascript" src="../static/js/google-maps.js"></script>
 
-	<link rel="stylesheet" href="../static/css/map-tool.css"/>
 </head>
 
 <body>
@@ -89,7 +92,7 @@
 <!-- Main Content-->
 <div class="main-split-pane-frame"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
     <div class="split-pane vertical-percent">
-        <div class="split-pane-component" id="left-component">
+        <div class="split-pane-component closed" id="left-component">
             <!-- dashboard -->
             <div id="dashboard-wrapper">
                 <div id="dashboard-header">
@@ -217,8 +220,8 @@
             </div>
             <!-- End of dashboard -->
         </div>
-        <div class="split-pane-divider" id="my-divider"></div>
-        <div class="split-pane-component" id="right-component">
+        <div class="split-pane-divider invisible" id="my-divider"></div>
+        <div class="split-pane-component maximized-r" id="right-component">
             <div id="map-area" class="container-fluid">
                 <div id="map-toolbar-wrapper" class="wrapper text-center">
                     <div id="map-toolbar"></div>
