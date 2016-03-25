@@ -12,9 +12,10 @@ function minToMax() {
 
 function maxToMin() {
     $('#my-divider').removeClass('invisible');
-    $("#left-component").removeClass('closed').removeClass('maximized-l').addClass('minimized-l');
+    var width =  parseInt($("#left-component").removeClass('closed').removeClass('maximized-l').addClass('minimized-l')
+        .css("min-width"));
     $("#right-component").removeClass('closed').removeClass('maximized-r').addClass('minimized-r');
-    $('div.split-pane').splitPane('firstComponentSize', parseInt($("#left-component").css("min-width")));
+    $('div.split-pane').splitPane('firstComponentSize', width);
     $("#maximize").find($("span")).replaceWith('<span class="glyphicon glyphicon-resize-full"></span>');
     sidebarState = "minimized";
 }
@@ -36,9 +37,10 @@ function openToolbar() {
         minToMax();
     } else {
         $('#my-divider').removeClass('invisible');
-        $("#left-component").removeClass('closed').removeClass('maximized-l').addClass('minimized-l');
+        var width = parseInt($("#left-component").removeClass('closed').removeClass('maximized-l')
+            .addClass('minimized-l').css("min-width"));
         $("#right-component").removeClass('closed').removeClass('maximized-r').addClass('minimized-r');
-        $('div.split-pane').splitPane('firstComponentSize', parseInt($("#left-component").css("min-width")));
+        $('div.split-pane').splitPane('firstComponentSize', width);
     }
     removeFastDrag();
 	// Shift center of map to the right by half width of the sidebar

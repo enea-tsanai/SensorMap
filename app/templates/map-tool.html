@@ -44,7 +44,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav id="top-navbar" class="navbar navbar-default navbar-fixed-top">
 	<div class="container-fluid">
 		<div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -112,25 +112,14 @@
                 </div>
 
                 <div>
-                    <h4>Quadrants</h4>
+                    <h4>Sensors Data</h4>
                     <ul class="nav nav-tabs" id="selection-tabs">
-                        <li class="active"><a href="#quad-1">Quad 1</a></li>
-                        <li><a href="#quad-2">Quad 2</a></li>
-                        <li><a href="#quad-3">Quad 3</a></li>
-                        <li><a href="#quad-4">Quad 4</a></li>
-                        <li><a href="#all-quads">All</a></li>
+                        <li class="active"><a href="#all-quads">Quadrants</a></li>
+                        <li><a href="#rain">Rain</a></li>
                     </ul>
                 </div>
 
                 <div class="tab-content">
-                    <div id="quad-1" class="tab-pane fade in active">
-                    </div>
-                    <div id="quad-2" class="tab-pane fade">
-                    </div>
-                    <div id="quad-3" class="tab-pane fade">
-                    </div>
-                    <div id="quad-4" class="tab-pane fade">
-                    </div>
                     <div id="all-quads" class="tab-pane fade">
 
                         <div id="combined-graphs-menu" class="row">
@@ -216,6 +205,7 @@
                         </div>
 
                     </div>
+                    <div id="rain" class="tab-pane fade in active"></div>
                 </div>
             </div>
             <!-- End of dashboard -->

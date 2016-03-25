@@ -16,6 +16,9 @@ $dashboard-desktop-min: 845px;
 #dashboard-wrapper {
   @include dashboard-transition($splitter-transition-time);
   background: $color-light-theme;
+}
+
+#dashboard-header div {
   padding-right: 5px;
 }
 

@@ -1,3 +1,7 @@
+#top-navbar {
+  border-color: #908585;
+}
+
 /* Splitter */
 $splitter-transition-time: 0.4s;
 $left-component-min-width: 320px;
@@ -81,6 +85,7 @@ html, body {
 }
 
 .split-pane-divider {
+  //background-color: #7F9FD2;
   width: 5px;
 }
 
