@@ -597,40 +597,21 @@ function populateGraphs(quad) {
 
 $(document).ready(function() {
 	populateQuads();
-	$('#selection-tabs a[href="#quad-1"]').on('shown.bs.tab', function(event) {
-		if (graphs['quad-1_probe-1'] != undefined) {
-			graphs['quad-1_probe-1'].resize();
-		}
-		if (graphs['quad-1_probe-2'] != undefined) {
-			graphs['quad-1_probe-2'].resize();
-		}
-		if (graphs['quad-1_temperature-1'] != undefined) {
-			graphs['quad-1_temperature-1'].resize();
-		}
-	});
-	$('#selection-tabs a[href="#quad-2"]').on('shown.bs.tab', function(event) {
-		if (graphs['quad-2_probe-1'] != undefined) {
-			graphs['quad-2_probe-1'].resize();
-		}
-		if (graphs['quad-2_probe-2'] != undefined) {
-			graphs['quad-2_probe-2'].resize();
-		}
-		if (graphs['quad-2_temperature-1'] != undefined) {
-			graphs['quad-2_temperature-1'].resize();
-		}
-	});
-	$('#selection-tabs a[href="#quad-3"]').on('shown.bs.tab', function(event) {
-		if (graphs['quad-3_probe-1'] != undefined) {
-			graphs['quad-3_probe-1'].resize();
-		}
-		if (graphs['quad-3_probe-2'] != undefined) {
-			graphs['quad-3_probe-2'].resize();
-		}
-		if (graphs['quad-3_temperature-1'] != undefined) {
-			graphs['quad-3_temperature-1'].resize();
-		}
-	});
-	$('#selection-tabs a[href="#all-quads"]').on('shown.bs.tab', function(event) {
+
+    res = function () {setTimeout(function(){
+        if (graphs['mixed-probes'] != undefined) {
+            graphs['mixed-probes'].resize();
+        }
+        if (graphs['mixed-temperatures'] != undefined) {
+            graphs['mixed-temperatures'].resize();
+        }
+        }, 300); // Need to add a small delay in order to avoid breaking the internal split-pane listener
+    };
+    //
+    $('div.split-pane').on('splitpaneresize', res);
+
+
+	$('a[href="#all-quads"]').on('shown.bs.tab', function(event) {
 		if (graphs['mixed-probes'] != undefined) {
 			graphs['mixed-probes'].resize();
 		}
