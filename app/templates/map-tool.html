@@ -114,14 +114,14 @@
                 <div>
                     <h4>Sensors Data</h4>
                     <ul class="nav nav-tabs" id="selection-tabs">
-                        <li class="active"><a href="#all-quads">Quadrants</a></li>
-                        <li><a href="#rain">Rain</a></li>
+                        <li class="active"><a href="#all-quads" role="tab" data-toggle="tab">Quadrants</a></li>
+                        <li><a role="tab" data-toggle="tab" href="#rain">Rain</a></li>
                     </ul>
                 </div>
 
                 <div class="tab-content">
-                    <div id="all-quads" class="tab-pane fade">
 
+                    <div id="all-quads" role="tabpanel" class="tab-pane active">
                         <div id="combined-graphs-menu" class="row">
 
                             <div class="col-sm-4 combined-graphs-menu-item">
@@ -170,13 +170,15 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-4 combined-graphs-menu-item">
-                                <div><h6>Combine</h6></div>
-                                <div>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="Combine"
-                                               value="combine">Yes
-                                    </label>
+                            <div class="row">
+                                <div class="col-sm-4 combined-graphs-menu-item">
+                                    <div><h6>Combine</h6></div>
+                                    <div>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" name="Combine"
+                                                   value="combine">Yes
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
@@ -187,7 +189,6 @@
                                     onclick="generateMixedGraphs()">Plot Graphs
                             </button>
                         </div>
-
                         <div class="row dygraph-plot-row-wrapper">
                             <div class="col-sm-2 text-center"></div>
                             <div class="col-sm-8 text-center graph-container">
@@ -195,7 +196,6 @@
                             </div>
                             <div class="col-sm-2 text-center"></div>
                         </div>
-
                         <div class="row dygraph-plot-row-wrapper">
                             <div class="col-sm-2"></div>
                             <div class="col-sm-8 text-center graph-container">
@@ -203,9 +203,8 @@
                             </div>
                             <div class="col-sm-2"></div>
                         </div>
-
                     </div>
-                    <div id="rain" class="tab-pane fade in active"></div>
+                    <div id="rain" role="tabpanel" class="tab-pane"><p>Test</p></div>
                 </div>
             </div>
             <!-- End of dashboard -->

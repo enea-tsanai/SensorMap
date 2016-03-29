@@ -595,31 +595,24 @@ function populateGraphs(quad) {
 	}
 }
 
-$(document).ready(function() {
-	populateQuads();
-
-    res = function () {setTimeout(function(){
+var resizeDygraphs = function () {
+    setTimeout(function () {
         if (graphs['mixed-probes'] != undefined) {
             graphs['mixed-probes'].resize();
         }
         if (graphs['mixed-temperatures'] != undefined) {
             graphs['mixed-temperatures'].resize();
         }
-        }, 300); // Need to add a small delay in order to avoid breaking the internal split-pane listener
-    };
-    //
-    $('div.split-pane').on('splitpaneresize', res);
+    }, 300); // Need to add a small delay in order to avoid breaking the internal split-pane listener
+};
 
+$(document).ready(function() {
+	populateQuads();
 
-	$('a[href="#all-quads"]').on('shown.bs.tab', function(event) {
-		if (graphs['mixed-probes'] != undefined) {
-			graphs['mixed-probes'].resize();
-		}
-		if (graphs['mixed-temperatures'] != undefined) {
-			graphs['mixed-temperatures'].resize();
-		}
-	});
-	$('.nav-tabs a').on('shown.bs.tab', function(event) {
-		populateGraphs($(event.target).text().split(" ")[1]);
-    });
+    $('div.split-pane').on('splitpaneresize', resizeDygraphs);
+	// $('a[href="#all-quads"]').on('shown.bs.tab', resizeDygraphs);
+
+    // $('.nav-tabs a').on('shown.bs.tab', function(event) {
+		// // populateGraphs($(event.target).text().split(" ")[1]);
+    // });
 });
