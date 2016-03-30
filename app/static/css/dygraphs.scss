@@ -1,7 +1,50 @@
+//.dygraph-legend > span.highlight { border: 1px solid grey; border-radius: 2px; }
+//.dygraph-toolbar {
+//  padding: 3px;
+//}
+//.dygraph-legend {
+//  padding-left: 0px;
+//}
+
 .dygraph-legend > span.highlight { border: 1px solid grey; border-radius: 2px; }
 .dygraph-toolbar {
   padding: 3px;
 }
+body {
+  background-color: white;
+}
 .dygraph-legend {
   padding-left: 0px;
+}
+/*<!--.dygraph-legend {*/
+/*<!--background-color: rgba(215, 227, 250, 1) !important;-->*/
+/*<!--padding: 4px;-->*/
+/*<!--border: 1px solid #000;-->*/
+/*<!--border-radius: 10px;-->*/
+/*<!--box-shadow: 4px 4px 4px #888;-->*/
+/*<!--pointer-events: none;-->*/
+/*<!--}-->*/
+
+@media (max-width: 768px) {
+  .btn-responsive {
+    padding:2px 4px;
+    font-size:80%;
+    line-height: 1;
+    border-radius:3px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .btn-responsive {
+    padding:4px 9px;
+    font-size:90%;
+    line-height: 1.2;
+  }
+}
+
+.btn-responsive-small {
+  padding:2px 4px;
+  font-size:80%;
+  line-height: 1;
+  border-radius:3px;
 }

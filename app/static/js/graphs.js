@@ -1,31 +1,39 @@
-var graphs = {};
+var dygraphs = {};
 // Dygraph options
 var gWidthRatioWhenMaximized = 0.7;
 var gWidthRatioWhenMinimized = 1;
 var gHeightRatioWhenMaximized = 0.3;
 var gHeightRatioWhenMinimized = 0.9;
-var dygraphParams = {
-    //"animatedZooms": true,
-	"connectSeparatedPoints": true,
-	"rollPeriod": 54,
-	"strokeWidth": 1.2,
-	"showLabelsOnHighlight": true,
-	"highlightCircleSize": 2,
-	"highlightSeriesOpts": {
-		"strokeWidth": 1.4,
-		"highlightCircleSize": 5
-	},
-	"labelsDivStyles": {
-		'text-align': 'right',
-		'background': 'none'
-	},
-	"labels": "",
-	"drawPoints": true,
-	"title": "",
-	"showRoller": false,
-	"showRangeSelector": true
-}
 
+var dygraphParams = {
+    // "labels" : ["Time","a","b","c","d","e","f","g","h","i","j","k","l"],
+    // "connectSeparatedPoints": true,
+    "rollPeriod": 15,
+    "showLabelsOnHighlight": true,
+    "highlightSeriesOpts": {
+//		strokeBorderWidth: 1.2,
+//		"strokeWidth": 1.4,
+//		"highlightCircleSize": 5
+    },
+    "labelsDivStyles": {
+        'text-align': 'right',
+        'background': 'none'
+    },
+    axes: {
+//		y2: {"valueRange": [0, 30]}
+    },
+    "drawPoints": false, //Making this true really affects the performance
+    "title": "Test",
+    "showRoller": false,
+    "showRangeSelector": true,
+    "fillGraph": false,
+    "legend": 'always',
+    "ylabel": '',
+    "labelsDivWidth": 150,
+    "labelsSeparateLines": true,
+    labelsDiv: document.getElementById('status')
+//	"valueRange": [],
+};
 
 var pages = 0;
 var totalCount = 0;
@@ -133,7 +141,7 @@ function showGraphof(site, divElement) {
 	}
 		//$(divElement).empty();
 
-	if (graphs[divElement] === undefined) {
+	if (dygraphs[divElement] === undefined) {
 
 		if (site.probe === undefined)
 			graphTitle = site.labels[1] + " vs " + site.labels[0];
@@ -148,7 +156,7 @@ function showGraphof(site, divElement) {
 		$("#"+divElement).parent().width() * gHeightRatioWhenMinimized:
 		$("#"+divElement).parent().width() * gHeightRatioWhenMaximized
 
-		graphs[divElement] = new Dygraph(document.getElementById(divElement), site.data, {
+		dygraphs[divElement] = new Dygraph(document.getElementById(divElement), site.data, {
 //		"animatedZooms": true,
 			"connectSeparatedPoints": true,
 			"rollPeriod": 54,
@@ -174,22 +182,22 @@ function showGraphof(site, divElement) {
 	} else {
 		if (sidebarState.localeCompare("minimized") == 0) {
 			resizeGraphs(gWidthRatioWhenMinimized, gHeightRatioWhenMinimized);
-//			graphs[divElement].width_ = 100;
-//			graphs[divElement].height_ = 100;
+//			dygraphs[divElement].width_ = 100;
+//			dygraphs[divElement].height_ = 100;
 		}
 		else if (sidebarState.localeCompare("maximized") == 0)  {
 			resizeGraphs(gWidthRatioWhenMaximized, gHeightRatioWhenMaximized);
-//			graphs[divElement].width = 500;
-//			graphs[divElement].height = 500;
+//			dygraphs[divElement].width = 500;
+//			dygraphs[divElement].height = 500;
 		}
 	}
 }
 
 function resizeGraphs(x, y) {
 	setTimeout(function() {
-		for (var gKey in graphs) {
-			graphs[gKey].resize();
-//			graphs[gKey].resize($("#"+gKey).parent().width() * x, $("#"+gKey).parent().width() * y);
+		for (var gKey in dygraphs) {
+			dygraphs[gKey].resize();
+//			dygraphs[gKey].resize($("#"+gKey).parent().width() * x, $("#"+gKey).parent().width() * y);
 		}}, 200);
 }
 
@@ -286,13 +294,15 @@ function populateLastMetricsTab() {
 }
 
 function generateMixedGraphs() {
-	$("#mixed-probes").empty();
-	$("#mixed-temperatures").empty();
+    $("#plot-area").empty();
+	// $("#mixed-probes").empty();
+	// $("#mixed-temperatures").empty();
 
 	var quadrants = [];
 	var probes = [];
 	var temperatures = [];
 	var combined = false;
+	var synched = false;
 	$.each($("input[name='Quadrant']:checked"), function(){
 		quadrants.push($(this).val());
 	});
@@ -302,10 +312,17 @@ function generateMixedGraphs() {
 	$.each($("input[name='Temp']:checked"), function(){
 		temperatures.push($(this).val());
 	});
-	$.each($("input[name='Combine']:checked"), function(){
-		combined = true;
-	});
-
+	// $.each($("input[name='Combine']:checked"), function(){
+	// 	combined = true;
+	// });
+    
+    if ($('input[name=optradio]:checked', '#combine-synchronize').val() === 'combine') {
+        console.log('OKKKK');
+        combined = true;
+    }
+    if ($('input[name=optradio]:checked', '#combine-synchronize').val() === 'synchronize') {
+        synched = true;
+    }
 
 	var probeLabels = ['Time'];
 	var temperatureLabels = ['Time'];
@@ -361,17 +378,22 @@ function generateMixedGraphs() {
 		}
 	}
 
-	var divElement = "mixed-probes";
 	var params = jQuery.extend({}, dygraphParams);
 
 	if (combined === true) {
 
 		if(probesData.length > 0 || temperaturesData.length > 0) {
-			var dataToPlot = aggregateDataMod(probesData.concat(temperaturesData));
+			var dataToPlot = aggregateDataMod(probesData.concat(temperaturesData)),
+            temperatureSeries = temperatureLabels.slice(1, temperatureLabels.length);
 			params.title = "Combined";
-			params.labels = probeLabels.concat(temperatureLabels.slice(1, temperatureLabels.length));
-			console.log("Combined: " + dataToPlot);
-			dygraphPlot("mixed-probes", dataToPlot, params);
+			params.labels = probeLabels.concat(temperatureSeries);
+            params.connectSeparatedPoints = true;
+            params.series = {};
+            for (var l in temperatureSeries) params.series[temperatureSeries[l]] = {axis: 'y2'};
+            params.ylabel = 'Moisture';
+            params.y2label = 'Temperature';
+            params.labelsSeparateLines = true;
+            dygraphPlot("mixed-probes", dataToPlot, params);
 		}
 	} else {
 		if(probesData.length > 0) {
@@ -401,12 +423,35 @@ function generateMixedGraphs() {
 			params.labels = temperatureLabels;
 			dygraphPlot("mixed-temperatures", dataToPlot, params);
 		}
+
+        if (synched === true) {
+            var synchedDygraphs = [];
+            if ('mixed-probes' in dygraphs) {
+                synchedDygraphs.push(dygraphs['mixed-probes']);
+            }
+            if ('mixed-temperatures' in dygraphs) {
+                synchedDygraphs.push(dygraphs['mixed-temperatures']);
+            }
+            console.log(synchedDygraphs);
+            if (synchedDygraphs.length > 1) {
+                Dygraph.synchronize(synchedDygraphs);
+            }
+        }
 	}
 }
 
+//TODO: Add this html fragment together with other fragments
+function addDygraphDomWrapper (id) {
+    var htmlFragment = "<form id=\"dygraph-plot-and-toolbar-wrapper-" + id + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-1\"></div>\n        <div class=\"col-xs-10 graph-container text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center\">\n                    <div id=\"" + id + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                    <div class=\"dygraph-toolbar text-center\">\n                        <b>Data Level:</b>\n                        <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                            <button name=\"hour\" type=\"button\" class=\"btn btn-default btn-responsive\">Hour</button>\n                            <button name=\"day\" type=\"button\" class=\"btn btn-default btn-responsive\">Day</button>\n                            <button name=\"week\" type=\"button\" class=\"btn btn-default btn-responsive\">Week</button>\n                            <button name=\"month\" type=\"button\" class=\"btn btn-default btn-responsive\">Month</button>\n                            <button name=\"full\" type=\"button\" class=\"btn btn-default btn-responsive\">Reset</button>\n                        </div>\n                        <b>Move:</b>\n                        <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                            <button name=\"left\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                                <span class=\"glyphicon glyphicon-circle-arrow-left\" aria-hidden=\"true\"></span></button>\n                            <button name=\"right\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                                <span class=\"glyphicon glyphicon-circle-arrow-right\" aria-hidden=\"true\"></span>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n                <div id=\"legend-" + id + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n        </div>\n        <div class=\"col-xs-1\"></div>\n    </div>\n</form>";
+    $("#dygraph-plot-and-toolbar-wrapper-" + id).remove();
+    $("#plot-area").append(htmlFragment);
+}
+
 function dygraphPlot(divElement, data, params) {
-	graphs[divElement] = new Dygraph(document.getElementById(divElement), data, params);
-	graphs[divElement].resize();
+    addDygraphDomWrapper(divElement);
+    params.labelsDiv = document.getElementById('legend-' + divElement);
+	dygraphs[divElement] = new Dygraph(document.getElementById(divElement), data, params);
+	dygraphs[divElement].resize();
 }
 
 Date.prototype.setISO8601 = function (string) {
@@ -597,17 +642,84 @@ function populateGraphs(quad) {
 
 var resizeDygraphs = function () {
     setTimeout(function () {
-        if (graphs['mixed-probes'] != undefined) {
-            graphs['mixed-probes'].resize();
+        if (dygraphs['mixed-probes'] != undefined) {
+            dygraphs['mixed-probes'].resize();
         }
-        if (graphs['mixed-temperatures'] != undefined) {
-            graphs['mixed-temperatures'].resize();
+        if (dygraphs['mixed-temperatures'] != undefined) {
+            dygraphs['mixed-temperatures'].resize();
         }
     }, 300); // Need to add a small delay in order to avoid breaking the internal split-pane listener
 };
 
+var desired_range = null, animate;
+
+// Functions for dygraphs toolbar
+function approach_range(graph) {
+    graph.updateOptions({dateWindow: desired_range});
+}
+
+var zoom = function(graph, res) {
+    var w = graph.xAxisRange();
+    desired_range = [ w[0], w[0] + res * 1000 ];
+    approach_range(graph);
+};
+
+var reset = function(graph) {
+    graph.resetZoom();
+};
+
+var pan = function(graph, dir) {
+    var w = graph.xAxisRange();
+    var scale = w[1] - w[0];
+    var amount = scale * 1 * dir; // 1 is the percentage to shift
+    desired_range = [ w[0] + amount, w[1] + amount ];
+    approach_range(graph);
+};
+
+// dgs = [];
+// for (g in dygraphs) {
+//     dgs.push(dygraphs[g]);
+// }
+// Dygraph.synchronize(dgs);
+
+function addDygraphsToolbarListener() {
+    $('body').on('click', 'button[name="hour"]', function () {
+        zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+            3600);
+    });
+
+    $('body').on('click', 'button[name="day"]', function () {
+        zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+            86400);
+    });
+
+    $('body').on('click', 'button[name="week"]', function () {
+        zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+            604800);
+    });
+
+    $('body').on('click', 'button[name="month"]', function () {
+        zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+            604830 * 8640000);
+    });
+
+    $('body').on('click', 'button[name="full"]', function () {
+        reset(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')]);
+    });
+
+    $('body').on('click', 'button[name="left"]', function () {
+        pan(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
+            -1);
+    });
+
+    $('body').on('click', 'button[name="right"]', function () {
+        pan(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')], 1);
+    });
+}
+
 $(document).ready(function() {
 	populateQuads();
+    addDygraphsToolbarListener();
 
     $('div.split-pane').on('splitpaneresize', resizeDygraphs);
 	// $('a[href="#all-quads"]').on('shown.bs.tab', resizeDygraphs);
@@ -615,4 +727,12 @@ $(document).ready(function() {
     // $('.nav-tabs a').on('shown.bs.tab', function(event) {
 		// // populateGraphs($(event.target).text().split(" ")[1]);
     // });
+
+    // if ($("#plot-area").width() <= 500) {
+    //     $("button.btn-responsive").addClass("btn-responsive-small");
+    //     // $( ".myclass.otherclass" ).css( "border", "13px solid red" );
+    // } else {
+    //     mapToolbar("Normal");
+    // }
+    
 });
