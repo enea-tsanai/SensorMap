@@ -138,7 +138,7 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 				'<div class="site-overview-balloon-tab tab-content">' +
 				'<div id = "LMetrics" class="l-metrics tab-pane fade in active"></div>' +
 				'<div id = "AboutSite" class="about-site tab-pane fade">' +
-				'<iframe src="https://3dwarehouse.sketchup.com/embed.html?mid=ua7d24fd4-10c8-4ba4-8202-83a5b0de4135" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" allowfullscreen></iframe>'+
+				'<div class="col-sm-12 text-center"><iframe src="https://3dwarehouse.sketchup.com/embed.html?mid=ua7d24fd4-10c8-4ba4-8202-83a5b0de4135" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" allowfullscreen></iframe></div>'+
 				'<p>' + sensor.Description + '</p>'+
 				'</div>' +
 				'</div>' +
@@ -225,11 +225,6 @@ function updateWindowPane() {
 
 
 		populateLastMetricsTab();
-		populateGraphs(1);
-		populateGraphs(2);
-		populateGraphs(3);
-		populateGraphs(4);
-
 		$("#sensor-info").replaceWith(updatedSensorInfo);
 
 	} else {

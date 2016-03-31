@@ -290,7 +290,7 @@ function populateLastMetricsTab() {
 	params.labels = probesLabels;
 	var dataToPlot = aggregateDataMod(probesData);
 	dataToPlot = reduceData(dataToPlot, 4000, true);
-	dygraphPlot("LMetrics", dataToPlot, params);
+	dygraphPlotLM("LMetrics", 'l-metrics', dataToPlot, params);
 }
 
 function generateMixedGraphs() {
@@ -393,7 +393,7 @@ function generateMixedGraphs() {
             params.ylabel = 'Moisture';
             params.y2label = 'Temperature';
             params.labelsSeparateLines = true;
-            dygraphPlot("mixed-probes", dataToPlot, params);
+            dygraphPlot('plot-area', 'mixed-probes', dataToPlot, params);
 		}
 	} else {
 		if(probesData.length > 0) {
@@ -414,14 +414,14 @@ function generateMixedGraphs() {
 	//		console.log("Rows: " + dataToPlot.split("\n").length + 1);
 	//		dataToPlot = reduceData(dataToPlot, 10000, true);
 	//		console.log("sorted: " + dataToPlot);
-			dygraphPlot("mixed-probes", dataToPlot, params);
+			dygraphPlot('plot-area', 'mixed-probes', dataToPlot, params);
 		}
 
 		if(temperaturesData.length > 0) {
 			var dataToPlot = aggregateDataMod(temperaturesData);
 			params.title = "Temperature";
 			params.labels = temperatureLabels;
-			dygraphPlot("mixed-temperatures", dataToPlot, params);
+			dygraphPlot('plot-area', 'mixed-temperatures', dataToPlot, params);
 		}
 
         if (synched === true) {
@@ -440,18 +440,26 @@ function generateMixedGraphs() {
 	}
 }
 
-//TODO: Add this html fragment together with other fragments
-function addDygraphDomWrapper (id) {
-    var htmlFragment = "<form id=\"dygraph-plot-and-toolbar-wrapper-" + id + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-1\"></div>\n        <div class=\"col-xs-10 graph-container text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center\">\n                    <div id=\"" + id + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                    <div class=\"dygraph-toolbar text-center\">\n                        <b>Data Level:</b>\n                        <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                            <button name=\"hour\" type=\"button\" class=\"btn btn-default btn-responsive\">Hour</button>\n                            <button name=\"day\" type=\"button\" class=\"btn btn-default btn-responsive\">Day</button>\n                            <button name=\"week\" type=\"button\" class=\"btn btn-default btn-responsive\">Week</button>\n                            <button name=\"month\" type=\"button\" class=\"btn btn-default btn-responsive\">Month</button>\n                            <button name=\"full\" type=\"button\" class=\"btn btn-default btn-responsive\">Reset</button>\n                        </div>\n                        <b>Move:</b>\n                        <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                            <button name=\"left\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                                <span class=\"glyphicon glyphicon-circle-arrow-left\" aria-hidden=\"true\"></span></button>\n                            <button name=\"right\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                                <span class=\"glyphicon glyphicon-circle-arrow-right\" aria-hidden=\"true\"></span>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n                <div id=\"legend-" + id + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n        </div>\n        <div class=\"col-xs-1\"></div>\n    </div>\n</form>";
-    $("#dygraph-plot-and-toolbar-wrapper-" + id).remove();
-    $("#plot-area").append(htmlFragment);
-}
+function dygraphPlot(wrapperElm, divElement, data, params) {
+    var dygraphToolbar = '<div class="dygraph-toolbar text-center">\n    <b>Data Level:</b>\n    <div class="btn-group" role="group" aria-label="...">\n        <button name="hour" type="button" class="btn btn-default btn-responsive">Hour</button>\n        <button name="day" type="button" class="btn btn-default btn-responsive">Day</button>\n        <button name="week" type="button" class="btn btn-default btn-responsive">Week</button>\n        <button name="month" type="button" class="btn btn-default btn-responsive">Month</button>\n        <button name="full" type="button" class="btn btn-default btn-responsive">Reset</button>\n    </div>\n    <b>Move:</b>\n    <div class="btn-group" role="group" aria-label="...">\n        <button name="left" type="button" class="btn btn-default btn-responsive">\n            <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></button>\n        <button name="right" type="button" class="btn btn-default btn-responsive">\n            <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>\n        </button>\n    </div>\n</div>';
+    var htmlFragment = "<form id=\"dygraph-plot-and-toolbar-wrapper-" + divElement + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-1\"></div>\n        <div class=\"col-xs-10 text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center graph-container\">\n                    <div id=\"" + divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                </div>\n                <div id=\"legend-" + divElement + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n            <div class=\"row\">\n                <div class=\"dygraph-toolbar col-xs-10 text-center\">\n                <b>Data Level:</b>\n                <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                    <button name=\"hour\" type=\"button\" class=\"btn btn-default btn-responsive\">Hour</button>\n                    <button name=\"day\" type=\"button\" class=\"btn btn-default btn-responsive\">Day</button>\n                    <button name=\"week\" type=\"button\" class=\"btn btn-default btn-responsive\">Week</button>\n                    <button name=\"month\" type=\"button\" class=\"btn btn-default btn-responsive\">Month</button>\n                    <button name=\"full\" type=\"button\" class=\"btn btn-default btn-responsive\">Reset</button>\n                </div>\n                <b>Move:</b>\n                <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                    <button name=\"left\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                        <span class=\"glyphicon glyphicon-circle-arrow-left\" aria-hidden=\"true\"></span></button>\n                    <button name=\"right\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                        <span class=\"glyphicon glyphicon-circle-arrow-right\" aria-hidden=\"true\"></span>\n                    </button>\n                </div>\n            </div>\n            </div>\n        </div>\n        <div class=\"col-xs-1\"></div>\n    </div>\n</form>";
+    $("#dygraph-plot-and-toolbar-wrapper-" + divElement).remove();
+    $('#' + wrapperElm).append(htmlFragment);
 
-function dygraphPlot(divElement, data, params) {
-    addDygraphDomWrapper(divElement);
     params.labelsDiv = document.getElementById('legend-' + divElement);
 	dygraphs[divElement] = new Dygraph(document.getElementById(divElement), data, params);
 	dygraphs[divElement].resize();
+}
+
+//TODO: remove this function and embed in dygraphPlot
+function dygraphPlotLM(wrapperElm, divElement, data, params) {
+    var htmlFragment = "<form id=\"dygraph-plot-and-toolbar-wrapper-" + divElement + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-9 text-center graph-container\">\n                    <div id=\"" + divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                </div>\n                <div id=\"legend-" + divElement + "\" class=\"dygraph-legend col-xs-3 text-left\"></div>\n            </div>\n        </div>\n    </div>\n</form>";
+    $("#dygraph-plot-and-toolbar-wrapper-" + divElement).remove();
+    $('#' + wrapperElm).append(htmlFragment);
+
+    params.labelsDiv = document.getElementById('legend-' + divElement);
+    dygraphs[divElement] = new Dygraph(document.getElementById(divElement), data, params);
+    dygraphs[divElement].resize();
 }
 
 Date.prototype.setISO8601 = function (string) {

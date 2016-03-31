@@ -129,9 +129,12 @@ div .fast-drag {
 }
 
 /* Site Balloon */
+$balloon-width: 395px;
+$balloon-height: 400px;
+
 .site-overview-balloon {
-  width: 300px;
-  height: 350px;
+  width: $balloon-width;
+  height: $balloon-height;
   overflow: hidden;
 }
 
@@ -143,12 +146,12 @@ div .fast-drag {
 }
 
 .site-overview-balloon-tab {
-  padding: 14px;
+  padding: 10px 0px 10px 5px;
 }
 
 .site-overview-balloon-tab>div {
-  width: 272px;
-  height: 250px;
+  height: $balloon-width - 90px;
+  overflow-x: hidden;
   overflow-y: scroll;
 }
 

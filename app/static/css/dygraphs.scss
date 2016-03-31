@@ -6,6 +6,9 @@
 //  padding-left: 0px;
 //}
 
+.dygraph-legend {
+  font-size: 10px;
+}
 .dygraph-legend > span.highlight { border: 1px solid grey; border-radius: 2px; }
 .dygraph-toolbar {
   padding: 3px;
@@ -47,4 +50,24 @@ body {
   font-size:80%;
   line-height: 1;
   border-radius:3px;
+}
+
+
+.graph-container {
+  display: inline-block;
+  position: relative;
+}
+
+.graph-container:after {
+  padding-top: 75%; //TODO: This ratio should change per screen size!
+  display: block;
+  content: '';
+}
+
+.dygraph-plot {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
