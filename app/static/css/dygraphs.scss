@@ -53,13 +53,20 @@ body {
 }
 
 
-.graph-container {
+
+.graph-container, .graph-container-desk { //TODO: Next thing to fix! When hitting plot
   display: inline-block;
   position: relative;
 }
 
 .graph-container:after {
   padding-top: 75%; //TODO: This ratio should change per screen size!
+  display: block;
+  content: '';
+}
+
+.graph-container-desk:after {
+  padding-top: 50%; //TODO: This ratio should change per screen size!
   display: block;
   content: '';
 }

@@ -132,6 +132,10 @@ div .fast-drag {
 $balloon-width: 395px;
 $balloon-height: 400px;
 
+.sketchup-model {
+  position: relative;
+}
+
 .site-overview-balloon {
   width: $balloon-width;
   height: $balloon-height;

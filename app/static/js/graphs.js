@@ -295,14 +295,14 @@ function populateLastMetricsTab() {
 
 function generateMixedGraphs() {
     $("#plot-area").empty();
-	// $("#mixed-probes").empty();
-	// $("#mixed-temperatures").empty();
 
 	var quadrants = [];
 	var probes = [];
 	var temperatures = [];
 	var combined = false;
 	var synched = false;
+    var showAverages = false;
+
 	$.each($("input[name='Quadrant']:checked"), function(){
 		quadrants.push($(this).val());
 	});
@@ -312,18 +312,20 @@ function generateMixedGraphs() {
 	$.each($("input[name='Temp']:checked"), function(){
 		temperatures.push($(this).val());
 	});
-	// $.each($("input[name='Combine']:checked"), function(){
-	// 	combined = true;
-	// });
     
     if ($('input[name=optradio]:checked', '#combine-synchronize').val() === 'combine') {
-        console.log('OKKKK');
         combined = true;
-    }
-    if ($('input[name=optradio]:checked', '#combine-synchronize').val() === 'synchronize') {
+    } else if ($('input[name=optradio]:checked', '#combine-synchronize').val() === 'synchronize') {
         synched = true;
     }
 
+    $.each($("input[name='average']:checked"), function() {
+        showAverages = true;
+    });
+
+
+    // $("input[name=average]:checked")
+    
 	var probeLabels = ['Time'];
 	var temperatureLabels = ['Time'];
 
@@ -383,16 +385,27 @@ function generateMixedGraphs() {
 	if (combined === true) {
 
 		if(probesData.length > 0 || temperaturesData.length > 0) {
-			var dataToPlot = aggregateDataMod(probesData.concat(temperaturesData)),
-            temperatureSeries = temperatureLabels.slice(1, temperatureLabels.length);
-			params.title = "Combined";
-			params.labels = probeLabels.concat(temperatureSeries);
+            params.title = "Combined";
             params.connectSeparatedPoints = true;
+            params.labelsSeparateLines = true;
             params.series = {};
-            for (var l in temperatureSeries) params.series[temperatureSeries[l]] = {axis: 'y2'};
             params.ylabel = 'Moisture';
             params.y2label = 'Temperature';
-            params.labelsSeparateLines = true;
+
+            if (showAverages === true) {
+                var d1 = getAverageData(probesData);
+                var d2 = getAverageData(temperaturesData);
+                dataToPlot = aggregateDataMod([d1, d2]);
+                params.labels = ['Time', 'Moisture', 'Temperature (C)'];
+                params.series['Temperature (C)'] = {axis: 'y2'};
+                params.customBars = true;
+                params.highlightSeriesOpts = '';
+            } else {
+                var dataToPlot = aggregateDataMod(probesData.concat(temperaturesData)),
+                    temperatureSeries = temperatureLabels.slice(1, temperatureLabels.length);
+                params.labels = probeLabels.concat(temperatureSeries);
+                for (var l in temperatureSeries) params.series[temperatureSeries[l]] = {axis: 'y2'};
+            }
             dygraphPlot('plot-area', 'mixed-probes', dataToPlot, params);
 		}
 	} else {
@@ -403,24 +416,40 @@ function generateMixedGraphs() {
 	//		testData.push(data3);
 	//		testData.push(data4);
 
-			start2 = performance.now();
-			var dataToPlot = aggregateDataMod(probesData);
-			var end2 = performance.now();
-			var duration2 = end2 - start2;
-			console.log("New: " + duration2);
+            var dataToPlot;
 
 			params.title = "Soil Moisture Probes";
-			params.labels = probeLabels;
+            if (showAverages === true) {
+                dataToPlot = getAverageData(probesData);
+                params.labels = ['Time', 'Moisture'];
+                params.customBars = true;
+                params.highlightSeriesOpts = '';
+            }
+            else {
+                start2 = performance.now();
+                dataToPlot = aggregateDataMod(probesData);
+                var end2 = performance.now();
+                var duration2 = end2 - start2;
+                console.log("New: " + duration2);
+                params.labels = probeLabels;
+            }
 	//		console.log("Rows: " + dataToPlot.split("\n").length + 1);
 	//		dataToPlot = reduceData(dataToPlot, 10000, true);
-	//		console.log("sorted: " + dataToPlot);
 			dygraphPlot('plot-area', 'mixed-probes', dataToPlot, params);
 		}
 
 		if(temperaturesData.length > 0) {
-			var dataToPlot = aggregateDataMod(temperaturesData);
-			params.title = "Temperature";
-			params.labels = temperatureLabels;
+            params.title = "Temperature";
+            var dataToPlot;
+            if (showAverages === true) {
+                dataToPlot = getAverageData(temperaturesData);
+                params.labels = ['Time', 'Temperature (C)'];
+                params.customBars = true;
+                params.highlightSeriesOpts = '';
+            } else {
+                dataToPlot = aggregateDataMod(temperaturesData);
+                params.labels = temperatureLabels;
+            }
 			dygraphPlot('plot-area', 'mixed-temperatures', dataToPlot, params);
 		}
 
@@ -494,6 +523,111 @@ function sortByDate( date1, date2 ) {
     return date2_ > date1_ ? 1 : -1;
 }
 
+function getAverageData(dataStreams) {
+    var dataHashMap = {};
+    var values = [];
+
+    for (var i = 0; i < dataStreams.length; i++) {
+        values.push("");
+    }
+
+    for (var i = 0; i < dataStreams.length; i++) {
+
+        var dataArray = dataStreams[i].split("\n");
+
+        // Check if the last element is empty
+        if (dataArray[dataArray.length - 1].split(",").length === 1) {
+            dataArray = dataArray.slice(0, dataArray.length - 1);
+        }
+
+        // Populate hashmap
+        for (var d = 0; d < dataArray.length; d++) {
+
+            var sp = dataArray[d].split(",");
+            key = sp[0], val = sp[1];
+
+            if (key !== "") {
+                if (dataHashMap[key] != undefined) {
+                    dataHashMap[key][i] = val;
+                    // console.log("Updated at: " + key + " the val: " + val);
+                } else {
+                    dataHashMap[key] = [].concat(values);
+                    dataHashMap[key][i] = val;
+                    // console.log("inserted at: " + key + " the val: " + val);
+                }
+            }
+            else
+                console.log("Problem at : " + d + " elemnt: " + dataArray[d]);
+        }
+    }
+
+    var dataToPlot = "";
+    var sorted_keys = [];
+
+    for (k in dataHashMap) {
+        sorted_keys.push(k);
+    }
+    sorted_keys.sort();
+
+    // Fill empty columns in merged hashmap
+    for (var i = 0; i < dataStreams.length; i++) {
+        var previous, next, nxtIndx ;
+        for (var k = 0; k < sorted_keys.length; k++) {
+            var key = sorted_keys[k];
+            if (!isNaN(parseFloat(dataHashMap[key][i]))) {
+                previous = parseFloat(dataHashMap[key][i]);
+            } else {
+                nxtIndx = (k < sorted_keys.length - 1) ? k + 1 : k;
+                while ((nxtIndx < sorted_keys.length - 1) && isNaN(parseFloat(dataHashMap[sorted_keys[nxtIndx]][i]))) {
+                    nxtIndx ++;
+                }
+                next = parseFloat(dataHashMap[sorted_keys[nxtIndx]][i]);
+                if (!isNaN(parseFloat(previous)) && !isNaN(parseFloat(next)))
+                    dataHashMap[key][i] = (previous + next) / 2;
+                else if (!isNaN(parseFloat(previous)))
+                    dataHashMap[key][i] = previous;
+                else if (!isNaN(parseFloat(next)))
+                    dataHashMap[key][i] = next;
+            }
+        }
+    }
+
+    var averages = {};
+
+    // Averages
+    for (var k in dataHashMap) {
+        var average = NaN, sum = 0, numOfElements = 0, max = Number.NEGATIVE_INFINITY, min = Number.POSITIVE_INFINITY;
+
+        for (var i = 0; i < dataStreams.length; i++) {
+            var val = parseFloat(dataHashMap[k][i]);
+            if (!isNaN(val)) {
+                if (val > max) max = val;
+                if (val < min) min = val;
+                sum += val;
+                numOfElements ++;
+            }
+        }
+        if (numOfElements > 0)
+            average = sum / numOfElements;
+        averages[k] = [min, average, max];
+    }
+
+    for (k in sorted_keys) {
+        var key = sorted_keys[k];
+        dataToPlot += key + "," + averages[key].join(';') + "\n";
+    }
+
+    dataToPlot = dataToPlot.substr(0, dataToPlot.length - 1);
+    return dataToPlot;
+}
+
+function mergeDataSeries(dataSeries) {
+
+}
+
+/*
+    gets a list [] of of arrays [[k, v], [k, v], ... ]
+ */
 function aggregateDataMod(dataStreams) {
 
 	var dataHashMap = {};
@@ -649,7 +783,16 @@ function populateGraphs(quad) {
 }
 
 var resizeDygraphs = function () {
+
     setTimeout(function () {
+        if( $('div.graph-container').width() > 400) {
+            console.log('GOOOD');
+            $('div.graph-container').addClass('graph-container-desk');
+
+            // $('div.dygraph-plot').css('padding-top', '50%');
+        } else {
+            $('div.graph-container').removeClass('graph-container-desk');
+        }
         if (dygraphs['mixed-probes'] != undefined) {
             dygraphs['mixed-probes'].resize();
         }
@@ -725,11 +868,19 @@ function addDygraphsToolbarListener() {
     });
 }
 
+
 $(document).ready(function() {
 	populateQuads();
     addDygraphsToolbarListener();
 
     $('div.split-pane').on('splitpaneresize', resizeDygraphs);
+
+    $('div.graph-container').bind('resize', function(e) {
+        if( $('div.graph-container').css('width') > 400) {
+            console.log('GOOOD');
+        }
+    });
+
 	// $('a[href="#all-quads"]').on('shown.bs.tab', resizeDygraphs);
 
     // $('.nav-tabs a').on('shown.bs.tab', function(event) {

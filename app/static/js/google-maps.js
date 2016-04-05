@@ -127,22 +127,7 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 			// InfoWindow
 			//TODO: Id of ballon should be the site id
 			//TODO: Include this in Dom elements
-			var windowContent = '<div class="site-overview-balloon">' +
-				'<div class="site-overview-balloon-header">' +
-				'<h4>' + sensor.Name + '</h4>' +
-				'<ul class="nav nav-tabs nav-justified">' +
-				'<li class="active"><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>' +
-				'<li><a href="#AboutSite" data-toggle="tab">About this site</a></li>' +
-				'</ul>' +
-				'</div>' +
-				'<div class="site-overview-balloon-tab tab-content">' +
-				'<div id = "LMetrics" class="l-metrics tab-pane fade in active"></div>' +
-				'<div id = "AboutSite" class="about-site tab-pane fade">' +
-				'<div class="col-sm-12 text-center"><iframe src="https://3dwarehouse.sketchup.com/embed.html?mid=ua7d24fd4-10c8-4ba4-8202-83a5b0de4135" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" allowfullscreen></iframe></div>'+
-				'<p>' + sensor.Description + '</p>'+
-				'</div>' +
-				'</div>' +
-				'</div>';
+			var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + sensor.Name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n            <li><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "LMetrics" class="l-metrics tab-pane fade in active"></div>\n        <div id = "AboutSite" class="about-site tab-pane fade">\n            <div class="row text-center">\n                    <iframe src="https://3dwarehouse.sketchup.com/embed.html?mid=ua7d24fd4-10c8-4ba4-8202-83a5b0de4135" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" allowfullscreen></iframe>\n            </div>\n            <p>' + sensor.Description + '</p>\n        </div>\n    </div>\n</div>';
 			infowindow.setContent(windowContent);
 			infowindow.open(map, marker);
 			updateWindowPane();
