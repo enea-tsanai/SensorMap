@@ -23,11 +23,11 @@ var labelIndex = 0;
 window.onkeydown = function(e) {
 	console.log(e.which);
 	ctrlPressed = ((e.keyIdentifier == 'Control') || (e.ctrlKey == true) || (e.which == 91));
-}
+};
 
 window.onkeyup = function(e) {
 	ctrlPressed = false;
-}
+};
 
 /*
  * Initialize Map
@@ -207,8 +207,6 @@ function updateWindowPane() {
 							'<p>Sensor: #' + selectedSensors[0].id + '</p><p><u><b>Latest Captured Value</b></u></p>';
 //							'Timestamp: ' + selectedSensors[0].timeValue + '<br>' +
 //							'Value: ' + selectedSensors[0].value + '<br></div>';
-
-
 		populateLastMetricsTab();
 		$("#sensor-info").replaceWith(updatedSensorInfo);
 
@@ -216,22 +214,6 @@ function updateWindowPane() {
 		for (sensor in selectedSensors) {
 			var updatedSensorInfo = '<div id="sensor-info"><h2>Showing data for multiple sensors</h2></div>';
 			console.log('updating info of sensor');
-//			showGraphof(quad-1_probe-1, "LMetrics");
-//			showGraphof(quad-1_probe-1);
-//			showGraphof(quad-1_temperature-1);
-//
-//			showGraphof(quad-2_probe-1);
-//			showGraphof(quad-2_probe-2);
-//			showGraphof(quad-2_temperature-1);
-//
-//			showGraphof(quad-3_probe-1);
-//			showGraphof(quad-3_probe-2);
-//			showGraphof(quad-3_temperature-1);
-//
-//			showGraphof(quad-4_probe-1);
-//			showGraphof(quad-4_probe-2);
-//			showGraphof(quad-4_temperature-1);
-
 //			$("#sensor-info").replaceWith(updatedSensorInfo);
 		}
 	}
