@@ -1,24 +1,45 @@
-//.dygraph-legend > span.highlight { border: 1px solid grey; border-radius: 2px; }
-//.dygraph-toolbar {
-//  padding: 3px;
-//}
-//.dygraph-legend {
-//  padding-left: 0px;
-//}
+@mixin respond-to($media) {
+  @if $media == handhelds {
+    @media only screen and (max-width: 767px) { @content; }
+  }
+  @else if $media == medium-screens {
+    @media only screen and (min-width: 768px) and (max-width: 1024px) { @content; }
+  }
+  @else if $media == wide-screens {
+    @media only screen and (min-width: 1024px) { @content; }
+  }
+}
 
 .dygraph-legend {
   font-size: 10px;
+  padding-left: 0px;
 }
+
 .dygraph-legend > span.highlight { border: 1px solid grey; border-radius: 2px; }
 .dygraph-toolbar {
   padding: 3px;
 }
+//TODO: Fix this
+.dygraph-toolbar > b {
+  @include respond-to('handhelds') {
+    font-size: small;
+  }
+  @include respond-to('medium-screens') {
+    font-size: medium;
+  }
+  @include respond-to('wide-screens') {
+    font-size: large;
+  }
+}
+
+.dygraph-title {
+  margin-left: 56px;
+}
+
 body {
   background-color: white;
 }
-.dygraph-legend {
-  padding-left: 0px;
-}
+
 /*<!--.dygraph-legend {*/
 /*<!--background-color: rgba(215, 227, 250, 1) !important;-->*/
 /*<!--padding: 4px;-->*/
@@ -28,33 +49,50 @@ body {
 /*<!--pointer-events: none;-->*/
 /*<!--}-->*/
 
-@media (max-width: 768px) {
-  .btn-responsive {
+//@media (max-width: 768px) {
+//  .btn-responsive {
+//    padding:2px 4px;
+//    font-size:80%;
+//    line-height: 1;
+//    border-radius:3px;
+//  }
+//}
+//
+//@media (min-width: 769px) and (max-width: 992px) {
+//  .btn-responsive {
+//    padding:4px 9px;
+//    font-size:90%;
+//    line-height: 1.2;
+//  }
+//}
+
+.btn-responsive {
+  @include respond-to('handhelds') {
     padding:2px 4px;
-    font-size:80%;
+    font-size: x-small;
     line-height: 1;
     border-radius:3px;
   }
-}
-
-@media (min-width: 769px) and (max-width: 992px) {
-  .btn-responsive {
+  @include respond-to('medium-screens') {
     padding:4px 9px;
-    font-size:90%;
+    font-size: medium;
+    line-height: 1.2;
+  }
+  @include respond-to('wide-screens') {
+    padding:4px 9px;
+    font-size: large;
     line-height: 1.2;
   }
 }
 
 .btn-responsive-small {
   padding:2px 4px;
-  font-size:80%;
+  font-size: x-small;
   line-height: 1;
   border-radius:3px;
 }
 
-
-
-.graph-container, .graph-container-desk { //TODO: Next thing to fix! When hitting plot
+.graph-container, .graph-container-desk {
   display: inline-block;
   position: relative;
 }

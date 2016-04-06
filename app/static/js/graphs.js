@@ -471,9 +471,17 @@ function generateMixedGraphs() {
 
 function dygraphPlot(wrapperElm, divElement, data, params) {
     var dygraphToolbar = '<div class="dygraph-toolbar text-center">\n    <b>Data Level:</b>\n    <div class="btn-group" role="group" aria-label="...">\n        <button name="hour" type="button" class="btn btn-default btn-responsive">Hour</button>\n        <button name="day" type="button" class="btn btn-default btn-responsive">Day</button>\n        <button name="week" type="button" class="btn btn-default btn-responsive">Week</button>\n        <button name="month" type="button" class="btn btn-default btn-responsive">Month</button>\n        <button name="full" type="button" class="btn btn-default btn-responsive">Reset</button>\n    </div>\n    <b>Move:</b>\n    <div class="btn-group" role="group" aria-label="...">\n        <button name="left" type="button" class="btn btn-default btn-responsive">\n            <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></button>\n        <button name="right" type="button" class="btn btn-default btn-responsive">\n            <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>\n        </button>\n    </div>\n</div>';
-    var htmlFragment = "<form id=\"dygraph-plot-and-toolbar-wrapper-" + divElement + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-1\"></div>\n        <div class=\"col-xs-10 text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center graph-container\">\n                    <div id=\"" + divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                </div>\n                <div id=\"legend-" + divElement + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n            <div class=\"row\">\n                <div class=\"dygraph-toolbar col-xs-10 text-center\">\n                <b>Data Level:</b>\n                <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                    <button name=\"hour\" type=\"button\" class=\"btn btn-default btn-responsive\">Hour</button>\n                    <button name=\"day\" type=\"button\" class=\"btn btn-default btn-responsive\">Day</button>\n                    <button name=\"week\" type=\"button\" class=\"btn btn-default btn-responsive\">Week</button>\n                    <button name=\"month\" type=\"button\" class=\"btn btn-default btn-responsive\">Month</button>\n                    <button name=\"full\" type=\"button\" class=\"btn btn-default btn-responsive\">Reset</button>\n                </div>\n                <b>Move:</b>\n                <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                    <button name=\"left\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                        <span class=\"glyphicon glyphicon-circle-arrow-left\" aria-hidden=\"true\"></span></button>\n                    <button name=\"right\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                        <span class=\"glyphicon glyphicon-circle-arrow-right\" aria-hidden=\"true\"></span>\n                    </button>\n                </div>\n            </div>\n            </div>\n        </div>\n        <div class=\"col-xs-1\"></div>\n    </div>\n</form>";
+    var htmlFragment = "<form id=\"dygraph-plot-and-toolbar-wrapper-" + divElement + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center graph-container\">\n                    <div id=\"" + divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                </div>\n                <div id=\"legend-" + divElement + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n            <div class=\"row\">\n                <div class=\"dygraph-toolbar col-xs-10 text-center\">\n                <b>Data Level:</b>\n                <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                    <button name=\"hour\" type=\"button\" class=\"btn btn-default btn-responsive\">Hour</button>\n                    <button name=\"day\" type=\"button\" class=\"btn btn-default btn-responsive\">Day</button>\n                    <button name=\"week\" type=\"button\" class=\"btn btn-default btn-responsive\">Week</button>\n                    <button name=\"month\" type=\"button\" class=\"btn btn-default btn-responsive\">Month</button>\n                    <button name=\"full\" type=\"button\" class=\"btn btn-default btn-responsive\">Reset</button>\n                </div>\n                <b>Move:</b>\n                <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n                    <button name=\"left\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                        <span class=\"glyphicon glyphicon-circle-arrow-left\" aria-hidden=\"true\"></span></button>\n                    <button name=\"right\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                        <span class=\"glyphicon glyphicon-circle-arrow-right\" aria-hidden=\"true\"></span>\n                    </button>\n                </div>\n            </div>\n            </div>\n        </div>\n    </div>\n</form>";
     $("#dygraph-plot-and-toolbar-wrapper-" + divElement).remove();
     $('#' + wrapperElm).append(htmlFragment);
+
+    if( $('div.graph-container').width() > 400) {
+        $('div.graph-container').addClass('graph-container-desk');
+        $('button.btn-responsive').removeClass('btn-responsive-small');
+    } else {
+        $('div.graph-container').removeClass('graph-container-desk');
+        $('button.btn-responsive').addClass('btn-responsive-small');
+    }
 
     params.labelsDiv = document.getElementById('legend-' + divElement);
 	dygraphs[divElement] = new Dygraph(document.getElementById(divElement), data, params);
@@ -783,14 +791,12 @@ function populateGraphs(quad) {
 }
 
 var resizeDygraphs = function () {
-
     setTimeout(function () {
         if( $('div.graph-container').width() > 400) {
-            console.log('GOOOD');
+            $('button.btn-responsive').removeClass('btn-responsive-small');
             $('div.graph-container').addClass('graph-container-desk');
-
-            // $('div.dygraph-plot').css('padding-top', '50%');
         } else {
+            $('button.btn-responsive').addClass('btn-responsive-small');
             $('div.graph-container').removeClass('graph-container-desk');
         }
         if (dygraphs['mixed-probes'] != undefined) {
@@ -875,11 +881,9 @@ $(document).ready(function() {
 
     $('div.split-pane').on('splitpaneresize', resizeDygraphs);
 
-    $('div.graph-container').bind('resize', function(e) {
-        if( $('div.graph-container').css('width') > 400) {
-            console.log('GOOOD');
-        }
-    });
+    // $('div.graph-container').bind('resize', function(e) {
+    //
+    // });
 
 	// $('a[href="#all-quads"]').on('shown.bs.tab', resizeDygraphs);
 
