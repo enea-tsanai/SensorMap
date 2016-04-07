@@ -273,11 +273,12 @@ function reduceData(strData, numOfLines, rev) {
 function populateLastMetricsTab() {
 	var probesData = [];
 	var probesLabels = ['Time'];
+
 	var params = jQuery.extend({}, dygraphParams);
 	params.title = "Soil Moisture Probes";
 
-	quadrants = ["quad-1", "quad-2", "quad-3", "quad-4"];
-	probes = ["probe-1", "probe-2"];
+	var quadrants = ["quad-1", "quad-2", "quad-3", "quad-4"];
+	var probes = ["probe-1", "probe-2"];
 
 	for(q in quadrants) {
 		for (p in probes) {
@@ -287,9 +288,37 @@ function populateLastMetricsTab() {
 		}
 	}
 
-	params.labels = probesLabels;
-	var dataToPlot = aggregateDataMod(probesData);
-	dataToPlot = reduceData(dataToPlot, 4000, true);
+	var temperaturesData = [];
+    var temperatureLabels = ['Time'];
+    var temperatures = ["temperature-1"];
+
+	for(q in quadrants) {
+		for (t in temperatures) {
+			console.log(quadrants[q] + "_" + temperatures[t]);
+			temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).data);
+			temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
+		}
+	}
+
+
+    params.title = "Combined";
+    params.connectSeparatedPoints = true;
+    params.labelsSeparateLines = true;
+    params.series = {};
+    params.ylabel = 'Moisture';
+    params.y2label = 'Temperature';
+
+
+    var d1 = getAverageData(probesData);
+    var d2 = getAverageData(temperaturesData);
+    var dataToPlot = aggregateDataMod([d1, d2]);
+    params.labels = ['Time', 'Moisture', 'Temperature (C)'];
+    params.series['Temperature (C)'] = {axis: 'y2'};
+    params.customBars = true;
+    params.highlightSeriesOpts = '';
+    params.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
+
+	// dataToPlot = reduceData(dataToPlot, 4000, true);
 	dygraphPlotLM("LMetrics", 'l-metrics', dataToPlot, params);
 }
 
