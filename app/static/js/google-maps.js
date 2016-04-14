@@ -127,10 +127,10 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
                 // InfoWindow
                 //TODO: Id of ballon should be the site id
                 //TODO: Include this in Dom elements
-                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + sensor.Name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n            <li><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "LMetrics" class="l-metrics tab-pane fade in active"></div>\n        <div id = "AboutSite" class="about-site tab-pane fade">\n            ' + sensor.Description + '\n        </div>\n    </div>\n</div>';
+                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + sensor.Name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n            <li><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "AboutSite" class="about-site tab-pane fade in active">\n            ' + sensor.Description + '\n        </div>\n        <div id = "LMetrics" class="l-metrics tab-pane fade"></div>\n    </div>\n</div>';
                 infowindow.setContent(windowContent);
                 infowindow.open(map, marker);
-                updateSiteWindowPane();
+                populateLastMetricsTab();
             }
 		}
 		// infoWindow Pane
@@ -201,15 +201,16 @@ function clearSelectedSensors () {
 	selectedSensors.length = 0;
 }
 
+//TODO: Remove this
 function updateSiteWindowPane() {
-	var sensorsData = [];
-	if (selectedSensors.length == 1) {
-		populateLastMetricsTab();
-	} else {
-		for (sensor in selectedSensors) {
-			//TODO: Handle multiple selected sites
-		}
-	}
+	// var sensorsData = [];
+	// if (selectedSensors.length == 1) {
+	// 	populateLastMetricsTab();
+	// } else {
+	// 	for (sensor in selectedSensors) {
+	// 		//TODO: Handle multiple selected sites
+	// 	}
+	// }
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
