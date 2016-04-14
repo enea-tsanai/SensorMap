@@ -4,6 +4,9 @@ from app import app
 from app import mongo
 from bson import Binary, Code, json_util
 from bson.json_util import dumps, loads
+# import datetime
+from dateutil.parser import parse
+import pprint
 
 
 @app.route('/')
@@ -39,19 +42,53 @@ def findSensors():
 
 
 @app.route('/getDataStream', methods=['POST', 'GET'])
-def getDataStream():
-	dataStreamId = int(request.args['dataStreamId'])
-	cursor = mongo.db.streams.find({"_id": dataStreamId})
-	records = dict(("Items", record['items']) for record in cursor)
+def get_data_stream():
+	data_stream_id = int(request.args['dataStreamId'])
+
+	period_from = str(request.args.get('periodFrom', ''))
+	period_to = str(request.args.get('periodTo', ''))
+
+	if not is_date(period_from):
+		period_from = str(get_last_month())
+
+	if not is_date(period_to):
+		period_to = str(get_today())
+
+	# cursor = mongo.db.streams.find({"_id": dataStreamId})
+	cursor = mongo.db.streams.aggregate([{"$project": {"items": 1}},
+										{"$unwind": "$items"},
+										{"$match": {
+											"$and": [{"_id": data_stream_id},
+													{"items.timeValue": {
+														"$gt": period_from}},
+													{"items.timeValue": {
+														"$lt": period_to}}]}},
+										{"$group": {"_id": "$_id", "items": {
+											"$push": "$items"}}}])
+
+	records = dict(("items", record['items']) for record in cursor)
 	return jsonify(records)
 
 
-def db_test():
-	# e = mongo.db.sensors_generic.find()
-	# g = mongo.db.regions.find()
-	# t = "cursor"
-	# return render_template('redirect_under_construction.html', data=e, type=t)
-	return ""
+def get_today():
+	return parse("2016-04-05T00:00:00")
+
+
+def get_last_month():
+	# today = datetime.DateTime.day()
+	# first = today.replace(day=1)
+	# lastMonth = first - datetime.DateTime.timedelta(days=1)
+	# return lastMonth
+	return parse("2016-04-04T00:00:00")
+
+
+# gets a string and returns if that string is in valid ISO-8601 date format
+def is_date(string):
+	try:
+		parse(string)
+		return True
+	except ValueError:
+		return False
 
 
 @app.route('/component/test', methods=['POST', 'GET'])

@@ -31,6 +31,7 @@ var dygraphParams = {
     "ylabel": '',
     "labelsDivWidth": 150,
     "labelsSeparateLines": true,
+    "labelsUTC": true,
     labelsDiv: document.getElementById('status')
 //	"valueRange": [],
 };
@@ -101,12 +102,12 @@ function getStreamData(siteData, url, requestParams) {
 //	setTimeout(function(){ stopLoading(); }, 1000);
 
 	if (localFetchMode === true) {
-		var url_ = concatenateUrlAndParams("/getDataStream/", requestParams)
+		var url_ = concatenateUrlAndParams("/getDataStream/", requestParams);
 		$.ajax({
 			url: url_,
-			dataType: "json",
+			dataType: "json"
 		}).done(function (data) {
-			$.each(data.Items, function (i, item) {
+			$.each(data.items, function (i, item) {
 				siteData.data += item.timeValue + ',' + item.value + '\n';
 			});
 		});
@@ -114,7 +115,7 @@ function getStreamData(siteData, url, requestParams) {
 		var url_ = concatenateUrlAndParams(url, requestParams)
 		$.ajax({
 			url: url_,
-			dataType: "json",
+			dataType: "json"
 		}).done(function (data) {
 			pages += 1;
 
@@ -308,7 +309,7 @@ function populateLastMetricsTab() {
     params.ylabel = 'Moisture';
     params.y2label = 'Temperature';
 
-
+console.log(probesData);
     var d1 = getAverageData(probesData);
     var d2 = getAverageData(temperaturesData);
     var dataToPlot = aggregateDataMod([d1, d2]);
@@ -319,6 +320,7 @@ function populateLastMetricsTab() {
     params.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
 
 	// dataToPlot = reduceData(dataToPlot, 4000, true);
+
 	dygraphPlotLM("LMetrics", 'l-metrics', dataToPlot, params);
 }
 
@@ -462,7 +464,7 @@ function generateMixedGraphs() {
                 console.log("New: " + duration2);
                 params.labels = probeLabels;
             }
-	//		console.log("Rows: " + dataToPlot.split("\n").length + 1);
+			// console.log("Rows: " + dataToPlot.split("\n").length + 1);
 	//		dataToPlot = reduceData(dataToPlot, 10000, true);
 			dygraphPlot('plot-area', 'mixed-probes', dataToPlot, params);
 		}
@@ -819,6 +821,27 @@ function populateGraphs(quad) {
 	}
 }
 
+function loadSiteData() {
+	var url = "https://public.optirtc.com/api/datapoint/";
+	var requestParams = {
+		"key": "z5ywCWZ4rLh3lu*3i234StqF",
+		"dataStreamId": 18704
+	};
+
+	for(var stream in streams) {
+		requestParams.dataStreamId = streams[stream].streamId;
+		getStreamData(streams[stream], url, requestParams);
+		resetCounters();
+	}
+
+//	getStreamData(quad-1_probe-1, url, requestParams);
+//	resetCounters();
+//
+//	requestParams.dataStreamId = 18711;
+//	getStreamData(quad-1_probe-2, url, requestParams);
+//	resetCounters();
+}
+
 var resizeDygraphs = function () {
     setTimeout(function () {
         if( $('div.graph-container').width() > 400) {
@@ -905,7 +928,7 @@ function addDygraphsToolbarListener() {
 
 
 $(document).ready(function() {
-	populateQuads();
+	loadSiteData();
     addDygraphsToolbarListener();
 
     $('div.split-pane').on('splitpaneresize', resizeDygraphs);
