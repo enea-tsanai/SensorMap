@@ -102,16 +102,19 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 				marker.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/purple.png'});
 				// marker.set(labelContent', 'labels[labelIndex++ % labels.length]);
 				selectedSensors.push(sensor);
-				updateWindowPane();
+				updateSiteWindowPane();
 			}
 		}
 		else {
+			// Handle 1 selected marker on map
 			clearSelectedMarkers();
 			clearSelectedSensors();
 			labelIndex = 0;
 			selectedMarker = marker;
+
 			if (selectedMarkers.indexOf(marker) == -1) {
 
+                // Place camera at center and on top of marker
 				if (sidebarState.localeCompare("minimized") == 0)
 					offsetCenter(marker.getPosition(), -($(window).width() * 0.15), 0);
 				else
@@ -120,21 +123,19 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 				selectedMarkers.push(selectedMarker);
 				selectedSensors.push(sensor);
 				marker.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/purple.png'});
-				// marker.set('labelContent', labels[labelIndex++ % labels.length]);
-			}
-			//infowindow.open(map, this);
 
-			// InfoWindow
-			//TODO: Id of ballon should be the site id
-			//TODO: Include this in Dom elements
-			var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + sensor.Name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n            <li><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "LMetrics" class="l-metrics tab-pane fade in active"></div>\n        <div id = "AboutSite" class="about-site tab-pane fade">\n            <div class="row text-center">\n                <iframe src="https://3dwarehouse.sketchup.com/embed.html?mid=ua7d24fd4-10c8-4ba4-8202-83a5b0de4135" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" allowfullscreen></iframe>\n            </div>\n            <p>' + sensor.Description + '</p>\n        </div>\n    </div>\n</div>';
-			infowindow.setContent(windowContent);
-			infowindow.open(map, marker);
-			updateWindowPane();
+                // InfoWindow
+                //TODO: Id of ballon should be the site id
+                //TODO: Include this in Dom elements
+                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + sensor.Name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n            <li><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "LMetrics" class="l-metrics tab-pane fade in active"></div>\n        <div id = "AboutSite" class="about-site tab-pane fade">\n            ' + sensor.Description + '\n        </div>\n    </div>\n</div>';
+                infowindow.setContent(windowContent);
+                infowindow.open(map, marker);
+                updateSiteWindowPane();
+            }
 		}
 		// infoWindow Pane
 		// infowindow.setContent("SensorID: " + sensor.id + "\n TimeValue: " + sensor.timeValue + "\nValue: " + sensor.value);
-		// updateWindowPane("SensorID: " + sensor.id + "/n TimeValue: " + sensor.timeValue + "/nValue: " + "+ sensor.value");
+		// updateSiteWindowPane("SensorID: " + sensor.id + "/n TimeValue: " + sensor.timeValue + "/nValue: " + "+ sensor.value");
 	});
 }
 
@@ -200,21 +201,13 @@ function clearSelectedSensors () {
 	selectedSensors.length = 0;
 }
 
-function updateWindowPane() {
+function updateSiteWindowPane() {
 	var sensorsData = [];
 	if (selectedSensors.length == 1) {
-		var updatedSensorInfo = '<div id="sensor-info">' +
-							'<p>Sensor: #' + selectedSensors[0].id + '</p><p><u><b>Latest Captured Value</b></u></p>';
-//							'Timestamp: ' + selectedSensors[0].timeValue + '<br>' +
-//							'Value: ' + selectedSensors[0].value + '<br></div>';
 		populateLastMetricsTab();
-		$("#sensor-info").replaceWith(updatedSensorInfo);
-
 	} else {
 		for (sensor in selectedSensors) {
-			var updatedSensorInfo = '<div id="sensor-info"><h2>Showing data for multiple sensors</h2></div>';
-			console.log('updating info of sensor');
-//			$("#sensor-info").replaceWith(updatedSensorInfo);
+			//TODO: Handle multiple selected sites
 		}
 	}
 }
