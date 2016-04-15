@@ -323,9 +323,8 @@ function generateMixedGraphs() {
 	var quadrants = [];
 	var probes = [];
 	var temperatures = [];
-	var combined = false;
-	var synched = false;
-    var showAverages = false;
+    var viewMode = $('input[name="view-mode"]:checked').val();
+    var showAverages = $('input[name="average-checkbox"]').bootstrapSwitch('state');
 
 	$.each($("input[name='Quadrant']:checked"), function(){
 		quadrants.push($(this).val());
@@ -336,59 +335,46 @@ function generateMixedGraphs() {
 	$.each($("input[name='Temp']:checked"), function(){
 		temperatures.push($(this).val());
 	});
-    
-    if ($('input[name=optradio]:checked', '#combine-synchronize').val() === 'combine') {
-        combined = true;
-    } else if ($('input[name=optradio]:checked', '#combine-synchronize').val() === 'synchronize') {
-        synched = true;
-    }
 
-    $.each($("input[name='average']:checked"), function() {
-        showAverages = true;
-    });
-
-
-    // $("input[name=average]:checked")
-    
 	var probeLabels = ['Time'];
 	var temperatureLabels = ['Time'];
 
-	// Test
-	var data1 = "2016-02-10T15:56:03.7783794,5\n" +
-				"2016-02-10T15:57:10.4915719,5\n" +
-				"2016-02-10T15:55:10.4915719,5\n" +
-				"2016-02-10T15:54:10.4915719,5\n" +
-				"2016-02-10T15:53:10.4915719,5\n" +
-				"2016-02-10T15:52:10.4915719,5\n" +
-				"2016-02-10T15:51:03.1974357,5";
-
-	var data2 = "2016-02-10T15:56:03.7783794,10\n" +
-				"2016-02-10T15:57:10.4915719,10\n" +
-				"2016-02-10T15:50:10.4915719,10\n" +
-				"2016-02-10T15:52:10.4915719,10\n" +
-				"2016-02-10T15:59:10.4915719,10\n" +
-				"2016-02-10T15:49:10.4915719,10\n" +
-				"2016-02-10T15:51:03.1974357,10";
-
-	var data3 = "2016-02-10T15:56:03.7783794,15\n" +
-				"2016-02-10T15:57:10.4915719,15\n" +
-				"2016-02-10T15:50:10.4915719,15\n" +
-				"2016-02-10T15:52:10.4915719,15\n" +
-				"2016-02-10T15:59:10.4915719,15\n" +
-				"2016-02-10T15:49:10.4915719,15\n" +
-				"2016-02-10T15:51:03.1974357,15";
-
-	var data4 = "2016-02-10T15:56:03.7783794,20\n" +
-				"2016-02-10T15:57:10.4915719,20\n" +
-				"2016-02-10T15:50:10.4915719,20\n" +
-				"2016-02-10T15:52:10.4915719,20\n" +
-				"2016-02-10T15:59:10.4915719,20\n" +
-				"2016-02-10T15:49:10.4915719,20\n" +
-				"2016-02-10T15:51:03.1974357,20";
+	// // Test
+	// var data1 = "2016-02-10T15:56:03.7783794,5\n" +
+	// 			"2016-02-10T15:57:10.4915719,5\n" +
+	// 			"2016-02-10T15:55:10.4915719,5\n" +
+	// 			"2016-02-10T15:54:10.4915719,5\n" +
+	// 			"2016-02-10T15:53:10.4915719,5\n" +
+	// 			"2016-02-10T15:52:10.4915719,5\n" +
+	// 			"2016-02-10T15:51:03.1974357,5";
+    //
+	// var data2 = "2016-02-10T15:56:03.7783794,10\n" +
+	// 			"2016-02-10T15:57:10.4915719,10\n" +
+	// 			"2016-02-10T15:50:10.4915719,10\n" +
+	// 			"2016-02-10T15:52:10.4915719,10\n" +
+	// 			"2016-02-10T15:59:10.4915719,10\n" +
+	// 			"2016-02-10T15:49:10.4915719,10\n" +
+	// 			"2016-02-10T15:51:03.1974357,10";
+    //
+	// var data3 = "2016-02-10T15:56:03.7783794,15\n" +
+	// 			"2016-02-10T15:57:10.4915719,15\n" +
+	// 			"2016-02-10T15:50:10.4915719,15\n" +
+	// 			"2016-02-10T15:52:10.4915719,15\n" +
+	// 			"2016-02-10T15:59:10.4915719,15\n" +
+	// 			"2016-02-10T15:49:10.4915719,15\n" +
+	// 			"2016-02-10T15:51:03.1974357,15";
+    //
+	// var data4 = "2016-02-10T15:56:03.7783794,20\n" +
+	// 			"2016-02-10T15:57:10.4915719,20\n" +
+	// 			"2016-02-10T15:50:10.4915719,20\n" +
+	// 			"2016-02-10T15:52:10.4915719,20\n" +
+	// 			"2016-02-10T15:59:10.4915719,20\n" +
+	// 			"2016-02-10T15:49:10.4915719,20\n" +
+	// 			"2016-02-10T15:51:03.1974357,20";
 
 	var probesData = [];
-	for(q in quadrants) {
-		for (p in probes) {
+	for(var q in quadrants) {
+		for (var p in probes) {
 			console.log(quadrants[q] + "_" + probes[p]);
 			probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
 			probeLabels.push(getStreamByName(quadrants[q] + "_" + probes[p]).name);
@@ -396,8 +382,8 @@ function generateMixedGraphs() {
 	}
 
 	var temperaturesData = [];
-	for(q in quadrants) {
-		for (t in temperatures) {
+	for(var q in quadrants) {
+		for (var t in temperatures) {
 			console.log(quadrants[q] + "_" + temperatures[t]);
 			temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).data);
 			temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
@@ -406,7 +392,7 @@ function generateMixedGraphs() {
 
 	var params = jQuery.extend({}, dygraphParams);
 
-	if (combined === true) {
+	if (viewMode === "combined") {
 
 		if(probesData.length > 0 || temperaturesData.length > 0) {
             params.title = "Combined";
@@ -477,7 +463,7 @@ function generateMixedGraphs() {
 			dygraphPlot('plot-area', 'mixed-temperatures', dataToPlot, params);
 		}
 
-        if (synched === true) {
+        if (viewMode === "synchronized") {
             var synchedDygraphs = [];
             if ('mixed-probes' in dygraphs) {
                 synchedDygraphs.push(dygraphs['mixed-probes']);

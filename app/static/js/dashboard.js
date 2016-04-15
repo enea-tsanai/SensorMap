@@ -81,7 +81,9 @@ var sliderListener = function() {
 $(document).ready(function() {
     sliderListener();
     closeToolbar(); //This ensures the proper initial state
-    
+    $("[name='average-checkbox']").bootstrapSwitch();
+
+
     //TODO: Check handheld threshhold from css
     $(window).resize(function() {
         if ($(window).width() < 845) {
