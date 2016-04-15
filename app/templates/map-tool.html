@@ -113,120 +113,189 @@
                     </div>
                 </div>
 
-                <div>
-                    <h4>Sensors Data</h4>
-                    <ul class="nav nav-tabs" id="selection-tabs">
-                        <li class="active"><a href="#all-quads" role="tab" data-toggle="tab">Quadrants</a></li>
-                        <li><a role="tab" data-toggle="tab" href="#rain">Rain</a></li>
-                    </ul>
-                </div>
-
-                <div class="tab-content">
-
-                    <div id="all-quads" role="tabpanel" class="tab-pane active">
-                        <div id="combined-graphs-menu" class="row">
-
-                            <div class="col-sm-4 combined-graphs-menu-item">
-                                <div><h6>Quadrants</h6></div>
-                                <div>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="Quadrant"
-                                               value="quad-1">1
-                                    </label>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="Quadrant"
-                                               value="quad-2">2
-                                    </label>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="Quadrant"
-                                               value="quad-3">3
-                                    </label>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="Quadrant"
-                                               value="quad-4">4
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4 combined-graphs-menu-item">
-                                <div><h6>Probes</h6></div>
-                                <div>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="Probe"
-                                               value="probe-1">1
-                                    </label>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="Probe"
-                                               value="probe-2">2
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4 combined-graphs-menu-item">
-                                <div><h6>Temp</h6></div>
-                                <div>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" name="Temp"
-                                               value="temperature-1">1
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="row">
-
-                                <div class="col-sm-4 combined-graphs-menu-item">
-                                    <div><h6>View mode</h6></div>
-                                    <form id="combine-synchronize" role="form">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="optradio" value="default" checked="checked">Separated
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="optradio" value="combine">Combined
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="optradio" value="synchronize">Synchronized
-                                        </label>
-                                    </form>
-                                </div>
-
-                                <div class="col-sm-4 combined-graphs-menu-item">
-                                    <div><h6>Show Average</h6></div>
-                                    <div>
-                                        <label class="checkbox-inline">
-                                            <input type="checkbox" name="average"
-                                                   value="average">Yes
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-4 combined-graphs-menu-item"></div>
-                            </div>
-
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">About CEER</a>
+                            </h4>
                         </div>
-                        <div class="text-center">
-                            <button id="combined-graphs-plot-button" type="button"
-                                    class="btn btn-primary btn-xs"
-                                    onclick="generateMixedGraphs()">Plot Graphs
-                            </button>
+                        <div id="collapse1" class="panel-collapse collapse in">
+                            <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
                         </div>
-                        <div id="plot-area"></div>
-                        <!--<div class="row dygraph-plot-row-wrapper">-->
-                            <!--<div class="col-sm-2 text-center"></div>-->
-                            <!--<div class="col-sm-8 text-center graph-container">-->
-                                <!--<div id="mixed-probes" style="width:100%"></div>-->
-                            <!--</div>-->
-                            <!--<div class="col-sm-2 text-center"></div>-->
-                        <!--</div>-->
-                        <!--<div class="row dygraph-plot-row-wrapper">-->
-                            <!--<div class="col-sm-2"></div>-->
-                            <!--<div class="col-sm-8 text-center graph-container">-->
-                                <!--<div id="mixed-temperatures" style="width:100%"></div>-->
-                            <!--</div>-->
-                            <!--<div class="col-sm-2"></div>-->
-                        <!--</div>-->
                     </div>
-                    <div id="rain" role="tabpanel" class="tab-pane"><p>Test</p></div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Data Plotter</a>
+                            </h4>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div>
+                                    <ul class="nav nav-tabs" id="selection-tabs">
+                                        <li class="active"><a href="#all-quads" role="tab" data-toggle="tab">Quadrants</a></li>
+                                        <li><a role="tab" data-toggle="tab" href="#rain">Rain</a></li>
+                                    </ul>
+                                </div>
+                                <div class="tab-content">
+
+                                    <div id="all-quads" role="tabpanel" class="tab-pane active">
+                                        <div id="combined-graphs-menu" class="row">
+
+                                            <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                                <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                                                    <div><h6>Quadrants</h6></div>
+                                                    <button type="button" class="btn btn-default">1</button>
+                                                    <button type="button" class="btn btn-default">2</button>
+                                                    <button type="button" class="btn btn-default">3</button>
+                                                    <button type="button" class="btn btn-default">4</button>
+                                                </div>
+                                                <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                                                    <div><h6>Probes</h6></div>
+                                                    <button type="button" class="btn btn-default">1</button>
+                                                    <button type="button" class="btn btn-default">2</button>
+                                                </div>
+                                                <div class="btn-group btn-group-sm text-center" role="group" aria-label="...">
+                                                    <div><h6>Temp</h6></div>
+                                                    <button type="button" class="btn btn-default">1</button>
+                                                </div>
+
+                                                <div class="btn-group btn-group-sm text-center">
+                                                    <div><h6>Temp</h6></div>
+                                                    <button type="button" class="btn btn-default">Sony</button>
+                                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="#">Tablet</a></li>
+                                                        <li><a href="#">Smartphone</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+
+                                            <!--<div class="col-sm-4 combined-graphs-menu-item">-->
+                                            <!--<div><h6>Quadrants</h6></div>-->
+                                            <!--<div>-->
+                                            <!--<label class="checkbox-inline">-->
+                                            <!--<input type="checkbox" name="Quadrant"-->
+                                            <!--value="quad-1">1-->
+                                            <!--</label>-->
+                                            <!--<label class="checkbox-inline">-->
+                                            <!--<input type="checkbox" name="Quadrant"-->
+                                            <!--value="quad-2">2-->
+                                            <!--</label>-->
+                                            <!--<label class="checkbox-inline">-->
+                                            <!--<input type="checkbox" name="Quadrant"-->
+                                            <!--value="quad-3">3-->
+                                            <!--</label>-->
+                                            <!--<label class="checkbox-inline">-->
+                                            <!--<input type="checkbox" name="Quadrant"-->
+                                            <!--value="quad-4">4-->
+                                            <!--</label>-->
+                                            <!--</div>-->
+                                            <!--</div>-->
+
+                                            <!--<div class="col-sm-4 combined-graphs-menu-item">-->
+                                            <!--<div><h6>Probes</h6></div>-->
+                                            <!--<div>-->
+                                            <!--<label class="checkbox-inline">-->
+                                            <!--<input type="checkbox" name="Probe"-->
+                                            <!--value="probe-1">1-->
+                                            <!--</label>-->
+                                            <!--<label class="checkbox-inline">-->
+                                            <!--<input type="checkbox" name="Probe"-->
+                                            <!--value="probe-2">2-->
+                                            <!--</label>-->
+                                            <!--</div>-->
+                                            <!--</div>-->
+
+                                            <!--<div class="col-sm-4 combined-graphs-menu-item">-->
+                                            <!--<div><h6>Temp</h6></div>-->
+                                            <!--<div>-->
+                                            <!--<label class="checkbox-inline">-->
+                                            <!--<input type="checkbox" name="Temp"-->
+                                            <!--value="temperature-1">1-->
+                                            <!--</label>-->
+                                            <!--</div>-->
+                                            <!--</div>-->
+
+                                            <!--<div class="row">-->
+
+                                            <!--<div class="col-sm-4 combined-graphs-menu-item">-->
+                                            <!--<div><h6>View mode</h6></div>-->
+                                            <!--<form id="combine-synchronize" role="form">-->
+                                            <!--<label class="radio-inline">-->
+                                            <!--<input type="radio" name="optradio" value="default" checked="checked">Separated-->
+                                            <!--</label>-->
+                                            <!--<label class="radio-inline">-->
+                                            <!--<input type="radio" name="optradio" value="combine">Combined-->
+                                            <!--</label>-->
+                                            <!--<label class="radio-inline">-->
+                                            <!--<input type="radio" name="optradio" value="synchronize">Synchronized-->
+                                            <!--</label>-->
+                                            <!--</form>-->
+                                            <!--</div>-->
+
+                                            <!--<div class="col-sm-4 combined-graphs-menu-item">-->
+                                            <!--<div><h6>Show Average</h6></div>-->
+                                            <!--<div>-->
+                                            <!--<label class="checkbox-inline">-->
+                                            <!--<input type="checkbox" name="average"-->
+                                            <!--value="average">Yes-->
+                                            <!--</label>-->
+                                            <!--</div>-->
+                                            <!--</div>-->
+
+                                            <!--<div class="col-sm-4 combined-graphs-menu-item"></div>-->
+                                            <!--</div>-->
+
+                                        </div>
+                                        <div class="text-center">
+                                            <button id="combined-graphs-plot-button" type="button"
+                                                    class="btn btn-primary btn-sm"
+                                                    onclick="generateMixedGraphs()">Plot Graphs
+                                            </button>
+                                        </div>
+                                        <hr>
+                                        <div id="plot-area"></div>
+                                        <!--<div class="row dygraph-plot-row-wrapper">-->
+                                        <!--<div class="col-sm-2 text-center"></div>-->
+                                        <!--<div class="col-sm-8 text-center graph-container">-->
+                                        <!--<div id="mixed-probes" style="width:100%"></div>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-sm-2 text-center"></div>-->
+                                        <!--</div>-->
+                                        <!--<div class="row dygraph-plot-row-wrapper">-->
+                                        <!--<div class="col-sm-2"></div>-->
+                                        <!--<div class="col-sm-8 text-center graph-container">-->
+                                        <!--<div id="mixed-temperatures" style="width:100%"></div>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-sm-2"></div>-->
+                                        <!--</div>-->
+                                    </div>
+                                    <div id="rain" role="tabpanel" class="tab-pane"><p>Test</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">More</a>
+                            </h4>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse">
+                            <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
             <!-- End of dashboard -->
         </div>
