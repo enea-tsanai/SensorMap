@@ -113,6 +113,7 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 			selectedMarker = marker;
 
 			if (selectedMarkers.indexOf(marker) == -1) {
+                loadSiteData();
 
                 // Place camera at center and on top of marker
 				if (sidebarState.localeCompare("minimized") == 0)

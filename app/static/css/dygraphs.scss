@@ -19,8 +19,9 @@
 .dygraph-toolbar {
   padding: 3px;
 }
+
 //TODO: Fix this
-.dygraph-toolbar > b {
+.dygraph-toolbar > h4 {
   @include respond-to('handhelds') {
     font-size: small;
   }
@@ -34,6 +35,15 @@
 
 .dygraph-title {
   margin-left: 56px;
+  @include respond-to('handhelds') {
+    font-size: small;
+  }
+  @include respond-to('medium-screens') {
+    font-size: medium;
+  }
+  @include respond-to('wide-screens') {
+    font-size: large;
+  }
 }
 
 body {
@@ -115,4 +125,9 @@ body {
   bottom: 0;
   right: 0;
   left: 0;
+}
+
+.dygraph-plot-and-toolbar-wrapper {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }

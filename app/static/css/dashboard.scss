@@ -79,3 +79,11 @@ $dashboard-desktop-min: 845px;
 .col-sm-4 div {
   margin: 0 auto;
 }
+
+div.dashboard-small > h4 {
+  font-size: small;
+}
+
+.dashboard-small {
+  font-size: small;
+}
