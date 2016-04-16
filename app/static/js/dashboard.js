@@ -86,7 +86,7 @@ $(document).ready(function() {
     $("[name='average-checkbox']").bootstrapSwitch();
 
     //Init datepicker
-    $('#datepicker').datepicker({endDate: "today", todayBtn: "linked"}).css("z-index", 10002);
+    $('#datepicker').datepicker({endDate: "today", todayBtn: "linked"});
 
     //TODO: Check handheld threshhold from css
     $(window).resize(function() {
