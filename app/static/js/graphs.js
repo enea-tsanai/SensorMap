@@ -325,7 +325,9 @@ function generateMixedGraphs() {
 	var temperatures = [];
     var viewMode = $('input[name="view-mode"]:checked').val();
     var showAverages = $('input[name="average-checkbox"]').bootstrapSwitch('state');
-
+    var startDate = $('#datepicker').find('input[name="start"]').datepicker("getDate");
+    var endDate = $('#datepicker').find('input[name="end"]').datepicker("getDate");
+    
 	$.each($("input[name='Quadrant']:checked"), function(){
 		quadrants.push($(this).val());
 	});
