@@ -87,6 +87,8 @@ $(document).ready(function() {
 
     //Init datepicker
     $('#datepicker').datepicker({endDate: "today", todayBtn: "linked"});
+    $('#datepicker').find('input[name="start"]').datepicker('setDate', "04/04/2016").datepicker('update');
+    $('#datepicker').find('input[name="end"]').datepicker('setDate', "today").datepicker('update');
 
     //TODO: Check handheld threshhold from css
     $(window).resize(function() {
