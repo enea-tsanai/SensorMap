@@ -134,6 +134,46 @@ var DygraphDataHelper = {
     }
 };
 
+// Dygraph Plot Toolbar buttons handlers
+var dygraphToolbar = {
+    desired_range: null,
+    approach_range: function (graph) {
+        graph.updateOptions({dateWindow: desired_range});
+    },
+    zoom: function(graph, res) {
+        var w = graph.xAxisRange();
+        desired_range = [ w[0], w[0] + res * 1000 ];
+        dygraphToolbar.approach_range(graph);
+    },
+    reset: function(graph) {
+        graph.resetZoom();
+    },
+    pan: function(graph, dir) {
+        var w = graph.xAxisRange();
+        var scale = w[1] - w[0];
+        var amount = scale * 1 * dir; // 1 is the percentage to shift
+        desired_range = [ w[0] + amount, w[1] + amount ];
+        dygraphToolbar.approach_range(graph);
+    },
+    addDygraphsToolbarListener: function() {
+        $('body').on('click', 'button[name="hour"]', function () {
+            dygraphToolbar.zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')], 3600);
+        }).on('click', 'button[name="day"]', function () {
+            dygraphToolbar.zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')], 86400);
+        }).on('click', 'button[name="week"]', function () {
+            dygraphToolbar.zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')], 604800);
+        }).on('click', 'button[name="month"]', function () {
+            dygraphToolbar.zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')], 604830 * 8640000);
+        }).on('click', 'button[name="full"]', function () {
+            dygraphToolbar.reset(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')]);
+        }).on('click', 'button[name="left"]', function () {
+            dygraphToolbar.pan(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')], -1);
+        }).on('click', 'button[name="right"]', function () {
+            dygraphToolbar.pan(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')], 1);
+        });
+    }
+};
+
 
 
 // Dygraph options
@@ -981,76 +1021,9 @@ var resizeDygraphs = function () {
     }, 300); // Need to add a small delay in order to avoid breaking the internal split-pane listener
 };
 
-var desired_range = null, animate;
-
-// Functions for dygraphs toolbar
-function approach_range(graph) {
-    graph.updateOptions({dateWindow: desired_range});
-}
-
-var zoom = function(graph, res) {
-    var w = graph.xAxisRange();
-    desired_range = [ w[0], w[0] + res * 1000 ];
-    approach_range(graph);
-};
-
-var reset = function(graph) {
-    graph.resetZoom();
-};
-
-var pan = function(graph, dir) {
-    var w = graph.xAxisRange();
-    var scale = w[1] - w[0];
-    var amount = scale * 1 * dir; // 1 is the percentage to shift
-    desired_range = [ w[0] + amount, w[1] + amount ];
-    approach_range(graph);
-};
-
-// dgs = [];
-// for (g in dygraphs) {
-//     dgs.push(dygraphs[g]);
-// }
-// Dygraph.synchronize(dgs);
-
-function addDygraphsToolbarListener() {
-    $('body').on('click', 'button[name="hour"]', function () {
-        zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
-            3600);
-    });
-
-    $('body').on('click', 'button[name="day"]', function () {
-        zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
-            86400);
-    });
-
-    $('body').on('click', 'button[name="week"]', function () {
-        zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
-            604800);
-    });
-
-    $('body').on('click', 'button[name="month"]', function () {
-        zoom(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
-            604830 * 8640000);
-    });
-
-    $('body').on('click', 'button[name="full"]', function () {
-        reset(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')]);
-    });
-
-    $('body').on('click', 'button[name="left"]', function () {
-        pan(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')],
-            -1);
-    });
-
-    $('body').on('click', 'button[name="right"]', function () {
-        pan(dygraphs[$(this).closest("form").find("div.dygraph-plot").attr('id')], 1);
-    });
-}
-
-
 $(document).ready(function() {
 	// loadSiteData();
-    addDygraphsToolbarListener();
+    dygraphToolbar.addDygraphsToolbarListener();
 
     $('div.split-pane').on('splitpaneresize', resizeDygraphs);
 
