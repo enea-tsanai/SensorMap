@@ -54,19 +54,28 @@ def get_data_stream():
 	if not is_date(period_to):
 		period_to = str(get_today())
 
-	# cursor = mongo.db.streams.find({"_id": dataStreamId})
-	cursor = mongo.db.streams.aggregate([{"$project": {"items": 1}},
-										{"$unwind": "$items"},
-										{"$match": {
-											"$and": [{"_id": data_stream_id},
-													{"items.timeValue": {
-														"$gt": period_from}},
-													{"items.timeValue": {
-														"$lt": period_to}}]}},
-										{"$group": {"_id": "$_id", "items": {
-											"$push": "$items"}}}])
+	# cursor = mongo.db.streams_test.find({"sensorId": data_stream_id})
+	# cursor = mongo.db.streams.aggregate([{"$project": {"items": 1}},
+	# 									{"$unwind": "$items"},
+	# 									{"$match": {
+	# 										"$and": [{"_id": data_stream_id},
+	# 												{"items.timeValue": {
+	# 													"$gt": period_from}},
+	# 												{"items.timeValue": {
+	# 													"$lt": period_to}}]}},
+	# 									{"$group": {"_id": "$_id", "items": {
+	# 										"$push": "$items"}}}])
 
-	records = dict(("items", record['items']) for record in cursor)
+	cursor = mongo.db.streams_test.find({'sensorId': data_stream_id, "timeValue": {"$gt": period_from}, "timeValue": {"$lt": period_to}})
+	# records = dict(("items", record['items']) for record in cursor)
+	records = dict()
+	items = list()
+
+	for record in cursor:
+		xy = {"timeValue": record['timeValue'], "value": record["value"]}
+		items.append(xy)
+
+	records["items"] = items
 	return jsonify(records)
 
 

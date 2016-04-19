@@ -113,7 +113,6 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 			selectedMarker = marker;
 
 			if (selectedMarkers.indexOf(marker) == -1) {
-                loadSiteData();
 
                 // Place camera at center and on top of marker
 				if (sidebarState.localeCompare("minimized") == 0)
@@ -123,6 +122,7 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 
 				selectedMarkers.push(selectedMarker);
 				selectedSensors.push(sensor);
+				//TODO: add local icon
 				marker.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/purple.png'});
 
                 // InfoWindow

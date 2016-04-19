@@ -1,4 +1,91 @@
+//Global vars
+var sites = [];
 var dygraphs = {};
+
+// Site Class
+function Site() {
+    this.id = "";
+    this.name = "";
+    this.description = "";
+    this.sensors = [];
+}
+
+Site.prototype.addSensor = function (sensorID) {
+    this.sensors.push(parseInt(sensorID));
+};
+
+// DygraphPlotter Class
+function DygraphPlotter() {
+    this.wrapperElement = "";
+    this.dygraphWrapper = "";
+    this.divElement = "";
+    this.plotHTML = "";
+    this.toolbar = "<div class=\"row\">\n    <div class=\"dygraph-toolbar col-xs-10 text-center\">\n        <h4>Data Level:</h4>\n        <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n            <button name=\"hour\" type=\"button\" class=\"btn btn-default btn-responsive\">Hour</button>\n            <button name=\"day\" type=\"button\" class=\"btn btn-default btn-responsive\">Day</button>\n            <button name=\"week\" type=\"button\" class=\"btn btn-default btn-responsive\">Week</button>\n            <button name=\"month\" type=\"button\" class=\"btn btn-default btn-responsive\">Month</button>\n            <button name=\"full\" type=\"button\" class=\"btn btn-default btn-responsive\">Reset</button>\n        </div>\n        <h4>Move:</h4>\n        <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n            <button name=\"left\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                <span class=\"glyphicon glyphicon-circle-arrow-left\" aria-hidden=\"true\"></span></button>\n            <button name=\"right\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                <span class=\"glyphicon glyphicon-circle-arrow-right\" aria-hidden=\"true\"></span>\n            </button>\n        </div>\n    </div>\n</div>";
+    this.hasVisibletoolbar = true;
+    this.plotParams = {
+        // "labels" : ["Time","a","b","c","d","e","f","g","h","i","j","k","l"],
+        // "connectSeparatedPoints": true,
+        "rollPeriod": 15,
+        "showLabelsOnHighlight": true,
+        "highlightSeriesOpts": {
+//		strokeBorderWidth: 1.2,
+//		"strokeWidth": 1.4,
+//		"highlightCircleSize": 5
+        },
+        "labelsDivStyles": {
+            'text-align': 'right',
+            'background': 'none'
+        },
+        axes: {
+//		y2: {"valueRange": [0, 30]}
+        },
+        "drawPoints": false, //Making this true really affects the performance
+        "title": "Test",
+        "showRoller": false,
+        "showRangeSelector": true,
+        "fillGraph": false,
+        "legend": 'always',
+        "ylabel": '',
+        "labelsDivWidth": 150,
+        "labelsSeparateLines": true,
+        "labelsUTC": true,
+        labelsDiv: document.getElementById('status')
+//	"valueRange": [],
+    };
+    this.dataToPlot = "";
+}
+
+DygraphPlotter.prototype.setWrapperElement = function (wrapperElement) {
+  this.wrapperElement = wrapperElement;
+};
+
+DygraphPlotter.prototype.updatePlotHTML = function () {
+    if (this.hasVisibletoolbar)
+        this.plotHTML = "<form id=\"" + this.dygraphWrapper + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center graph-container\">\n                    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                </div>\n                <div id=\"" + this.plotParams.labelsDiv + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n            " + this.toolbar + "\n        </div>\n    </div>\n</form>";
+    else
+        this.plotHTML = "<form id=\"" + this.dygraphWrapper + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center graph-container\">\n                    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                </div>\n                <div id=\"" + this.plotParams.labelsDiv + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n        </div>\n    </div>\n</form>";
+};
+
+DygraphPlotter.prototype.setDivElement = function (divElement) {
+    this.plotParams.labelsDiv = document.getElementById('legend-' + divElement);
+    this.dygraphWrapper = "#dygraph-plot-and-toolbar-wrapper-" + divElement;
+    this.divElement = divElement;
+    this.updatePlotHTML();
+};
+
+DygraphPlotter.prototype.plot = function () {
+    $(this.dygraphWrapper).remove();
+    $('#' + this.wrapperElm).append(this.plotHTML);
+    adjustDygraphsPlotAreaHTMLonResize();
+
+    //TODO: Check the following: may be undifined
+    params.labelsDiv = document.getElementById('legend-' + this.divElement);
+    dygraphs[divElement] = new Dygraph(document.getElementById(this.divElement), this.data, this.plotParams);
+    dygraphs[divElement].resize();
+};
+
+
+
 // Dygraph options
 var gWidthRatioWhenMaximized = 0.7;
 var gWidthRatioWhenMinimized = 1;
@@ -265,6 +352,7 @@ function reduceData(strData, numOfLines, rev) {
 }
 
 function populateLastMetricsTab() {
+
 	var probesData = [];
 	var probesLabels = ['Time'];
 
@@ -274,8 +362,8 @@ function populateLastMetricsTab() {
 	var quadrants = ["quad-1", "quad-2", "quad-3", "quad-4"];
 	var probes = ["probe-1", "probe-2"];
 
-	for(q in quadrants) {
-		for (p in probes) {
+	for(var q in quadrants) {
+		for (var p in probes) {
 			console.log(quadrants[q] + "_" + probes[p]);
 			probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
 			probesLabels.push(getStreamByName(quadrants[q] + "_" + probes[p]).name);
@@ -287,13 +375,12 @@ function populateLastMetricsTab() {
     var temperatures = ["temperature-1"];
 
 	for(q in quadrants) {
-		for (t in temperatures) {
+		for (var t in temperatures) {
 			console.log(quadrants[q] + "_" + temperatures[t]);
 			temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).data);
 			temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
 		}
 	}
-
 
     params.title = "Combined";
     params.connectSeparatedPoints = true;
@@ -327,7 +414,7 @@ function generateMixedGraphs() {
     var showAverages = $('input[name="average-checkbox"]').bootstrapSwitch('state');
     var startDate = $('#datepicker').find('input[name="start"]').datepicker("getDate");
     var endDate = $('#datepicker').find('input[name="end"]').datepicker("getDate");
-    
+
 	$.each($("input[name='Quadrant']:checked"), function(){
 		quadrants.push($(this).val());
 	});
