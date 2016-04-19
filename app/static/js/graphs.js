@@ -2,6 +2,26 @@
 var sites = [];
 var dygraphs = {};
 
+// Helper functions
+var helperFunctions = {
+    call: function(fn) {
+        fn();
+    },
+    concatenateUrlAndParams: function(url, requestParams) {
+        if (!jQuery.isEmptyObject(requestParams)) {
+            var params = "";
+            for(p in requestParams) {
+                params += p + "=" + requestParams[p] + "&"
+            }
+            if (url.slice(-1) === "/") {
+                url = url.slice(0, -1);
+            }
+            url += "?" + params.slice(0, -1);
+        }
+        return url;
+    }
+};
+
 // Sensor Class
 function Sensor() {
     this.id = "";
@@ -106,13 +126,9 @@ DygraphPlotter.prototype.plot = function () {
 };
 
 // DygraphDataHelper object
-function call(fn) {
-    fn();
-}
-
 var DygraphDataHelper = {
     fetchData: function (url, requestParams) {
-        var _url = concatenateUrlAndParams("/getDataStream/", requestParams);
+        var _url = helperFunctions.concatenateUrlAndParams("/getDataStream/", requestParams);
         return $.ajax({
             url: _url,
             dataType: "json"
@@ -219,22 +235,6 @@ var totalCount = 0;
 /*Quadrants*/
 var localFetchMode = true;
 
-//var quad-1_probe-1 = {name: "quad-1_probe-1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
-//var quad-1_probe-2 = {name: "quad-1_probe-2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
-//var quad-1_temperature-1 = {name: "quad-1_temperature-1", labels: ["Date", "Temperature C"], data: ""};
-//
-//var quad-2_probe-1 = {name: "quad-2_probe-1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
-//var quad-2_probe-2 = {name: "quad-2_probe-2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
-//var quad-2_temperature-1 = {name: "quad-2_temperature-1", labels: ["Date", "Temperature C"], data: ""};
-//
-//var quad-3_probe-1 = {name: "quad-3_probe-1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
-//var quad-3_probe-2 = {name: "quad-3_probe-2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
-//var quad-3_temperature-1 = {name: "quad-3_temperature-1", labels: ["Date", "Temperature C"], data: ""};
-//
-//var quad-4_probe-1 = {name: "quad-4_probe-1", probe: "Probe 1", labels: ["Date", "Cubic Meters"], data: ""};
-//var quad-4_probe-2 = {name: "quad-4_probe-2", probe: "Probe 2", labels: ["Date", "Cubic Meters"], data: ""};
-//var quad-4_temperature-1 = {name: "quad-4_temperature-1", labels: ["Date", "Temperature C"], data: ""};
-
 var streams = [
 	{streamId: 18704, name: "quad-1_probe-1", quad: "1", probe: "1", labels: ["Date", "Cubic Meters"], data: ""},
 	{streamId: 18711, name: "quad-1_probe-2", quad: "1", probe: "2", labels: ["Date", "Cubic Meters"], data: ""},
@@ -272,7 +272,7 @@ function getStreamData(siteData, url, requestParams) {
 //	setTimeout(function(){ stopLoading(); }, 1000);
 
 	if (localFetchMode === true) {
-		var url_ = concatenateUrlAndParams("/getDataStream/", requestParams);
+		var url_ = helperFunctions.concatenateUrlAndParams("/getDataStream/", requestParams);
 		$.ajax({
 			url: url_,
 			dataType: "json"
@@ -282,7 +282,7 @@ function getStreamData(siteData, url, requestParams) {
 			});
 		});
 	} else {
-		var url_ = concatenateUrlAndParams(url, requestParams)
+		var url_ = helperFunctions.concatenateUrlAndParams(url, requestParams)
 		$.ajax({
 			url: url_,
 			dataType: "json"
@@ -383,20 +383,6 @@ function startLoading() {
 
 function stopLoading() {
 	$("#loader").remove();
-}
-
-function concatenateUrlAndParams(url, requestParams) {
-	if (!jQuery.isEmptyObject(requestParams)) {
-		var params = "";
-		for(p in requestParams) {
-			params += p + "=" + requestParams[p] + "&"
-		}
-		if (url.slice(-1) === "/") {
-			url = url.slice(0, -1);
-		}
-		url += "?" + params.slice(0, -1);
-	}
-	return url;
 }
 
 function getStreamByID(id) {
