@@ -2,6 +2,27 @@
 var sites = [];
 var dygraphs = {};
 
+// Sensor Class
+function Sensor() {
+    this.id = "";
+    this.name = "";
+    this.description = "";
+    this.labels = [];
+    this.data = {};
+}
+
+Sensor.prototype.getData = function () {
+    return this.data;
+};
+
+Sensor.prototype.setData = function (data) {
+    this.data = data;
+};
+
+Sensor.prototype.addData = function (newData) {
+    jQuery.extend(this.data, newData);
+};
+
 // Site Class
 function Site() {
     this.id = "";
@@ -82,6 +103,35 @@ DygraphPlotter.prototype.plot = function () {
     params.labelsDiv = document.getElementById('legend-' + this.divElement);
     dygraphs[divElement] = new Dygraph(document.getElementById(this.divElement), this.data, this.plotParams);
     dygraphs[divElement].resize();
+};
+
+// DygraphDataHelper object
+function call(fn) {
+    fn();
+}
+
+var DygraphDataHelper = {
+    fetchData: function (url, requestParams) {
+        var _url = concatenateUrlAndParams("/getDataStream/", requestParams);
+        return $.ajax({
+            url: _url,
+            dataType: "json"
+        });
+    },
+    onDoneFetchingData: function (fetchingFunctions, dataHandlingFunctions) {
+        $.when(fetchingFunctions.forEach(call)).done(function(dataHandlingFunctions) {
+            // Parse results
+            // the code here will be executed when all four ajax requests resolve.
+            // a1, a2, a3 and a4 are lists of length 3 containing the response text,
+            // status, and jqXHR object for each of the four ajax calls respectively.
+        });
+    },
+    toDygraphPlotData: function () {
+
+    },
+    toDygraphPlotAvergeData: function () {
+
+    }
 };
 
 
