@@ -63,6 +63,7 @@ function DygraphPlotter() {
     this.plotHTML = "";
     this.toolbar = "<div class=\"row\">\n    <div class=\"dygraph-toolbar col-xs-10 text-center\">\n        <h4>Data Level:</h4>\n        <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n            <button name=\"hour\" type=\"button\" class=\"btn btn-default btn-responsive\">Hour</button>\n            <button name=\"day\" type=\"button\" class=\"btn btn-default btn-responsive\">Day</button>\n            <button name=\"week\" type=\"button\" class=\"btn btn-default btn-responsive\">Week</button>\n            <button name=\"month\" type=\"button\" class=\"btn btn-default btn-responsive\">Month</button>\n            <button name=\"full\" type=\"button\" class=\"btn btn-default btn-responsive\">Reset</button>\n        </div>\n        <h4>Move:</h4>\n        <div class=\"btn-group\" role=\"group\" aria-label=\"...\">\n            <button name=\"left\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                <span class=\"glyphicon glyphicon-circle-arrow-left\" aria-hidden=\"true\"></span></button>\n            <button name=\"right\" type=\"button\" class=\"btn btn-default btn-responsive\">\n                <span class=\"glyphicon glyphicon-circle-arrow-right\" aria-hidden=\"true\"></span>\n            </button>\n        </div>\n    </div>\n</div>";
     this.hasVisibletoolbar = true;
+    this.hasVisibleSpinner = true;
     this.plotParams = {
         // "labels" : ["Time","a","b","c","d","e","f","g","h","i","j","k","l"],
         // "connectSeparatedPoints": true,
@@ -125,30 +126,71 @@ DygraphPlotter.prototype.plot = function () {
     dygraphs[divElement].resize();
 };
 
-// DygraphDataHelper object
-var DygraphDataHelper = {
-    fetchData: function (url, requestParams) {
-        var _url = helperFunctions.concatenateUrlAndParams("/getDataStream/", requestParams);
-        return $.ajax({
-            url: _url,
-            dataType: "json"
-        });
-    },
-    onDoneFetchingData: function (fetchingFunctions, dataHandlingFunctions) {
-        $.when(fetchingFunctions.forEach(call)).done(function(dataHandlingFunctions) {
-            // Parse results
-            // the code here will be executed when all four ajax requests resolve.
-            // a1, a2, a3 and a4 are lists of length 3 containing the response text,
-            // status, and jqXHR object for each of the four ajax calls respectively.
-        });
-    },
-    toDygraphPlotData: function () {
 
-    },
-    toDygraphPlotAvergeData: function () {
+DygraphPlotter.prototype._requestData = function () {
+    this.showSpinner();
+    // this.graphDataProvider.loadData("Series-A", null, null, this.detailStartDateTm, this.detailEndDateTm, this.$graphCont.width());
+};
 
+DygraphPlotter.prototype.showSpinner = function () {
+    if (this.hasVisibleSpinner === true) {
+        if (this.spinner == null) {
+            var opts = {
+                lines: 13, // The number of lines to draw
+                length: 7, // The length of each line
+                width: 6, // The line thickness
+                radius: 10, // The radius of the inner circle
+                corners: 1, // Corner roundness (0..1)
+                rotate: 0, // The rotation offset
+                color: '#000', // #rgb or #rrggbb
+                speed: 1, // Rounds per second
+                trail: 60, // Afterglow percentage
+                shadow: false, // Whether to render a shadow
+                hwaccel: false, // Whether to use hardware acceleration
+                className: 'spinner', // The CSS class to assign to the spinner
+                zIndex: 2e9, // The z-index (defaults to 2000000000)
+                top: 'auto', // Top position relative to parent in px
+                left: 'auto' // Left position relative to parent in px
+            };
+            var target = this.$graphCont.parent().get(0);
+            this.spinner = new Spinner(opts);
+            this.spinner.spin(target);
+            this.spinnerIsSpinning = true;
+        } else {
+            if (this.spinnerIsSpinning === false) { //else already spinning
+                this.spinner.spin(this.divElement);
+                this.spinnerIsSpinning = true;
+            }
+        }
+    } else if (this.spinner != null && this.hasVisibleSpinner === false) {
+        this.spinner.stop();
+        this.spinnerIsSpinning = false;
     }
 };
+
+
+// DygraphDataProvider object
+function DygraphDataProvider() {
+
+}
+
+DygraphDataProvider.prototype.fetchData = function (url, requestParams) {
+    var _url = helperFunctions.concatenateUrlAndParams("/getDataStream/", requestParams);
+    return $.ajax({
+        url: _url,
+        dataType: "json"
+    });
+};
+DygraphDataProvider.prototype.onDoneFetchingData = function (fetchingFunctions, dataHandlingFunctions) {
+    $.when(fetchingFunctions.forEach(call)).done(function(dataHandlingFunctions) {
+        // Parse results
+        // the code here will be executed when all four ajax requests resolve.
+        // a1, a2, a3 and a4 are lists of length 3 containing the response text,
+        // status, and jqXHR object for each of the four ajax calls respectively.
+    });
+};
+DygraphDataProvider.prototype.toDygraphPlotData = function () {};
+DygraphDataProvider.prototype.toDygraphPlotAvergeData = function () {};
 
 // Dygraph Plot Toolbar buttons handlers
 var dygraphToolbar = {
