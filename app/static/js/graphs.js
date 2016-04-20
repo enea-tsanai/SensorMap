@@ -1,4 +1,5 @@
 //Global vars
+var currentSite = 1;
 var sites = [];
 var dygraphs = {};
 
@@ -57,6 +58,7 @@ Site.prototype.addSensor = function (sensorID) {
 
 // DygraphPlotter Class
 function DygraphPlotter() {
+    this.dataProvider = new DygraphDataProvider();
     this.wrapperElement = "";
     this.dygraphWrapper = "";
     this.divElement = "";
@@ -115,17 +117,18 @@ DygraphPlotter.prototype.setDivElement = function (divElement) {
     this.updatePlotHTML();
 };
 
-DygraphPlotter.prototype.plot = function () {
+DygraphPlotter.prototype.appendHTML = function() {
     $(this.dygraphWrapper).remove();
-    $('#' + this.wrapperElm).append(this.plotHTML);
+    $('#' + this.wrapperElement).append(this.plotHTML);
     adjustDygraphsPlotAreaHTMLonResize();
+};
 
+DygraphPlotter.prototype.plot = function () {
     //TODO: Check the following: may be undifined
     params.labelsDiv = document.getElementById('legend-' + this.divElement);
     dygraphs[divElement] = new Dygraph(document.getElementById(this.divElement), this.data, this.plotParams);
     dygraphs[divElement].resize();
 };
-
 
 DygraphPlotter.prototype._requestData = function () {
     this.showSpinner();
@@ -136,23 +139,28 @@ DygraphPlotter.prototype.showSpinner = function () {
     if (this.hasVisibleSpinner === true) {
         if (this.spinner == null) {
             var opts = {
-                lines: 13, // The number of lines to draw
-                length: 7, // The length of each line
-                width: 6, // The line thickness
-                radius: 10, // The radius of the inner circle
-                corners: 1, // Corner roundness (0..1)
-                rotate: 0, // The rotation offset
-                color: '#000', // #rgb or #rrggbb
-                speed: 1, // Rounds per second
-                trail: 60, // Afterglow percentage
-                shadow: false, // Whether to render a shadow
-                hwaccel: false, // Whether to use hardware acceleration
-                className: 'spinner', // The CSS class to assign to the spinner
-                zIndex: 2e9, // The z-index (defaults to 2000000000)
-                top: 'auto', // Top position relative to parent in px
-                left: 'auto' // Left position relative to parent in px
+                lines: 15 // The number of lines to draw
+                , length: 6 // The length of each line
+                , width: 14 // The line thickness
+                , radius: 32 // The radius of the inner circle
+                , scale: 0.75 // Scales overall size of the spinner
+                , corners: 0.6 // Corner roundness (0..1)
+                , color: '#000' // #rgb or #rrggbb or array of colors
+                , opacity: 0.4 // Opacity of the lines
+                , rotate: 0 // The rotation offset
+                , direction: 1 // 1: clockwise, -1: counterclockwise
+                , speed: 1 // Rounds per second
+                , trail: 100 // Afterglow percentage
+                , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+                , zIndex: 2e9 // The z-index (defaults to 2000000000)
+                , className: 'spinner' // The CSS class to assign to the spinner
+                , top: '50%' // Top position relative to parent
+                , left: '50%' // Left position relative to parent
+                , shadow: false // Whether to render a shadow
+                , hwaccel: false // Whether to use hardware acceleration
+                , position: 'absolute' // Element positioning
             };
-            var target = this.$graphCont.parent().get(0);
+            var target = document.getElementById(this.dygraphWrapper);
             this.spinner = new Spinner(opts);
             this.spinner.spin(target);
             this.spinnerIsSpinning = true;
@@ -168,28 +176,62 @@ DygraphPlotter.prototype.showSpinner = function () {
     }
 };
 
+DygraphPlotter.prototype.stopSpinner = function () {
+    console.log('test spinner');
+    if (this.spinner != undefined)
+        this.spinner.stop();
+};
 
-// DygraphDataProvider object
+
+// DygraphDataProvider class
 function DygraphDataProvider() {
-
+    this.dataCallbacks = $.Callbacks();
+    this.lastRangeReqNum = null;
 }
 
-DygraphDataProvider.prototype.fetchData = function (url, requestParams) {
-    var _url = helperFunctions.concatenateUrlAndParams("/getDataStream/", requestParams);
+DygraphDataProvider.prototype.load = function (sensorIds, dateWindow) {
+    var requestParams = {
+        "key": "z5ywCWZ4rLh3lu*3i234StqF"
+    };
+    for (sId in sensorIds) {
+        requestParams.dataStreamId = sensorIdsensorIds[sId];
+        this.makeRequest("/getDataStream/", requestParams);
+        // if (sites[currentSite].getSensor(sensorIds[sensorId]).
+    }
+};
+
+DygraphDataProvider.prototype.makeRequest = function (url) {
     return $.ajax({
-        url: _url,
-        dataType: "json"
+        url: url,
+        dataType: "json",
+        success: function (response) {
+            // Sites[currentSite].sensor[sId].data.push(response.items);
+            console.log("Success function works");
+        }
     });
 };
-DygraphDataProvider.prototype.onDoneFetchingData = function (fetchingFunctions, dataHandlingFunctions) {
-    $.when(fetchingFunctions.forEach(call)).done(function(dataHandlingFunctions) {
-        // Parse results
-        // the code here will be executed when all four ajax requests resolve.
-        // a1, a2, a3 and a4 are lists of length 3 containing the response text,
-        // status, and jqXHR object for each of the four ajax calls respectively.
+
+DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
+    // var requests = [
+    //     new this.makeRequest("/getDataStream?dataStreamId=18704"),
+    //     new this.makeRequest("/getDataStream?dataStreamId=18711"),
+    //     new this.makeRequest("/getDataStream?dataStreamId=18718")
+    // ];
+    var requests = [];
+    for (var id in ids) {
+        requests.push(new this.makeRequest("/getDataStream?dataStreamId=" + ids[id] + "&periodFrom=" + dateWindow.periodFrom + "&periodTo=" + dateWindow.periodTo));
+    }
+    return requests;
+};
+
+DygraphDataProvider.prototype.onDoneFetchingData = function (ids, dateWindow, dataHandlingFunctions) {
+    $.when.apply($, this.generateRequests(ids, dateWindow)).done(function() {
+        dataHandlingFunctions.forEach(helperFunctions.call);
     });
 };
+
 DygraphDataProvider.prototype.toDygraphPlotData = function () {};
+
 DygraphDataProvider.prototype.toDygraphPlotAvergeData = function () {};
 
 // Dygraph Plot Toolbar buttons handlers
@@ -470,56 +512,83 @@ function reduceData(strData, numOfLines, rev) {
 }
 
 function populateLastMetricsTab() {
+    var g = new DygraphPlotter();
+    g.plotParams.title = "Latest captured data for Soil Moisture Probes";
+    g.plotParams.labels = ['Time', 'Moisture', 'Temperature (C)'];
+    g.plotParams.ylabel = 'Moisture';
+    g.plotParams.y2label = 'Temperature';
+    g.plotParams.series = {};
+    g.plotParams.series["Temperature (C)"] = {axis: 'y2'};
+    g.plotParams.connectSeparatedPoints = true;
+    g.plotParams.labelsSeparateLines = true;
+    g.plotParams.customBars = true;
+    g.plotParams.highlightSeriesOpts = '';
+    g.plotParams.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
+    g.hasVisibletoolbar = false;
+    g.setWrapperElement("LMetrics");
+    g.setDivElement("l-metrics");
+    g.appendHTML();
+    g.showSpinner();
 
-	var probesData = [];
-	var probesLabels = ['Time'];
+    var sensorsInGraph = [18704,
+                        18711,
+                        18718,
+                        18725,
+                        18732,
+                        18739,
+                        18746,
+                        18753
+                        ];
 
-	var params = jQuery.extend({}, dygraphParams);
-	params.title = "Soil Moisture Probes";
+    var dateWindow = [];
 
-	var quadrants = ["quad-1", "quad-2", "quad-3", "quad-4"];
-	var probes = ["probe-1", "probe-2"];
+    g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: "2016-04-04T00:00:00", periodTo: "2016-04-05T00:00:00"},
+        [function() {return test("callback1");},
+        function() {return test("callback2");},
+        function() {return g.stopSpinner();}
+    ]);
 
-	for(var q in quadrants) {
-		for (var p in probes) {
-			console.log(quadrants[q] + "_" + probes[p]);
-			probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
-			probesLabels.push(getStreamByName(quadrants[q] + "_" + probes[p]).name);
-		}
-	}
+    //
+    //
+    // var probesData = [];
+    // var probesLabels = ['Time'];
+    //
+    // var quadrants = ["quad-1", "quad-2", "quad-3", "quad-4"];
+    // var probes = ["probe-1", "probe-2"];
+    //
+    // for(var q in quadrants) {
+		// for (var p in probes) {
+		// 	console.log(quadrants[q] + "_" + probes[p]);
+		// 	probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
+		// 	probesLabels.push(getStreamByName(quadrants[q] + "_" + probes[p]).name);
+		// }
+    // }
+    //
+    // var temperaturesData = [];
+    // var temperatureLabels = ['Time'];
+    // var temperatures = ["temperature-1"];
+    //
+    // for(q in quadrants) {
+		// for (var t in temperatures) {
+		// 	console.log(quadrants[q] + "_" + temperatures[t]);
+		// 	temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).data);
+		// 	temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
+		// }
+    // }
+    //
+    // console.log(probesData);
+    // var d1 = getAverageData(probesData);
+    // var d2 = getAverageData(temperaturesData);
+    // var dataToPlot = aggregateDataMod([d1, d2]);
 
-	var temperaturesData = [];
-    var temperatureLabels = ['Time'];
-    var temperatures = ["temperature-1"];
-
-	for(q in quadrants) {
-		for (var t in temperatures) {
-			console.log(quadrants[q] + "_" + temperatures[t]);
-			temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).data);
-			temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
-		}
-	}
-
-    params.title = "Combined";
-    params.connectSeparatedPoints = true;
-    params.labelsSeparateLines = true;
-    params.series = {};
-    params.ylabel = 'Moisture';
-    params.y2label = 'Temperature';
-
-	console.log(probesData);
-    var d1 = getAverageData(probesData);
-    var d2 = getAverageData(temperaturesData);
-    var dataToPlot = aggregateDataMod([d1, d2]);
-    params.labels = ['Time', 'Moisture', 'Temperature (C)'];
-    params.series['Temperature (C)'] = {axis: 'y2'};
-    params.customBars = true;
-    params.highlightSeriesOpts = '';
-    params.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
 
 	// dataToPlot = reduceData(dataToPlot, 4000, true);
 
-	dygraphPlotLM("LMetrics", 'l-metrics', dataToPlot, params);
+	// dygraphPlotLM("LMetrics", 'l-metrics', dataToPlot, g.plotParams);
+}
+
+function test(a) {
+    console.log(a);
 }
 
 function generateMixedGraphs() {

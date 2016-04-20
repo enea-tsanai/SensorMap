@@ -1266,7 +1266,7 @@
 							var join = arrayNotation[0].substring(1, arrayNotation[0].length-1);
 							data = (join==="") ? out : out.join(join);
 	
-							// The inner call to fetchData has already traversed through the remainder
+							// The inner call to makeRequest has already traversed through the remainder
 							// of the source requested, so we exit from the loop
 							break;
 						}
