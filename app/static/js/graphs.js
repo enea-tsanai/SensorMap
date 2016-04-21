@@ -72,8 +72,9 @@ Sensor.prototype.setData = function (data) {
     this.data = data;
 };
 
+//TODO: perform double concat for double ranges to avoid sorting
 Sensor.prototype.addData = function (newData) {
-    jQuery.extend(this.data, newData);
+    this.data = this.data.concat(newData);
 };
 
 //TODO: test if null causes problems in date filtering.. so far it works
@@ -270,9 +271,9 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
             url: helperFunctions.concatenateUrlAndParams(url, params),
             dataType: "json",
             success: function (response) {
-
-                helperFunctions.getIndexSite().getSensorById(params.dataStreamId).data = response.items;
-                // console.log(helperFunctions.getIndexSite().getSensorById(params.dataStreamId));
+                console.log(response.items);
+                helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response.items);
+                console.log(helperFunctions.getIndexSite().getSensorById(params.dataStreamId));
             }
         });
     }
