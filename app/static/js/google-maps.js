@@ -48,6 +48,18 @@ function initialize() {
 	});
 }
 
+function loadSites() {
+    return $.ajax({
+        url: "/getSites",
+        dataType: "json",
+        success: function (results) {
+            $.each(results, function (i, site) {
+                sites.push($.extend(new Site(), site));
+            });
+        }
+    });
+}
+
 /*
  * Populate sites on map
 */
@@ -57,31 +69,45 @@ function showSites() {
 	var result = dummySites;
 	var indx = 0;
 
-	$.each(result.Items, function (i, sensor) {
-		Sensors.push(sensor);
+    $.when(loadSites()).done(function(results) {
 
-		var coordinate = new google.maps.LatLng(dummyCoords[indx].x, dummyCoords[indx].y);
-		sensorArray.push(coordinate);
+        for (var s in sites) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(sites[s].location.x, sites[s].location.y),
+                map: map,
+                // label: 'A',
+                icon: {url: 'http://maps.google.com/mapfiles/ms/micons/red.png'},
+                //animation: google.maps.Animation.DROP,
+                title: sites[s].name
+            });
 
-		var marker = new google.maps.Marker({
-			position: coordinate,
-			map: map,
-			// label: 'A',
-			icon: {url: 'http://maps.google.com/mapfiles/ms/micons/red.png'},
-			//animation: google.maps.Animation.DROP,
-			title: "SensorID:"
-		});
+            markers.push(marker);
+            marker.setMap(map);
+            bindInfoWindow(marker, map, infowindow, sites[s]);
+        }
 
-		markers.push(marker);
-		marker.setMap(map);
-
-		bindInfoWindow(marker, map, infowindow, sensor);
-		indx++;
-	});
-		/*******TODO
-		  -Make this more robust and create markers based on Database and names... might need another AJAX call.
-		  -Also allow for marker array to be checked first for cached markers to be added before performing AJAX call.
-		********/
+        // $.each(result.Items, function (i, sensor) {
+        //     Sensors.push(sensor);
+        //
+        //     var coordinate = new google.maps.LatLng(dummyCoords[indx].x, dummyCoords[indx].y);
+        //     sensorArray.push(coordinate);
+        //
+        //     var marker = new google.maps.Marker({
+        //         position: coordinate,
+        //         map: map,
+        //         // label: 'A',
+        //         icon: {url: 'http://maps.google.com/mapfiles/ms/micons/red.png'},
+        //         //animation: google.maps.Animation.DROP,
+        //         title: "SensorID:"
+        //     });
+        //
+        //     markers.push(marker);
+        //     marker.setMap(map);
+        //
+        //     bindInfoWindow(marker, map, infowindow, sensor);
+        //     indx++;
+        // });
+    });
 }
 
 var ctrlPressed = false;
@@ -125,10 +151,11 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 				//TODO: add local icon
 				marker.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/purple.png'});
 
+                console.log(sensor);
                 // InfoWindow
                 //TODO: Id of ballon should be the site id
                 //TODO: Include this in Dom elements
-                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + sensor.Name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n            <li><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "AboutSite" class="about-site tab-pane fade in active">\n            ' + sensor.Description + '\n        </div>\n        <div id = "LMetrics" class="l-metrics tab-pane fade"></div>\n    </div>\n</div>';
+                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + sensor.name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n            <li><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "AboutSite" class="about-site tab-pane fade in active">\n            ' + sensor.description + '\n        </div>\n        <div id = "LMetrics" class="l-metrics tab-pane fade"></div>\n    </div>\n</div>';
                 infowindow.setContent(windowContent);
                 infowindow.open(map, marker);
                 populateLastMetricsTab();

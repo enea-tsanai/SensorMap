@@ -2,6 +2,7 @@
 from flask import render_template, jsonify, request
 from app import app
 from app import mongo
+import json
 from bson import Binary, Code, json_util
 from bson.json_util import dumps, loads
 # import datetime
@@ -40,6 +41,13 @@ def findSensors():
 
 	return jsonify(records)
 
+@app.route('/getSites', methods=['POST', 'GET'])
+def get_sites():
+	# cursor = mongo.db.sites.find()
+	# records = dict((str(record['_id']), record) for record in cursor)
+
+	docs_list = list(mongo.db.sites.find())
+	return json.dumps(docs_list, default=json_util.default)
 
 @app.route('/getDataStream', methods=['POST', 'GET'])
 def get_data_stream():
