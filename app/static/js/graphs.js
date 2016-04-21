@@ -5,7 +5,32 @@ var dygraphs = {};
 
 // Helper functions
 var helperFunctions = {
-    getIndexSite: function () {
+    /*
+     * Returns true of rangeA fully contains rangeB
+     */
+    datePeriodContains: function(rangeA, rangeB) {
+        console.log("rangeA: " + rangeA + ", rangeB: " + rangeB);
+        return rangeB[0] >= rangeA[0] && rangeB[1] <= rangeA[1];
+    },
+    /*
+     * Returns the parts of rangeB not contained in rangeA
+     */
+    getExcludedDatePeriods: function (rangeA, rangeB) {
+        var excludedDatePeriods = [];
+        if (!helperFunctions.datePeriodContains(rangeA, rangeB)) {
+            if (rangeA[0] > rangeB[0])
+                excludedDatePeriods.push = [rangeB[0], rangeA[0]];
+            if (rangeA[1] < rangeB[1])
+                excludedDatePeriods.push = [rangeA[1], rangeB[1]];
+        }
+        return excludedDatePeriods;
+    },
+    toArrayOfArrays: function(arrayOfObjects) {
+        return $.map(arrayOfObjects, function(value, index) {
+            return [value];
+        });
+    },
+    getIndexSite: function() {
         for (s in sites) {
             if (sites[s]._id === indexSite)
                 return sites[s];
@@ -49,6 +74,10 @@ Sensor.prototype.setData = function (data) {
 
 Sensor.prototype.addData = function (newData) {
     jQuery.extend(this.data, newData);
+};
+
+Sensor.prototype.getDateRange = function () {
+  return this.data.length ? [this.data[this.data.length - 1].timeValue, this.data[0].timeValue]: null;
 };
 
 // Site Class
@@ -212,17 +241,38 @@ DygraphDataProvider.prototype.load = function (sensorIds, dateWindow) {
 };
 
 DygraphDataProvider.prototype.makeRequest = function (url, params) {
-    console.log(helperFunctions.getIndexSite().getSensorById(params.dataStreamId));
-    if (helperFunctions.getIndexSite().getSensorById(params.dataStreamId).data != undefined) {
+
+    var indexSensor = helperFunctions.getIndexSite().getSensorById(params.dataStreamId);
+    console.log(indexSensor);
+    console.log(indexSensor.getDateRange());
+    //Data is already there for the requested date period
+    if (indexSensor.data.length && helperFunctions.datePeriodContains(indexSensor.getDateRange(),
+            [params.periodFrom, params.periodTo])) {
+        console.log("RESOLVED");
         return $.Deferred().resolve();
     }
     else {
+        //There is already some data. Get the excluded dates
+        if (indexSensor.data.length) {
+            var excludedDatesToRequest = helperFunctions.getExcludedDatePeriods(indexSensor.getDateRange(),
+                [params.periodFrom, params.periodTo]);
+
+            if (excludedDatesToRequest.length) {
+                params.PeriodFrom = excludedDatesToRequest[0][0];
+                params.PeriodTo = excludedDatesToRequest[0][1];
+                if (excludedDatesToRequest[1] != undefined) {
+                    params.rPeriodFrom = excludedDatesToRequest[1][0];
+                    params.rPeriodTo = excludedDatesToRequest[1][1];
+                }
+            }
+        }
         return $.ajax({
             url: helperFunctions.concatenateUrlAndParams(url, params),
             dataType: "json",
             success: function (response) {
+
                 helperFunctions.getIndexSite().getSensorById(params.dataStreamId).data = response.items;
-                console.log(helperFunctions.getIndexSite().getSensorById(params.dataStreamId));
+                // console.log(helperFunctions.getIndexSite().getSensorById(params.dataStreamId));
             }
         });
     }
@@ -236,7 +286,8 @@ DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
     // ];
     var requests = [];
     for (var id in ids) {
-        requests.push(new this.makeRequest("/getDataStream", {"dataStreamId": ids[id], "periodFrom": dateWindow.periodFrom, "periodTo": dateWindow.periodTo}));
+        requests.push(new this.makeRequest("/getDataStream",
+            {"dataStreamId": ids[id], "periodFrom": dateWindow.periodFrom, "periodTo": dateWindow.periodTo}));
     }
     return requests;
 };
@@ -537,19 +588,21 @@ function populateLastMetricsTab() {
     g.appendHTML();
     g.showSpinner();
 
-    var sensorsInGraph = [18704,
-                        // 18711,
-                        // 18718,
-                        // 18725,
-                        // 18732,
-                        // 18739,
-                        // 18746,
-                        18753
-                        ];
+    // var sensorsInGraph = [18704,
+    //                     // 18711,
+    //                     // 18718,
+    //                     // 18725,
+    //                     // 18732,
+    //                     // 18739,
+    //                     // 18746,
+    //                     18753
+    //                     ];
+
+    var sensorsInGraph = [16293];
 
     var dateWindow = [];
 
-    g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: "2016-04-04T00:00:00", periodTo: "2016-04-05T00:00:00"},
+    g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: "2016-04-07T00:00:00", periodTo: "2016-04-08T00:00:00"},
         [function() {return test("callback1");},
         function() {return test("callback2");},
         function() {return g.stopSpinner();}

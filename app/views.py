@@ -55,12 +55,29 @@ def get_data_stream():
 
 	period_from = str(request.args.get('periodFrom', ''))
 	period_to = str(request.args.get('periodTo', ''))
+	rperiod_from = str(request.args.get('rperiodFrom', ''))
+	rperiod_to = str(request.args.get('rperiodTo', ''))
 
 	if not is_date(period_from):
 		period_from = str(get_last_month())
 
 	if not is_date(period_to):
 		period_to = str(get_today())
+
+	if is_date(rperiod_from) and is_date(rperiod_to):
+		cursor = mongo.db.streams_test.find({'sensorId': data_stream_id,
+											 "timeValue": {"$gt": period_from},
+											 "timeValue": {"$lt": period_to},
+											 "timeValue": {"$gt": rperiod_from},
+											 "timeValue": {"$lt": rperiod_to}
+											 })
+	else:
+		print period_from
+		print period_to
+		cursor = mongo.db.streams_test.find({'sensorId': data_stream_id,
+											 "timeValue": {"$gte": period_from,
+														   "$lte": period_to}}
+											).sort("timeValue", -1)
 
 	# cursor = mongo.db.streams_test.find({"sensorId": data_stream_id})
 	# cursor = mongo.db.streams.aggregate([{"$project": {"items": 1}},
@@ -74,7 +91,7 @@ def get_data_stream():
 	# 									{"$group": {"_id": "$_id", "items": {
 	# 										"$push": "$items"}}}])
 
-	cursor = mongo.db.streams_test.find({'sensorId': data_stream_id, "timeValue": {"$gt": period_from}, "timeValue": {"$lt": period_to}})
+
 	# records = dict(("items", record['items']) for record in cursor)
 	records = dict()
 	items = list()

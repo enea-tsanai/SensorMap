@@ -57,7 +57,13 @@ function loadSites() {
         dataType: "json",
         success: function (results) {
             $.each(results, function (i, site) {
-                sites.push($.extend(new Site(), site));
+                var sensors = [];
+                site.sensors.forEach(function (sensor) {
+                    sensors.push($.extend(new Sensor(), sensor));
+                });
+                newSite = $.extend(new Site(), site);
+                newSite.sensors = sensors;
+                sites.push(newSite);
             });
         }
     });
@@ -127,8 +133,7 @@ function bindInfoWindow(marker, map, infowindow, site) {
 				selectedSensors.push(site);
 				//TODO: add local icon
 				marker.setIcon({url: 'http://maps.gstatic.com/mapfiles/markers2/icon_green.png'});
-
-                console.log(site);
+                
                 // InfoWindow
                 //TODO: Id of ballon should be the site id
                 //TODO: Include this in Dom elements
