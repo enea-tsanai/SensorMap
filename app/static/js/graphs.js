@@ -98,6 +98,20 @@ Site.prototype.getSensorById = function (sensorId) {
     return $.grep(this.sensors, function(e){ return e._id == sensorId; })[0];
 };
 
+/**
+ * Returns an array with all the sensors that match the requested ids
+ * @param sensorIds
+ * @returns {Array}
+ */
+Site.prototype.getSensorsById = function (sensorIds) {
+    var _this = this;
+    var sensors = [];
+    sensorIds.forEach(function (sensorId) {
+        sensors.push(_this.getSensorById(sensorId));
+    });
+    return sensors;
+};
+
 // DygraphPlotter Class
 function DygraphPlotter() {
     this.dataProvider = new DygraphDataProvider();
@@ -229,6 +243,7 @@ DygraphPlotter.prototype.stopSpinner = function () {
 function DygraphDataProvider() {
     this.dataCallbacks = $.Callbacks();
     this.lastRangeReqNum = null;
+    this.data = [];
 }
 
 DygraphDataProvider.prototype.load = function (sensorIds, dateWindow) {
@@ -297,6 +312,25 @@ DygraphDataProvider.prototype.onDoneFetchingData = function (ids, dateWindow, da
     $.when.apply($, this.generateRequests(ids, dateWindow)).done(function() {
         dataHandlingFunctions.forEach(helperFunctions.call);
     });
+};
+
+
+/**
+ * @param: an array of objects that contain pairs of values to be plotted
+ */
+DygraphDataProvider.prototype.addDataStreams = function (dataStreams) {
+    var _this = this;
+    dataStreams.forEach(function (sensor) {
+        _this.addDataStream(sensor.data);
+    });
+};
+
+DygraphDataProvider.prototype.addDataStream = function (dataStream) {
+    var arrayOfArrays = [];
+    dataStream.forEach(function (item) {
+        arrayOfArrays.push([item.timeValue, item.value]);
+    });
+    this.data.push(arrayOfArrays);
 };
 
 DygraphDataProvider.prototype.toDygraphPlotData = function () {};
@@ -600,12 +634,14 @@ function populateLastMetricsTab() {
     //                     ];
 
     var sensorsInGraph = [16293];
+    var dateWindow = ["2016-04-07T00:00:00", "2016-04-08T00:00:00"];
 
-    var dateWindow = [];
 
-    g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: "2016-04-07T00:00:00", periodTo: "2016-04-08T00:00:00"},
-        [function() {return test("callback1");},
-        function() {return test("callback2");},
+
+
+    g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+        [function() {return g.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorsInGraph));},
+        function() {return test(g.dataProvider.data);},
         function() {return g.stopSpinner();}
     ]);
 
