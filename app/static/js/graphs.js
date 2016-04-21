@@ -76,6 +76,7 @@ Sensor.prototype.addData = function (newData) {
     jQuery.extend(this.data, newData);
 };
 
+//TODO: test if null causes problems in date filtering.. so far it works
 Sensor.prototype.getDateRange = function () {
   return this.data.length ? [this.data[this.data.length - 1].timeValue, this.data[0].timeValue]: null;
 };
@@ -243,8 +244,7 @@ DygraphDataProvider.prototype.load = function (sensorIds, dateWindow) {
 DygraphDataProvider.prototype.makeRequest = function (url, params) {
 
     var indexSensor = helperFunctions.getIndexSite().getSensorById(params.dataStreamId);
-    console.log(indexSensor);
-    console.log(indexSensor.getDateRange());
+
     //Data is already there for the requested date period
     if (indexSensor.data.length && helperFunctions.datePeriodContains(indexSensor.getDateRange(),
             [params.periodFrom, params.periodTo])) {

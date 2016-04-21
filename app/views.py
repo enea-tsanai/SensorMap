@@ -41,6 +41,7 @@ def findSensors():
 
 	return jsonify(records)
 
+
 @app.route('/getSites', methods=['POST', 'GET'])
 def get_sites():
 	# cursor = mongo.db.sites.find()
@@ -48,6 +49,7 @@ def get_sites():
 
 	docs_list = list(mongo.db.sites.find())
 	return json.dumps(docs_list, default=json_util.default)
+
 
 @app.route('/getDataStream', methods=['POST', 'GET'])
 def get_data_stream():
@@ -66,11 +68,14 @@ def get_data_stream():
 
 	if is_date(rperiod_from) and is_date(rperiod_to):
 		cursor = mongo.db.streams_test.find({'sensorId': data_stream_id,
-											 "timeValue": {"$gt": period_from},
-											 "timeValue": {"$lt": period_to},
-											 "timeValue": {"$gt": rperiod_from},
-											 "timeValue": {"$lt": rperiod_to}
-											 })
+											 "$or": [{"timeValue": {
+														"$gt": period_from,
+														"$lt": period_to}},
+													{"timeValue": {
+														"$gt": rperiod_from,
+														"$lt": rperiod_to}}
+											]}).sort("timeValue", -1)
+
 	else:
 		print period_from
 		print period_to
