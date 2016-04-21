@@ -5,7 +5,7 @@ var MAP_TOOLBAR_HANDHELD = '<div id="map-toolbar" class="btn-group">\
         <span class="caret"></span>\
         </button>\
         <ul class="dropdown-menu" role="menu">\
-        <li><a href="#"onclick="showSites()">Show Sites</a></li>\
+        <li><a href="#"onclick="populateSitesOnMap()">Show Sites</a></li>\
         <li><a href="#"onclick="clearMap()">Clear Map</a></li>\
         </ul>\
         </div>'
@@ -13,7 +13,7 @@ var MAP_TOOLBAR_HANDHELD = '<div id="map-toolbar" class="btn-group">\
 var MAP_TOOLBAR_NORMAL = 
     '<div id="map-toolbar" class="btn-group">\
             <button type="button" class="btn btn-default" onclick="openToolbar()">Dashboard</button>\
-            <button type="button" class="btn btn-default" onclick="showSites()">Show Sites</button>\
+            <button type="button" class="btn btn-default" onclick="populateSitesOnMap()">Show Sites</button>\
             <button type="button" class="btn btn-default" onclick="clearMap()">Clear Map</button>\
      </div>';
 

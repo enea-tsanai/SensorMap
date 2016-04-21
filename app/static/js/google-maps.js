@@ -49,6 +49,9 @@ function initialize() {
 }
 
 function loadSites() {
+    if (sites.length) {
+        return $.Deferred().resolve();
+    }
     return $.ajax({
         url: "/getSites",
         dataType: "json",
@@ -63,20 +66,15 @@ function loadSites() {
 /*
  * Populate sites on map
 */
-function showSites() {
+function populateSitesOnMap() {
 	clearMap();
-
-	var result = dummySites;
-	var indx = 0;
-
     $.when(loadSites()).done(function(results) {
-
         for (var s in sites) {
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(sites[s].location.x, sites[s].location.y),
                 map: map,
-                // label: 'A',
-                icon: {url: 'http://maps.google.com/mapfiles/ms/micons/red.png'},
+                // label: "A",
+                icon: {url: 'http://maps.gstatic.com/mapfiles/markers2/marker.png'},
                 //animation: google.maps.Animation.DROP,
                 title: sites[s].name
             });
@@ -85,28 +83,6 @@ function showSites() {
             marker.setMap(map);
             bindInfoWindow(marker, map, infowindow, sites[s]);
         }
-
-        // $.each(result.Items, function (i, sensor) {
-        //     Sensors.push(sensor);
-        //
-        //     var coordinate = new google.maps.LatLng(dummyCoords[indx].x, dummyCoords[indx].y);
-        //     sensorArray.push(coordinate);
-        //
-        //     var marker = new google.maps.Marker({
-        //         position: coordinate,
-        //         map: map,
-        //         // label: 'A',
-        //         icon: {url: 'http://maps.google.com/mapfiles/ms/micons/red.png'},
-        //         //animation: google.maps.Animation.DROP,
-        //         title: "SensorID:"
-        //     });
-        //
-        //     markers.push(marker);
-        //     marker.setMap(map);
-        //
-        //     bindInfoWindow(marker, map, infowindow, sensor);
-        //     indx++;
-        // });
     });
 }
 
@@ -125,7 +101,7 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 		if (ctrlPressed) {
 			if (selectedMarkers.indexOf(marker) == -1) {
 				selectedMarkers.push(marker);
-				marker.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/purple.png'});
+				marker.setIcon({url: 'http://maps.gstatic.com/mapfiles/markers2/icon_green.png'});
 				// marker.set(labelContent', 'labels[labelIndex++ % labels.length]);
 				selectedSensors.push(sensor);
 				updateSiteWindowPane();
@@ -149,7 +125,7 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 				selectedMarkers.push(selectedMarker);
 				selectedSensors.push(sensor);
 				//TODO: add local icon
-				marker.setIcon({url: 'http://maps.google.com/mapfiles/ms/micons/purple.png'});
+				marker.setIcon({url: 'http://maps.gstatic.com/mapfiles/markers2/icon_green.png'});
 
                 console.log(sensor);
                 // InfoWindow
