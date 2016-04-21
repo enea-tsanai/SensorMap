@@ -1,10 +1,17 @@
 //Global vars
-var currentSite = 1;
+var indexSite;
 var sites = [];
 var dygraphs = {};
 
 // Helper functions
 var helperFunctions = {
+    getIndexSite: function () {
+        for (s in sites) {
+            if (sites[s]._id === indexSite)
+                return sites[s];
+        }
+        return null;
+    },
     call: function(fn) {
         fn();
     },
@@ -25,7 +32,7 @@ var helperFunctions = {
 
 // Sensor Class
 function Sensor() {
-    this.id = "";
+    this._id = "";
     this.name = "";
     this.description = "";
     this.labels = [];
@@ -46,7 +53,7 @@ Sensor.prototype.addData = function (newData) {
 
 // Site Class
 function Site() {
-    this.id = "";
+    this._id = "";
     this.name = "";
     this.description = "";
     this.sensors = [];
@@ -54,6 +61,10 @@ function Site() {
 
 Site.prototype.addSensor = function (sensorID) {
     this.sensors.push(parseInt(sensorID));
+};
+
+Site.prototype.getSensorById = function (sensorId) {
+    return $.grep(this.sensors, function(e){ return e._id == sensorId; })[0];
 };
 
 // DygraphPlotter Class
@@ -196,20 +207,25 @@ DygraphDataProvider.prototype.load = function (sensorIds, dateWindow) {
     for (sId in sensorIds) {
         requestParams.dataStreamId = sensorIdsensorIds[sId];
         this.makeRequest("/getDataStream/", requestParams);
-        // if (sites[currentSite].getSensor(sensorIds[sensorId]).
+        // if (sites[indexSite].getSensor(sensorIds[sensorId]).
     }
 };
 
 DygraphDataProvider.prototype.makeRequest = function (url, params) {
-    return $.ajax({
-        url: helperFunctions.concatenateUrlAndParams(url, params),
-        dataType: "json",
-        success: function (response) {
-            // Sites[currentSite].sensor[sId].data.push(response.items);
-            console.log("Success function works");
-
-        }
-    });
+    console.log(helperFunctions.getIndexSite().getSensorById(params.dataStreamId));
+    if (helperFunctions.getIndexSite().getSensorById(params.dataStreamId).data != undefined) {
+        return $.Deferred().resolve();
+    }
+    else {
+        return $.ajax({
+            url: helperFunctions.concatenateUrlAndParams(url, params),
+            dataType: "json",
+            success: function (response) {
+                helperFunctions.getIndexSite().getSensorById(params.dataStreamId).data = response.items;
+                console.log(helperFunctions.getIndexSite().getSensorById(params.dataStreamId));
+            }
+        });
+    }
 };
 
 DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
@@ -337,16 +353,6 @@ var streams = [
 	{streamId: 18753, name: "quad-4_probe-2", quad: "4", probe: "2", labels: ["Date", "Cubic Meters"], data: ""},
 	{streamId: 18777, name: "quad-4_temperature-1", quad: "4", labels: ["Date", "Temperature C"], data: ""}
 ];
-
-
-var CEERTEXT = "<div class=\"row text-center\">\n    <div class=\"col-sm-10 col-sm-offset-1\">\n        <iframe src=\"https://3dwarehouse.sketchup.com/embed.html?mid=ua7d24fd4-10c8-4ba4-8202-83a5b0de4135\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" allowfullscreen></iframe>\n        <p><br>Construction of Villanova's Green Roof took place in 3 days in the summer of 2006. The design was a retrofit of a small portion of Villanova's Center for Engineering Education Research (CEER) roof. The green roof is\n        located on a second storey terrace above the \\\"Holy Grounds\\\" coffee shop. It is highly visible because it is located outside of the main stairwell and serves multiple purposes.<br><br>\n        Underlying the green roof is a traditional roof which was refinished in order to ensure maximum life of the green\n        roof. The next layer is an additional waterproofing layer which is also resistant to root penetration. On top of this layer is an insulation layer which is a thick mat designed to keep the potential for a large temperature gradient between the surface of the green roof and the original roof layer. The insulation is overlain with a geosynthetic layer that serves several purposes including drainage pathways, water storage areas, and aeration. This layer which looks much like an egg crate has holes at the high points to allow excessive amounts of water to drain. A filter fabric lies on top of it and allows water to pass through but keeps the fine sediments from the growth media from occupying the voids in the drainage layer. The media is a mixture of baked minerals which look like gravel and make it hard for weeds or anything aside from the highly specialized Sedum species to grow.</p>\n    </div>\n</div>";
-var dummySites = {"Items":[
-{"ID":"0","Name":"CEER Green Roof","Description":CEERTEXT},
-{"ID":"1","Name":"name","Description":"description"},
-{"ID":"2","Name":"name","Description":"description"},
-{"ID":"3","Name":"name","Description":"description"},
-{"ID":"4","Name":"name","Description":"description"}],
-"Count":5};
 
 
 /*
@@ -532,12 +538,12 @@ function populateLastMetricsTab() {
     g.showSpinner();
 
     var sensorsInGraph = [18704,
-                        18711,
-                        18718,
-                        18725,
-                        18732,
-                        18739,
-                        18746,
+                        // 18711,
+                        // 18718,
+                        // 18725,
+                        // 18732,
+                        // 18739,
+                        // 18746,
                         18753
                         ];
 

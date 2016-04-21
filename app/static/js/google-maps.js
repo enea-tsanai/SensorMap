@@ -96,14 +96,14 @@ function clearSelectedMarkers() {
 	selectedMarkers.length = 0;
 }
 
-function bindInfoWindow(marker, map, infowindow, sensor) {
+function bindInfoWindow(marker, map, infowindow, site) {
 	google.maps.event.addListener(marker, 'click', function () {
 		if (ctrlPressed) {
 			if (selectedMarkers.indexOf(marker) == -1) {
 				selectedMarkers.push(marker);
 				marker.setIcon({url: 'http://maps.gstatic.com/mapfiles/markers2/icon_green.png'});
 				// marker.set(labelContent', 'labels[labelIndex++ % labels.length]);
-				selectedSensors.push(sensor);
+				selectedSensors.push(site);
 				updateSiteWindowPane();
 			}
 		}
@@ -113,6 +113,7 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 			clearSelectedSensors();
 			labelIndex = 0;
 			selectedMarker = marker;
+            indexSite = site._id;
 
 			if (selectedMarkers.indexOf(marker) == -1) {
 				// loadSiteData();
@@ -123,15 +124,15 @@ function bindInfoWindow(marker, map, infowindow, sensor) {
 					map.panTo(marker.getPosition());
 
 				selectedMarkers.push(selectedMarker);
-				selectedSensors.push(sensor);
+				selectedSensors.push(site);
 				//TODO: add local icon
 				marker.setIcon({url: 'http://maps.gstatic.com/mapfiles/markers2/icon_green.png'});
 
-                console.log(sensor);
+                console.log(site);
                 // InfoWindow
                 //TODO: Id of ballon should be the site id
                 //TODO: Include this in Dom elements
-                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + sensor.name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n            <li><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "AboutSite" class="about-site tab-pane fade in active">\n            ' + sensor.description + '\n        </div>\n        <div id = "LMetrics" class="l-metrics tab-pane fade"></div>\n    </div>\n</div>';
+                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + site.name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n            <li><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "AboutSite" class="about-site tab-pane fade in active">\n            ' + site.description + '\n        </div>\n        <div id = "LMetrics" class="l-metrics tab-pane fade"></div>\n    </div>\n</div>';
                 infowindow.setContent(windowContent);
                 infowindow.open(map, marker);
                 populateLastMetricsTab();
