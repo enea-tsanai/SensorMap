@@ -5,6 +5,15 @@ var dygraphs = {};
 
 // Helper functions
 var helperFunctions = {
+    getZone: function (number, zones) {
+        var cnt = 0;
+        for (var i in zones) {
+            cnt += zones[i];
+            if (number < cnt)
+                return i;
+        }
+        return NaN;
+    },
     /*
      * Returns true of rangeA fully contains rangeB
      */
@@ -183,11 +192,10 @@ DygraphPlotter.prototype.appendHTML = function() {
 
 DygraphPlotter.prototype.plot = function () {
     console.log("Plotting..");
-    // console.log(this.dataProvider.data);
     //TODO: Check the following: may be undifined
     this.plotParams.labelsDiv = document.getElementById('legend-' + this.divElement);
     dygraphs[this.divElement] = new Dygraph(document.getElementById(this.divElement), this.dataProvider.data, this.plotParams);
-    dygraphs[this.divElement].resize();
+    dygraphs[this.divElement].resize(); //Force drawing. Resolves issues inside tabs
 };
 
 DygraphPlotter.prototype._requestData = function () {
@@ -247,6 +255,9 @@ DygraphPlotter.prototype.stopSpinner = function () {
 function DygraphDataProvider() {
     this.dataCallbacks = $.Callbacks();
     this.lastRangeReqNum = null;
+    this.calculateAverages = false;
+    this.averageGroups = [1];
+    this.numberOfStreams = 0;
     this.data = [];
 }
 
@@ -292,7 +303,6 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
             success: function (response) {
                 console.log(response.items);
                 helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response.items);
-                console.log(helperFunctions.getIndexSite().getSensorById(params.dataStreamId));
             }
         });
     }
@@ -322,6 +332,7 @@ DygraphDataProvider.prototype.onDoneFetchingData = function (ids, dateWindow, da
  * @param: an array of objects that contain pairs of values to be plotted
  */
 DygraphDataProvider.prototype.addDataStreams = function (dataStreams) {
+    this.numberOfStreams = dataStreams.length;
     var arrayOfArrays = [];
     dataStreams.forEach(function (dataStream) {
         var stream = [];
@@ -344,6 +355,82 @@ DygraphDataProvider.prototype.addDataStream = function (dataStream) {
 };
 
 /**
+ * Gets dygraph-data in a hashmap form and returns it in array form with calculated averages and min-max values
+ * @param dataHashMap
+ * @param sortedKeys
+ * @returns {Array}
+ */
+DygraphDataProvider.prototype.getAverages = function (dataHashMap, sortedKeys) {
+    var averages = [];
+    var averagesMap = {};
+    var numberOfKeys = sortedKeys.length;
+    var groups = this.averageGroups;
+    var numOfZones = groups.length;
+
+    // Fill empty columns in merged hashmap (prepare)
+    for (var i = 0; i < this.numberOfStreams; i++) {
+        var previous, next, nxtIndx;
+        for (var k = 0; k < numberOfKeys; k++) {
+            var key = sortedKeys[k];
+            if (!isNaN(parseFloat(dataHashMap[key][i]))) {
+                previous = parseFloat(dataHashMap[key][i]);
+            } else {
+                nxtIndx = (k < numberOfKeys - 1) ? k + 1 : k;
+                while ((nxtIndx < numberOfKeys - 1) && isNaN(parseFloat(dataHashMap[sortedKeys[nxtIndx]][i]))) {
+                    nxtIndx++;
+                }
+                next = parseFloat(dataHashMap[sortedKeys[nxtIndx]][i]);
+                if (!isNaN(parseFloat(previous)) && !isNaN(parseFloat(next)))
+                    dataHashMap[key][i] = (previous + next) / 2;
+                else if (!isNaN(parseFloat(previous)))
+                    dataHashMap[key][i] = previous;
+                else if (!isNaN(parseFloat(next)))
+                    dataHashMap[key][i] = next;
+            }
+        }
+    }
+
+    // Calculate and populate Averages
+    for (var k in dataHashMap) {
+        var average = [], sum = [], numOfElements = [], max = [], min = [];
+        averagesMap[k] = [];
+
+        for (var i = 0; i < numOfZones; i++) {
+            average.push(NaN);
+            sum.push(0);
+            numOfElements.push(0);
+            max.push(Number.NEGATIVE_INFINITY);
+            min.push(Number.POSITIVE_INFINITY);
+        }
+
+        for (var i = 0; i < this.numberOfStreams; i++) {
+            var val = parseFloat(dataHashMap[k][i]);
+            if (!isNaN(val)) {
+                var indx = helperFunctions.getZone(i, groups);
+                if (val > max[indx]) max[indx] = val;
+                if (val < min[indx]) min[indx] = val;
+                sum[indx] += val;
+                numOfElements[indx] ++;
+            }
+        }
+
+        for (var i = 0; i < numOfZones; i++) {
+            var indx = helperFunctions.getZone(i, groups);
+            if (numOfElements[indx] > 0)
+                average[indx] = sum[indx] / numOfElements[indx];
+            averagesMap[k].push([min[indx]+";"+average[indx]+";"+max[indx]]);
+        }
+    }
+
+    for (k in sortedKeys) {
+        var key = sortedKeys[k];
+        averages.push([key].concat(averagesMap[key].join()));
+        // averages += key + "," + averagesMap[key].join(';') + "\n";
+    }
+    return averages;
+};
+
+/**
  * Gets an array of streams in the format [[[timeValue, value], ...], ...]
  * @param dataStreams
  * @returns {string}
@@ -352,6 +439,8 @@ DygraphDataProvider.prototype.toDygraphNativeFormat = function (dataStreams) {
         if (dataStreams.length === 1)
             return dataStreams[0];
 
+        var dataToPlot = [];
+        var sorted_keys = [];
         var dataHashMap = {};
         var emptyDataRow = [];
 
@@ -380,22 +469,20 @@ DygraphDataProvider.prototype.toDygraphNativeFormat = function (dataStreams) {
             }
         }
 
-        console.log(dataHashMap);
-
-        var dataToPlot = [];
-        var sorted_keys = [];
-
         for (var k in dataHashMap)
             sorted_keys.push(k);
 
         sorted_keys.sort();
 
-        for (var k in sorted_keys) {
-            var key = sorted_keys[k];
-            // dataToPlot.push([new Date(key)].concat(dataHashMap[key]));
-            dataToPlot.push([key].concat(dataHashMap[key]).join());
+        if (this.calculateAverages)
+            dataToPlot = this.getAverages(dataHashMap, sorted_keys);
+        else {
+            for (var k in sorted_keys) {
+                var key = sorted_keys[k];
+                // dataToPlot.push([new Date(key)].concat(dataHashMap[key]));
+                dataToPlot.push([key].concat(dataHashMap[key]).join());
+            }
         }
-
         dataToPlot = dataToPlot.join("\n");
         return dataToPlot;
 };
@@ -679,10 +766,14 @@ function populateLastMetricsTab() {
     g.plotParams.series["Temperature (C)"] = {axis: 'y2'};
     g.plotParams.connectSeparatedPoints = true;
     g.plotParams.labelsSeparateLines = true;
-    g.plotParams.customBars = false; //Carefull with this
+    g.plotParams.customBars = true; //Carefull with this
     g.plotParams.highlightSeriesOpts = '';
     g.plotParams.showRangeSelector = false;
     // g.plotParams.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
+
+    // Additional Options
+    g.dataProvider.calculateAverages = true; //Hack: May need to add interface functions for this setting
+    g.dataProvider.averageGroups = [1, 2]; //Hack: May need to add interface functions for this setting
     g.hasVisibletoolbar = false;
     g.hasSeparateLegendDiv = false;
     g.setWrapperElement("LMetrics");
@@ -700,7 +791,7 @@ function populateLastMetricsTab() {
     //                     18753
     //                     ];
 
-    var sensorsInGraph = [18704, 18777];
+    var sensorsInGraph = [18704, 18746, 18777];
     var dateWindow = ["2016-04-05T00:00:00", "2016-04-06T00:00:00"];
 
     g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
@@ -742,10 +833,8 @@ function populateLastMetricsTab() {
     // var d2 = getAverageData(temperaturesData);
     // var dataToPlot = aggregateDataMod([d1, d2]);
 
-
 	// dataToPlot = reduceData(dataToPlot, 4000, true);
 
-	// dygraphPlotLM("LMetrics", 'l-metrics', dataToPlot, g.plotParams);
 }
 
 function test(a) {

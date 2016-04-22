@@ -74,7 +74,7 @@ def get_data_stream():
 													{"timeValue": {
 														"$gt": rperiod_from,
 														"$lt": rperiod_to}}
-											]}).sort("timeValue", -1)
+											]}).sort("timeValue", -1).limit(5)
 
 	else:
 		print period_from
@@ -82,7 +82,7 @@ def get_data_stream():
 		cursor = mongo.db.streams_test.find({'sensorId': data_stream_id,
 											 "timeValue": {"$gte": period_from,
 														   "$lte": period_to}}
-											).sort("timeValue", -1)
+											).sort("timeValue", -1).limit(5)
 
 	# cursor = mongo.db.streams_test.find({"sensorId": data_stream_id})
 	# cursor = mongo.db.streams.aggregate([{"$project": {"items": 1}},
