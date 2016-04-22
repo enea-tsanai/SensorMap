@@ -115,6 +115,7 @@ Site.prototype.getSensorsById = function (sensorIds) {
 // DygraphPlotter Class
 function DygraphPlotter() {
     this.dataProvider = new DygraphDataProvider();
+    this.hasSeparateLegendDiv = true;
     this.wrapperElement = "";
     this.dygraphWrapper = "";
     this.divElement = "";
@@ -124,7 +125,7 @@ function DygraphPlotter() {
     this.hasVisibleSpinner = true;
     this.plotParams = {
         // "labels" : ["Time","a","b","c","d","e","f","g","h","i","j","k","l"],
-        // "connectSeparatedPoints": true,
+        "connectSeparatedPoints": true,
         "rollPeriod": 15,
         "showLabelsOnHighlight": true,
         "highlightSeriesOpts": {
@@ -137,10 +138,10 @@ function DygraphPlotter() {
             'background': 'none'
         },
         axes: {
-//		y2: {"valueRange": [0, 30]}
+		y2: {"valueRange": [0, 30]}
         },
         "drawPoints": false, //Making this true really affects the performance
-        "title": "Test",
+        "title": "Title",
         "showRoller": false,
         "showRangeSelector": true,
         "fillGraph": false,
@@ -152,7 +153,6 @@ function DygraphPlotter() {
         labelsDiv: document.getElementById('status')
 //	"valueRange": [],
     };
-    this.dataToPlot = "";
 }
 
 DygraphPlotter.prototype.setWrapperElement = function (wrapperElement) {
@@ -160,10 +160,12 @@ DygraphPlotter.prototype.setWrapperElement = function (wrapperElement) {
 };
 
 DygraphPlotter.prototype.updatePlotHTML = function () {
+    this.plotParams.labelsDiv = this.divElement + "-labels-div";
+    var graphHTML = this.hasLegendDiv ? "<div class=\"col-xs-10 text-center graph-container\">\n    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n</div>\n<div id=\"" + this.plotParams.labelsDiv + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>" : "<div class=\"col-xs-12 text-center graph-container\">\n    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n</div>";
     if (this.hasVisibletoolbar)
-        this.plotHTML = "<form id=\"" + this.dygraphWrapper + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center graph-container\">\n                    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                </div>\n                <div id=\"" + this.plotParams.labelsDiv + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n            " + this.toolbar + "\n        </div>\n    </div>\n</form>";
+        this.plotHTML = "<form id=\"" + this.dygraphWrapper + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n            " + graphHTML + "            </div>\n            " + this.toolbar + "\n        </div>\n    </div>\n</form>";
     else
-        this.plotHTML = "<form id=\"" + this.dygraphWrapper + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n                <div class=\"col-xs-10 text-center graph-container\">\n                    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n                </div>\n                <div id=\"" + this.plotParams.labelsDiv + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>\n            </div>\n        </div>\n    </div>\n</form>";
+        this.plotHTML = "<form id=\"" + this.dygraphWrapper + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n            " + graphHTML + "      \n            </div>\n        </div>\n    </div>\n</form>";
 };
 
 DygraphPlotter.prototype.setDivElement = function (divElement) {
@@ -180,10 +182,12 @@ DygraphPlotter.prototype.appendHTML = function() {
 };
 
 DygraphPlotter.prototype.plot = function () {
+    console.log("Plotting..");
+    // console.log(this.dataProvider.data);
     //TODO: Check the following: may be undifined
-    params.labelsDiv = document.getElementById('legend-' + this.divElement);
-    dygraphs[divElement] = new Dygraph(document.getElementById(this.divElement), this.data, this.plotParams);
-    dygraphs[divElement].resize();
+    this.plotParams.labelsDiv = document.getElementById('legend-' + this.divElement);
+    dygraphs[this.divElement] = new Dygraph(document.getElementById(this.divElement), this.dataProvider.data, this.plotParams);
+    dygraphs[this.divElement].resize();
 };
 
 DygraphPlotter.prototype._requestData = function () {
@@ -314,17 +318,23 @@ DygraphDataProvider.prototype.onDoneFetchingData = function (ids, dateWindow, da
     });
 };
 
-
 /**
  * @param: an array of objects that contain pairs of values to be plotted
  */
 DygraphDataProvider.prototype.addDataStreams = function (dataStreams) {
-    var _this = this;
-    dataStreams.forEach(function (sensor) {
-        _this.addDataStream(sensor.data);
+    var arrayOfArrays = [];
+    dataStreams.forEach(function (dataStream) {
+        var stream = [];
+        dataStream.data.forEach(function (item) {
+            // stream.push([new Date(item.timeValue), item.value]);
+            stream.push([item.timeValue, item.value]);
+        });
+        arrayOfArrays.push(stream);
     });
+    this.data = this.toDygraphNativeFormat(arrayOfArrays);
 };
 
+//TODO: Remove this
 DygraphDataProvider.prototype.addDataStream = function (dataStream) {
     var arrayOfArrays = [];
     dataStream.forEach(function (item) {
@@ -333,7 +343,62 @@ DygraphDataProvider.prototype.addDataStream = function (dataStream) {
     this.data.push(arrayOfArrays);
 };
 
-DygraphDataProvider.prototype.toDygraphPlotData = function () {};
+/**
+ * Gets an array of streams in the format [[[timeValue, value], ...], ...]
+ * @param dataStreams
+ * @returns {string}
+ */
+DygraphDataProvider.prototype.toDygraphNativeFormat = function (dataStreams) {
+        if (dataStreams.length === 1)
+            return dataStreams[0];
+
+        var dataHashMap = {};
+        var emptyDataRow = [];
+
+        for (var i = 0; i < dataStreams.length; i++) {
+            emptyDataRow.push(null)
+        }
+
+        for (var i = 0; i < dataStreams.length; i++) {
+
+            var dataArray = dataStreams[i];
+
+            // Populate hashmap
+            for (var d = 0; d < dataArray.length; d++) {
+                var key = dataArray[d][0];
+                var val = dataArray[d][1];
+
+                if (key !== "") {
+                    if (dataHashMap[key] === undefined) {
+                        dataHashMap[key] = [].concat(emptyDataRow);
+                        // console.log("inserted at: " + key + " the val: " + val);
+                    }
+                    dataHashMap[key][i] = val;
+                }
+                else
+                    console.log("Problem at : " + d + " elemnt: " + dataArray[d]);
+            }
+        }
+
+        console.log(dataHashMap);
+
+        var dataToPlot = [];
+        var sorted_keys = [];
+
+        for (var k in dataHashMap)
+            sorted_keys.push(k);
+
+        sorted_keys.sort();
+
+        for (var k in sorted_keys) {
+            var key = sorted_keys[k];
+            // dataToPlot.push([new Date(key)].concat(dataHashMap[key]));
+            dataToPlot.push([key].concat(dataHashMap[key]).join());
+        }
+
+        dataToPlot = dataToPlot.join("\n");
+        return dataToPlot;
+};
 
 DygraphDataProvider.prototype.toDygraphPlotAvergeData = function () {};
 
@@ -614,10 +679,12 @@ function populateLastMetricsTab() {
     g.plotParams.series["Temperature (C)"] = {axis: 'y2'};
     g.plotParams.connectSeparatedPoints = true;
     g.plotParams.labelsSeparateLines = true;
-    g.plotParams.customBars = true;
+    g.plotParams.customBars = false; //Carefull with this
     g.plotParams.highlightSeriesOpts = '';
-    g.plotParams.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
+    g.plotParams.showRangeSelector = false;
+    // g.plotParams.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
     g.hasVisibletoolbar = false;
+    g.hasSeparateLegendDiv = false;
     g.setWrapperElement("LMetrics");
     g.setDivElement("l-metrics");
     g.appendHTML();
@@ -633,17 +700,14 @@ function populateLastMetricsTab() {
     //                     18753
     //                     ];
 
-    var sensorsInGraph = [16293];
-    var dateWindow = ["2016-04-07T00:00:00", "2016-04-08T00:00:00"];
-
-
-
+    var sensorsInGraph = [18704, 18777];
+    var dateWindow = ["2016-04-05T00:00:00", "2016-04-06T00:00:00"];
 
     g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
         [function() {return g.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorsInGraph));},
-        function() {return test(g.dataProvider.data);},
-        function() {return g.stopSpinner();}
-    ]);
+            function() {return g.stopSpinner();},
+            function() { return g.plot();}
+        ]);
 
     //
     //
