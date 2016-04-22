@@ -19,7 +19,6 @@ var helperFunctions = {
      * Returns true of rangeA fully contains rangeB
      */
     datePeriodContains: function (rangeA, rangeB) {
-        console.log("rangeA: " + rangeA + ", rangeB: " + rangeB);
         return rangeB[0] >= rangeA[0] && rangeB[1] <= rangeA[1];
     },
     /*
@@ -165,7 +164,7 @@ function DygraphPlotter() {
         "labelsDivWidth": 150,
         "labelsSeparateLines": true,
         "labelsUTC": true,
-        labelsDiv: document.getElementById('status')
+        "labelsDiv": ""
 //	"valueRange": [],
     };
 }
@@ -176,7 +175,7 @@ DygraphPlotter.prototype.setWrapperElement = function (wrapperElement) {
 
 DygraphPlotter.prototype.updatePlotHTML = function () {
     this.plotParams.labelsDiv = this.divElement + "-labels-div";
-    var graphHTML = this.hasLegendDiv ? "<div class=\"col-xs-10 text-center graph-container\">\n    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n</div>\n<div id=\"" + this.plotParams.labelsDiv + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>" : "<div class=\"col-xs-12 text-center graph-container\">\n    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n</div>";
+    var graphHTML = this.hasSeparateLegendDiv ? "<div class=\"col-xs-10 text-center graph-container\">\n    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n</div>\n<div id=\"" + this.plotParams.labelsDiv + "\" class=\"dygraph-legend col-xs-2 text-left\"></div>" : "<div class=\"col-xs-12 text-center graph-container\">\n    <div id=\"" + this.divElement + "\" class=\"dygraph-plot\" style=\"width:100%\"></div>\n</div>";
     if (this.hasVisibletoolbar)
         this.plotHTML = "<form id=\"" + this.dygraphWrapper + "\" class=\"text-center dygraph-plot-and-toolbar-wrapper\">\n    <div class=\"row dygraph-plot-row-wrapper\">\n        <div class=\"col-xs-12 text-center\">\n            <div class=\"row\">\n            " + graphHTML + "            </div>\n            " + this.toolbar + "\n        </div>\n    </div>\n</form>";
     else
@@ -184,7 +183,6 @@ DygraphPlotter.prototype.updatePlotHTML = function () {
 };
 
 DygraphPlotter.prototype.setDivElement = function (divElement) {
-    this.plotParams.labelsDiv = document.getElementById('legend-' + divElement);
     this.dygraphWrapper = "#dygraph-plot-and-toolbar-wrapper-" + divElement;
     this.divElement = divElement;
     this.updatePlotHTML();
@@ -198,8 +196,8 @@ DygraphPlotter.prototype.appendHTML = function () {
 
 DygraphPlotter.prototype.plot = function () {
     console.log("Plotting..");
+    // console.log(this.dataProvider.data);
     //TODO: Check the following: may be undifined
-    this.plotParams.labelsDiv = document.getElementById('legend-' + this.divElement);
     dygraphs[this.divElement] = new Dygraph(document.getElementById(this.divElement), this.dataProvider.data, this.plotParams);
     dygraphs[this.divElement].resize(); //Force drawing. Resolves issues inside tabs
 };
@@ -852,6 +850,169 @@ function populateLastMetricsTab() {
 
 function test(a) {
     console.log(a);
+}
+
+function generateMixedGraphs_() {
+    $("#plot-area").empty();
+
+    var sensorsInGraph = [];
+    var quadrantsChecked = [];
+    var probesChecked = [];
+    var temperaturesChecked = [];
+    var viewMode = $('input[name="view-mode"]:checked').val();
+    var showAverages = $('input[name="average-checkbox"]').bootstrapSwitch('state');
+    var startDate = $('#datepicker').find('input[name="start"]').datepicker("getDate").toISOString();
+    var endDate = $('#datepicker').find('input[name="end"]').datepicker("getDate").toISOString();
+    var dateWindow = [startDate, endDate];
+
+    $.each($("input[name='Quadrant']:checked"), function () {
+        quadrantsChecked.push($(this).val());
+    });
+    $.each($("input[name='Probe']:checked"), function () {
+        probesChecked.push($(this).val());
+    });
+    $.each($("input[name='Temp']:checked"), function () {
+        temperaturesChecked.push($(this).val());
+    });
+
+    var probeLabels = [];
+    var temperatureLabels = [];
+
+    var buttonsToSensorIds = {
+        "q-1_p-1": 18704,
+        "q-1_p-2": 18711,
+        "q-1_t-1": 18762,
+        "q-2_p-1": 18718,
+        "q-2_p-2": 18725,
+        "q-2_t-1": 18767,
+        "q-3_p-1": 18732,
+        "q-3_p-2": 18739,
+        "q-3_t-1": 18772,
+        "q-4_p-1": 18746,
+        "q-4_p-2": 18753,
+        "q-4_t-1": 18777
+    };
+
+    for (var q in quadrantsChecked) {
+        // Probes
+        for (var p in probesChecked) {
+            var sensorName = quadrantsChecked[q] + "_" + probesChecked[p];
+            sensorsInGraph.push(buttonsToSensorIds[sensorName]);
+            probeLabels.push(sensorName);
+        }
+        // Temperatures
+        for (var t in temperaturesChecked) {
+            var sensorName = quadrantsChecked[q] + "_" + temperaturesChecked[t];
+            sensorsInGraph.push(buttonsToSensorIds[sensorName]);
+            temperatureLabels.push(sensorName);
+        }
+    }
+
+    if (viewMode === "combined") {
+
+        var g = new DygraphPlotter();
+        g.plotParams.title = "Soil Moisture and Temperature";
+        g.plotParams.labels = ['Time'].concat(probeLabels.concat(temperatureLabels));
+        g.plotParams.ylabel = 'Moisture';
+        g.plotParams.y2label = 'Temperature';
+        g.plotParams.series = {};
+        g.plotParams.series["Temperature (C)"] = {axis: 'y2'};
+        g.plotParams.connectSeparatedPoints = true;
+        g.plotParams.labelsSeparateLines = true;
+        g.plotParams.customBars = showAverages; //Carefull with this
+        g.plotParams.highlightSeriesOpts = '';
+        g.plotParams.showRangeSelector = false;
+        // g.plotParams.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
+
+        // Additional Options
+        g.dataProvider.calculateAverages = showAverages; //Hack: May need to add interface functions for this setting
+        // g.dataProvider.averageGroups = [1, 2]; //Hack: May need to add interface functions for this setting
+        g.hasVisibletoolbar = true;
+        g.hasSeparateLegendDiv = true;
+        g.setWrapperElement("plot-area");
+        g.setDivElement("mixed-probes");
+        g.appendHTML();
+        g.showSpinner();
+
+        if (showAverages === true) {
+            g.plotParams.title = "Soil Moisture and Temperature Averages";
+            g.plotParams.labels = ['Time', 'Moisture', 'Temperature (C)'];
+            g.plotParams.series['Temperature (C)'] = {axis: 'y2'};
+            g.plotParams.highlightSeriesOpts = '';
+            g.dataProvider.averageGroups = [probeLabels.length, temperatureLabels.length];
+
+        } else {
+            for (var l in temperatureLabels) g.plotParams.series[temperatureLabels[l]] = {axis: 'y2'};
+        }
+        g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+            [function () {
+                return g.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorsInGraph));
+                },
+                function () {
+                    return g.stopSpinner();
+                },
+                function () {
+                    return g.plot();
+                }]);
+    } else {;
+        // if (probesData.length > 0) {
+        //     //		var testData = [];
+        //     //		testData.push(data1);
+        //     //		testData.push(data2);
+        //     //		testData.push(data3);
+        //     //		testData.push(data4);
+        //
+        //     var dataToPlot;
+        //
+        //     params.title = "Soil Moisture Probes";
+        //     if (showAverages === true) {
+        //         dataToPlot = getAverageData(probesData);
+        //         params.labels = ['Time', 'Moisture'];
+        //         params.customBars = true;
+        //         params.highlightSeriesOpts = '';
+        //     }
+        //     else {
+        //         start2 = performance.now();
+        //         dataToPlot = aggregateDataMod(probesData);
+        //         var end2 = performance.now();
+        //         var duration2 = end2 - start2;
+        //         console.log("New: " + duration2);
+        //         params.labels = probeLabels;
+        //     }
+        //     // console.log("Rows: " + dataToPlot.split("\n").length + 1);
+        //     //		dataToPlot = reduceData(dataToPlot, 10000, true);
+        //     dygraphPlot('plot-area', 'mixed-probes', dataToPlot, params);
+        // }
+        //
+        // if (temperaturesData.length > 0) {
+        //     params.title = "Temperature";
+        //     var dataToPlot;
+        //     if (showAverages === true) {
+        //         dataToPlot = getAverageData(temperaturesData);
+        //         params.labels = ['Time', 'Temperature (C)'];
+        //         params.customBars = true;
+        //         params.highlightSeriesOpts = '';
+        //     } else {
+        //         dataToPlot = aggregateDataMod(temperaturesData);
+        //         params.labels = temperatureLabels;
+        //     }
+        //     dygraphPlot('plot-area', 'mixed-temperatures', dataToPlot, params);
+        // }
+        //
+        // if (viewMode === "synchronized") {
+        //     var synchedDygraphs = [];
+        //     if ('mixed-probes' in dygraphs) {
+        //         synchedDygraphs.push(dygraphs['mixed-probes']);
+        //     }
+        //     if ('mixed-temperatures' in dygraphs) {
+        //         synchedDygraphs.push(dygraphs['mixed-temperatures']);
+        //     }
+        //     console.log(synchedDygraphs);
+        //     if (synchedDygraphs.length > 1) {
+        //         Dygraph.synchronize(synchedDygraphs);
+        //     }
+        // }
+    }
 }
 
 function generateMixedGraphs() {
