@@ -1625,17 +1625,24 @@ var adjustDygraphsPlotAreaHTMLonResize = function () {
         $('div.dygraph-title').addClass('dashboard-small');
         $('div.graph-container').removeClass('graph-container-desk');
     }
-}
+};
+
 
 var resizeDygraphs = function () {
     setTimeout(function () {
         adjustDygraphsPlotAreaHTMLonResize();
-        if (dygraphs['mixed-probes'] != undefined) {
-            dygraphs['mixed-probes'].resize();
+
+        for (var indx in dygraphs) {
+            if (dygraphs.hasOwnProperty(indx)) {
+                dygraphs[indx].resize();
+            }
         }
-        if (dygraphs['mixed-temperatures'] != undefined) {
-            dygraphs['mixed-temperatures'].resize();
-        }
+        // if (dygraphs['mixed-probes'] != undefined) {
+        //     dygraphs['mixed-probes'].resize();
+        // }
+        // if (dygraphs['mixed-temperatures'] != undefined) {
+        //     dygraphs['mixed-temperatures'].resize();
+        // }
     }, 300); // Need to add a small delay in order to avoid breaking the internal split-pane listener
 };
 
