@@ -801,74 +801,20 @@ function populateLastMetricsTab() {
 
     // Additional Options
     g.dataProvider.calculateAverages = true; //Hack: May need to add interface functions for this setting
-    g.dataProvider.averageGroups = [1, 2]; //Hack: May need to add interface functions for this setting
+    g.dataProvider.averageGroups = [8, 4]; //Hack: May need to add interface functions for this setting
     g.hasVisibletoolbar = false;
     g.hasSeparateLegendDiv = false;
     g.setWrapperElement("LMetrics");
     g.setDivElement("l-metrics");
-    g.appendHTML();
-    g.showSpinner();
 
-    // var sensorsInGraph = [18704,
-    //                     // 18711,
-    //                     // 18718,
-    //                     // 18725,
-    //                     // 18732,
-    //                     // 18739,
-    //                     // 18746,
-    //                     18753
-    //                     ];
+    var quadProbes = [18704, 18711, 18718, 18725, 18732, 18739, 18746, 18753];
+    var quadTemps = [18762, 18767, 18772, 18777];
+    var sensorsInGraph = quadProbes.concat(quadTemps);
 
-    var sensorsInGraph = [19201, 18691];
     var dateWindow = ["2016-04-05T00:00:00", "2016-04-06T00:00:00"];
 
-    g.dataProvider._onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
-        [function () {
-            return g.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorsInGraph));
-        },
-            function () {
-                return g.stopSpinner();
-            },
-            function () {
-                return g.plot();
-            }
-        ]);
-
-    //
-    //
-    // var probesData = [];
-    // var probesLabels = ['Time'];
-    //
-    // var quadrants = ["quad-1", "quad-2", "quad-3", "quad-4"];
-    // var probes = ["probe-1", "probe-2"];
-    //
-    // for(var q in quadrants) {
-    // for (var p in probes) {
-    // 	console.log(quadrants[q] + "_" + probes[p]);
-    // 	probesData.push(getStreamByName(quadrants[q] + "_" + probes[p]).data);
-    // 	probesLabels.push(getStreamByName(quadrants[q] + "_" + probes[p]).name);
-    // }
-    // }
-    //
-    // var temperaturesData = [];
-    // var temperatureLabels = ['Time'];
-    // var temperatures = ["temperature-1"];
-    //
-    // for(q in quadrants) {
-    // for (var t in temperatures) {
-    // 	console.log(quadrants[q] + "_" + temperatures[t]);
-    // 	temperaturesData.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).data);
-    // 	temperatureLabels.push(getStreamByName(quadrants[q] + "_" + temperatures[t]).name);
-    // }
-    // }
-    //
-    // console.log(probesData);
-    // var d1 = getAverageData(probesData);
-    // var d2 = getAverageData(temperaturesData);
-    // var dataToPlot = aggregateDataMod([d1, d2]);
-
+    g.loadAndPlot(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]});
     // dataToPlot = reduceData(dataToPlot, 4000, true);
-
 }
 
 function test(a) {
