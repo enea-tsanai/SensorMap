@@ -1134,6 +1134,39 @@ function generateCisternGraphs() {
     }
 }
 
+function generateOtherSensorsGraphs() {
+    $("#other-sensors-plot-area").empty();
+    var startDate = $('#other-sensors-datepicker').find('input[name="start"]').datepicker("getDate").toISOString();
+    var endDate = $('#other-sensors-datepicker').find('input[name="end"]').datepicker("getDate").toISOString();
+    var dateWindow = [startDate, endDate];
+    var sensorsInGraph = [18929, 18697, 16293, 16294];
+    var dygs = [];
+
+    for (var i = 0; i < sensorsInGraph.length; i++) {
+
+        var sensor = helperFunctions.getIndexSite().getSensorById(sensorsInGraph[i]);
+
+        dygs.push(new DygraphPlotter());
+        dygs[i].plotParams.title = sensor.name;
+        dygs[i].plotParams.labels = [sensor.units[1], sensor.units[0]];  //Use Reverse function or change db schema?
+        dygs[i].plotParams.ylabel = sensor.units[0];
+        dygs[i].plotParams.labelsSeparateLines = true;
+        dygs[i].plotParams.highlightSeriesOpts = '';
+        dygs[i].plotParams.showRangeSelector = false;
+        dygs[i].plotParams.fillGraph = true;
+        dygs[i].plotParams.rollPeriod = 30;
+        // dygs[i].plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
+
+        // Additional Options
+        dygs[i].hasVisibletoolbar = true;
+        dygs[i].hasSeparateLegendDiv = true;
+        dygs[i].setWrapperElement("other-sensors-plot-area");
+        dygs[i].setDivElement("sensor-" + sensorsInGraph[i]);
+
+        dygs[i].loadAndPlot([sensorsInGraph[i]], {periodFrom: dateWindow[0], periodTo: dateWindow[1]});
+    }
+}
+
 function generateMixedGraphs() {
     $("#plot-area").empty();
 
