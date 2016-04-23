@@ -263,9 +263,10 @@ DygraphPlotter.prototype.stopSpinner = function () {
 
 DygraphPlotter.prototype.loadAndPlot = function (sensorIds, period) {
     var _this = this;
-    this.dataProvider.onDoneFetchingData(sensorIds, period,
+    _this.appendHTML();
+    _this.showSpinner();
+    _this.dataProvider._onDoneFetchingData(sensorIds, period,
         [function () {
-            console.log(_this);
             _this.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorIds));
             _this.stopSpinner();
             _this.plot();
@@ -345,7 +346,7 @@ DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
     return requests;
 };
 
-DygraphDataProvider.prototype.onDoneFetchingData = function (ids, dateWindow, dataHandlingFunctions) {
+DygraphDataProvider.prototype._onDoneFetchingData = function (ids, dateWindow, dataHandlingFunctions) {
     $.when.apply($, this.generateRequests(ids, dateWindow)).done(function () {
         dataHandlingFunctions.forEach(helperFunctions.call);
     });
@@ -821,7 +822,7 @@ function populateLastMetricsTab() {
     var sensorsInGraph = [19201, 18691];
     var dateWindow = ["2016-04-05T00:00:00", "2016-04-06T00:00:00"];
 
-    g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+    g.dataProvider._onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
         [function () {
             return g.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorsInGraph));
         },
@@ -969,7 +970,7 @@ function generateMixedGraphs_() {
         } else {
             for (var l in temperatureLabels) g.plotParams.series[temperatureLabels[l]] = {axis: 'y2'};
         }
-        g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+        g.dataProvider._onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
             [function () {
                 return g.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorsInGraph));
             },
@@ -1010,7 +1011,7 @@ function generateMixedGraphs_() {
             if (showAverages)
                 g1.plotParams.labels = ['Time', 'Moisture'];
 
-            g1.dataProvider.onDoneFetchingData(probesInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+            g1.dataProvider._onDoneFetchingData(probesInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
                 [function () {
                     g1.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(probesInGraph));
                     g1.stopSpinner();
@@ -1046,7 +1047,7 @@ function generateMixedGraphs_() {
             if (showAverages)
                 g2.plotParams.labels = ['Time', 'Temperature'];
 
-            g2.dataProvider.onDoneFetchingData(tempsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+            g2.dataProvider._onDoneFetchingData(tempsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
                 [function () {
                     g2.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(tempsInGraph));
                     g2.stopSpinner();
@@ -1094,24 +1095,9 @@ function generateRainGraphs() {
         dygs[i].hasSeparateLegendDiv = true;
         dygs[i].setWrapperElement("rain-plot-area");
         dygs[i].setDivElement("sensor-" + sensorsInGraph[i]);
-        dygs[i].appendHTML();
-        dygs[i].showSpinner();
 
         dygs[i].loadAndPlot([sensorsInGraph[i]], {periodFrom: dateWindow[0], periodTo: dateWindow[1]});
     }
-
-    // for (var i = 0; i < dygs.length; i++) {
-    //     var sensor = helperFunctions.getIndexSite().getSensorById(sensorsInGraph[i]);
-    //     // console.log(dygs);
-    //     dygs[i].dataProvider.onDoneFetchingData([sensorsInGraph[i]], {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
-    //         [function () {
-    //             console.log(dygs);
-    //             console.log(dygs[i]);
-    //             dygs[i].dataProvider.addDataStreams([sensor]);
-    //             dygs[i].stopSpinner();
-    //             dygs[i].plot();
-    //         }]);
-    // }
 }
 
 function generateMixedGraphs() {
