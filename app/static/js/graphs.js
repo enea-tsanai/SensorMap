@@ -19,6 +19,7 @@ var helperFunctions = {
      * Returns true of rangeA fully contains rangeB
      */
     datePeriodContains: function (rangeA, rangeB) {
+        console.log(rangeA, rangeB);
         return rangeB[0] >= rangeA[0] && rangeB[1] <= rangeA[1];
     },
     /*
@@ -28,9 +29,9 @@ var helperFunctions = {
         var excludedDatePeriods = [];
         if (!helperFunctions.datePeriodContains(rangeA, rangeB)) {
             if (rangeA[0] > rangeB[0])
-                excludedDatePeriods.push = [rangeB[0], rangeA[0]];
+                excludedDatePeriods.push([rangeB[0], rangeA[0]]);
             if (rangeA[1] < rangeB[1])
-                excludedDatePeriods.push = [rangeA[1], rangeB[1]];
+                excludedDatePeriods.push([rangeA[1], rangeB[1]]);
         }
         return excludedDatePeriods;
     },
@@ -85,11 +86,18 @@ Sensor.prototype.setData = function (data) {
 //TODO: perform double concat for double ranges to avoid sorting
 Sensor.prototype.addData = function (newData) {
     this.data = this.data.concat(newData);
+    // this.data = this.data.sort(function (a, b) {
+    //     return a.timeValue.localeCompare(b.timeValue);
+    // });
 };
 
 //TODO: test if null causes problems in date filtering.. so far it works
 Sensor.prototype.getDateRange = function () {
-    return this.data.length ? [this.data[this.data.length - 1].timeValue, this.data[0].timeValue] : null;
+    var from = new Date(this.data[this.data.length - 1].timeValue);
+    var to = new Date(this.data[0].timeValue);
+    from.setHours(0); from.setMinutes(0); from.setSeconds(0); from.setMilliseconds(0);
+    to.setDate(to.getDate() + 1); to.setHours(0); to.setMinutes(0); to.setSeconds(0); to.setMilliseconds(0);
+    return this.data.length ? [from.toISOString(), to.toISOString()] : null;
 };
 
 
@@ -196,7 +204,7 @@ DygraphPlotter.prototype.appendHTML = function () {
 
 DygraphPlotter.prototype.plot = function () {
     console.log("Plotting..");
-    console.log(this.dataProvider.data);
+    // console.log(this.dataProvider.data);
     //TODO: Check the following: may be undifined
     dygraphs[this.divElement] = new Dygraph(document.getElementById(this.divElement), this.dataProvider.data, this.plotParams);
     dygraphs[this.divElement].resize(); //Force drawing. Resolves issues inside tabs
@@ -278,7 +286,6 @@ DygraphDataProvider.prototype.load = function (sensorIds, dateWindow) {
 DygraphDataProvider.prototype.makeRequest = function (url, params) {
 
     var indexSensor = helperFunctions.getIndexSite().getSensorById(params.dataStreamId);
-
     //Data is already there for the requested date period
     if (indexSensor.data.length && helperFunctions.datePeriodContains(indexSensor.getDateRange(),
             [params.periodFrom, params.periodTo])) {
@@ -290,15 +297,17 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
         if (indexSensor.data.length) {
             var excludedDatesToRequest = helperFunctions.getExcludedDatePeriods(indexSensor.getDateRange(),
                 [params.periodFrom, params.periodTo]);
-
+            console.log(excludedDatesToRequest);
             if (excludedDatesToRequest.length) {
-                params.PeriodFrom = excludedDatesToRequest[0][0];
-                params.PeriodTo = excludedDatesToRequest[0][1];
+                params.periodFrom = excludedDatesToRequest[0][0];
+                params.periodTo = excludedDatesToRequest[0][1];
+                console.log(params);
                 if (excludedDatesToRequest[1] != undefined) {
                     params.rPeriodFrom = excludedDatesToRequest[1][0];
                     params.rPeriodTo = excludedDatesToRequest[1][1];
                 }
             }
+            // console.log(params);
         }
         return $.ajax({
             url: helperFunctions.concatenateUrlAndParams(url, params),
