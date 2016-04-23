@@ -154,6 +154,7 @@
                                     <ul class="nav nav-tabs" id="selection-tabs">
                                         <li class="active"><a href="#all-quads" role="tab" data-toggle="tab">Quadrants</a></li>
                                         <li><a role="tab" data-toggle="tab" href="#rain">Rain</a></li>
+                                        <li><a role="tab" data-toggle="tab" href="#cistern">Cistern</a></li>
                                     </ul>
                                 </div>
                                 <div class="tab-content">
@@ -222,7 +223,6 @@
                                         <hr>
                                         <div id="plot-area"></div>
                                     </div>
-
                                     <div id="rain" role="tabpanel" class="tab-pane tab-plot">
 
                                         <div id="rain-graphs-menu" class="row">
@@ -245,6 +245,30 @@
                                         </div>
                                         <hr>
                                         <div id="rain-plot-area"></div>
+
+                                    </div>
+                                    <div id="cistern" role="tabpanel" class="tab-pane tab-plot">
+
+                                        <div id="cistern-graphs-menu" class="row">
+                                            <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                                <div class="btn-group btn-group-sm text-center">
+                                                    <div><h6>Date Range</h6></div>
+                                                    <div class="input-daterange input-group" id="cistern-datepicker">
+                                                        <input type="text" class="input-sm form-control" data-size="small" name="start" />
+                                                        <span class="input-group-addon">to</span>
+                                                        <input type="text" class="input-sm form-control" data-size="small" name="end" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="button"
+                                                    class="btn btn-primary btn-sm graphs-plot-button" onclick="generateCisternGraphs()">
+                                                <span class="glyphicon glyphicon-triangle-right"></span> Plot
+                                            </button>
+                                        </div>
+                                        <hr>
+                                        <div id="cistern-plot-area"></div>
 
                                     </div>
                                 </div>

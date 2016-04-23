@@ -1088,12 +1088,46 @@ function generateRainGraphs() {
         dygs[i].plotParams.showRangeSelector = false;
         dygs[i].plotParams.fillGraph = true;
         dygs[i].plotParams.rollPeriod = 30;
+        dygs[i].plotParams.color = "#5BAFF3";
         // dygs[i].plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
 
         // Additional Options
         dygs[i].hasVisibletoolbar = true;
         dygs[i].hasSeparateLegendDiv = true;
         dygs[i].setWrapperElement("rain-plot-area");
+        dygs[i].setDivElement("sensor-" + sensorsInGraph[i]);
+
+        dygs[i].loadAndPlot([sensorsInGraph[i]], {periodFrom: dateWindow[0], periodTo: dateWindow[1]});
+    }
+}
+
+function generateCisternGraphs() {
+    $("#cistern-plot-area").empty();
+    var startDate = $('#cistern-datepicker').find('input[name="start"]').datepicker("getDate").toISOString();
+    var endDate = $('#cistern-datepicker').find('input[name="end"]').datepicker("getDate").toISOString();
+    var dateWindow = [startDate, endDate];
+    var sensorsInGraph = [19201, 18691];
+    var dygs = [];
+
+    for (var i = 0; i < sensorsInGraph.length; i++) {
+
+        var sensor = helperFunctions.getIndexSite().getSensorById(sensorsInGraph[i]);
+
+        dygs.push(new DygraphPlotter());
+        dygs[i].plotParams.title = sensor.name;
+        dygs[i].plotParams.labels = [sensor.units[1], sensor.units[0]];  //Use Reverse function or change db schema?
+        dygs[i].plotParams.ylabel = sensor.units[0];
+        dygs[i].plotParams.labelsSeparateLines = true;
+        dygs[i].plotParams.highlightSeriesOpts = '';
+        dygs[i].plotParams.showRangeSelector = false;
+        dygs[i].plotParams.fillGraph = true;
+        dygs[i].plotParams.rollPeriod = 30;
+        // dygs[i].plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
+
+        // Additional Options
+        dygs[i].hasVisibletoolbar = true;
+        dygs[i].hasSeparateLegendDiv = true;
+        dygs[i].setWrapperElement("cistern-plot-area");
         dygs[i].setDivElement("sensor-" + sensorsInGraph[i]);
 
         dygs[i].loadAndPlot([sensorsInGraph[i]], {periodFrom: dateWindow[0], periodTo: dateWindow[1]});
