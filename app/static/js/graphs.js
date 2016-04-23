@@ -261,6 +261,17 @@ DygraphPlotter.prototype.stopSpinner = function () {
         this.spinner.stop();
 };
 
+DygraphPlotter.prototype.loadAndPlot = function (sensorIds, period) {
+    var _this = this;
+    this.dataProvider.onDoneFetchingData(sensorIds, period,
+        [function () {
+            console.log(_this);
+            _this.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorIds));
+            _this.stopSpinner();
+            _this.plot();
+        }]);
+};
+
 
 // DygraphDataProvider class
 function DygraphDataProvider() {
@@ -961,7 +972,7 @@ function generateMixedGraphs_() {
         g.dataProvider.onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
             [function () {
                 return g.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorsInGraph));
-                },
+            },
                 function () {
                     return g.stopSpinner();
                 },
@@ -1001,12 +1012,12 @@ function generateMixedGraphs_() {
 
             g1.dataProvider.onDoneFetchingData(probesInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
                 [function () {
-                        g1.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(probesInGraph));
-                        g1.stopSpinner();
-                        g1.plot();
-                        synchedDygraphs.push(dygraphs['mixed-probes']);
-                        probesGraphComplete.resolve();
-                    }]);
+                    g1.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(probesInGraph));
+                    g1.stopSpinner();
+                    g1.plot();
+                    synchedDygraphs.push(dygraphs['mixed-probes']);
+                    probesGraphComplete.resolve();
+                }]);
         }
 
         if (temperatureLabels.length) {
@@ -1051,6 +1062,56 @@ function generateMixedGraphs_() {
             });
         }
     }
+}
+
+function generateRainGraphs() {
+    $("#rain-plot-area").empty();
+
+    var startDate = $('#rain-datepicker').find('input[name="start"]').datepicker("getDate").toISOString();
+    var endDate = $('#rain-datepicker').find('input[name="end"]').datepicker("getDate").toISOString();
+    var dateWindow = [startDate, endDate];
+
+    // var sensorsInGraph = [19201, 18691,18685, 19051];
+    var sensorsInGraph = [18685, 19051];
+    var dygs = [];
+    for (var i = 0; i < sensorsInGraph.length; i++) {
+
+        var sensor = helperFunctions.getIndexSite().getSensorById(sensorsInGraph[i]);
+
+        dygs.push(new DygraphPlotter());
+        dygs[i].plotParams.title = sensor.name;
+        dygs[i].plotParams.labels = [sensor.units[1], sensor.units[0]];  //Use Reverse function or change db schema?
+        dygs[i].plotParams.ylabel = sensor.units[0];
+        dygs[i].plotParams.labelsSeparateLines = true;
+        dygs[i].plotParams.highlightSeriesOpts = '';
+        dygs[i].plotParams.showRangeSelector = false;
+        dygs[i].plotParams.fillGraph = true;
+        dygs[i].plotParams.rollPeriod = 30;
+        // dygs[i].plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
+
+        // Additional Options
+        dygs[i].hasVisibletoolbar = true;
+        dygs[i].hasSeparateLegendDiv = true;
+        dygs[i].setWrapperElement("rain-plot-area");
+        dygs[i].setDivElement("sensor-" + sensorsInGraph[i]);
+        dygs[i].appendHTML();
+        dygs[i].showSpinner();
+
+        dygs[i].loadAndPlot([sensorsInGraph[i]], {periodFrom: dateWindow[0], periodTo: dateWindow[1]});
+    }
+
+    // for (var i = 0; i < dygs.length; i++) {
+    //     var sensor = helperFunctions.getIndexSite().getSensorById(sensorsInGraph[i]);
+    //     // console.log(dygs);
+    //     dygs[i].dataProvider.onDoneFetchingData([sensorsInGraph[i]], {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+    //         [function () {
+    //             console.log(dygs);
+    //             console.log(dygs[i]);
+    //             dygs[i].dataProvider.addDataStreams([sensor]);
+    //             dygs[i].stopSpinner();
+    //             dygs[i].plot();
+    //         }]);
+    // }
 }
 
 function generateMixedGraphs() {

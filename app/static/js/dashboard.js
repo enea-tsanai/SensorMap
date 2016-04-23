@@ -85,10 +85,10 @@ $(document).ready(function() {
     //Init Switch
     $("[name='average-checkbox']").bootstrapSwitch();
 
-    //Init datepicker
-    $('#datepicker').datepicker({endDate: "today", todayBtn: "linked"});
-    $('#datepicker').find('input[name="start"]').datepicker('setDate', "04/04/2016").datepicker('update');
-    $('#datepicker').find('input[name="end"]').datepicker('setDate', "today").datepicker('update');
+    //Init datepickers
+    $('.input-daterange').datepicker({endDate: "today", todayBtn: "linked"});
+    $('.input-daterange').find('input[name="start"]').datepicker('setDate', "04/04/2016").datepicker('update');
+    $('.input-daterange').find('input[name="end"]').datepicker('setDate', "today").datepicker('update');
 
     //TODO: Check handheld threshhold from css
     $(window).resize(function() {

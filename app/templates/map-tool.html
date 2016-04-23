@@ -214,15 +214,39 @@
                                             </div>
                                         </div>
                                         <div class="text-center">
-                                            <button id="combined-graphs-plot-button" type="button"
-                                                    class="btn btn-primary btn-sm" onclick="generateMixedGraphs_()">
+                                            <button type="button"
+                                                    class="btn btn-primary btn-sm graphs-plot-button" onclick="generateMixedGraphs_()">
                                                 <span class="glyphicon glyphicon-triangle-right"></span> Plot
                                             </button>
                                         </div>
                                         <hr>
                                         <div id="plot-area"></div>
                                     </div>
-                                    <div id="rain" role="tabpanel" class="tab-pane"><p>Test</p></div>
+
+                                    <div id="rain" role="tabpanel" class="tab-pane">
+
+                                        <div id="rain-graphs-menu" class="row">
+                                            <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                                <div class="btn-group btn-group-sm text-center">
+                                                    <div><h6>Date Range</h6></div>
+                                                    <div class="input-daterange input-group" id="rain-datepicker">
+                                                        <input type="text" class="input-sm form-control" data-size="small" name="start" />
+                                                        <span class="input-group-addon">to</span>
+                                                        <input type="text" class="input-sm form-control" data-size="small" name="end" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="button"
+                                                class="btn btn-primary btn-sm graphs-plot-button" onclick="generateRainGraphs()">
+                                            <span class="glyphicon glyphicon-triangle-right"></span> Plot
+                                            </button>
+                                        </div>
+                                        <hr>
+                                        <div id="rain-plot-area"></div>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
