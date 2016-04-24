@@ -26,10 +26,10 @@
     font-size: small;
   }
   @include respond-to('medium-screens') {
-    font-size: medium;
+    font-size: smaller;
   }
   @include respond-to('wide-screens') {
-    font-size: large;
+    font-size: medium;
   }
 }
 
@@ -42,7 +42,7 @@
     font-size: medium;
   }
   @include respond-to('wide-screens') {
-    font-size: large;
+    font-size: medium;
   }
 }
 
@@ -85,12 +85,12 @@ body {
   }
   @include respond-to('medium-screens') {
     padding:4px 9px;
-    font-size: medium;
+    font-size: smaller;
     line-height: 1.2;
   }
   @include respond-to('wide-screens') {
     padding:4px 9px;
-    font-size: large;
+    font-size: smaller;
     line-height: 1.2;
   }
 }
@@ -136,6 +136,16 @@ body {
 }
 
 .dygraph-plot-and-toolbar-wrapper {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  @include respond-to('handhelds') {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  @include respond-to('medium-screens') {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  @include respond-to('wide-screens') {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
 }
