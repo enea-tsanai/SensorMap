@@ -138,7 +138,7 @@ function bindInfoWindow(marker, map, infowindow, site) {
                 // InfoWindow
                 //TODO: Id of ballon should be the site id
                 //TODO: Include this in Dom elements
-                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + site.name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n            <li><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "AboutSite" class="about-site tab-pane fade in active">\n            ' + site.description + '\n        </div>\n        <div id = "LMetrics" class="tab-pane fade tab-plot"></div>\n    </div>\n</div>';
+                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + site.name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n            <li><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "AboutSite" class="about-site tab-pane fade in active">\n            ' + site.overview + '\n        </div>\n        <div id = "LMetrics" class="tab-pane fade tab-plot"></div>\n    </div>\n</div>';
                 infowindow.setContent(windowContent);
                 infowindow.open(map, marker);
                 populateLastMetricsTab();
