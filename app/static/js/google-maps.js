@@ -63,6 +63,7 @@ function loadSites() {
                 });
                 newSite = $.extend(new Site(), site);
                 newSite.sensors = sensors;
+				newSite.initView("site-about");
                 sites.push(newSite);
             });
         }
