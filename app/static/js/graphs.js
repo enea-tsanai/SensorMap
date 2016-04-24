@@ -223,7 +223,7 @@ DygraphPlotter.prototype.showSpinner = function () {
                 , length: 6 // The length of each line
                 , width: 14 // The line thickness
                 , radius: 32 // The radius of the inner circle
-                , scale: 0.75 // Scales overall size of the spinner
+                , scale: 0.25 // Scales overall size of the spinner
                 , corners: 0.6 // Corner roundness (0..1)
                 , color: '#000' // #rgb or #rrggbb or array of colors
                 , opacity: 0.4 // Opacity of the lines
@@ -240,7 +240,7 @@ DygraphPlotter.prototype.showSpinner = function () {
                 , hwaccel: false // Whether to use hardware acceleration
                 , position: 'absolute' // Element positioning
             };
-            var target = document.getElementById(this.dygraphWrapper);
+            var target = document.getElementById(this.divElement);
             this.spinner = new Spinner(opts);
             this.spinner.spin(target);
             this.spinnerIsSpinning = true;
