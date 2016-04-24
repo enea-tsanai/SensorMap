@@ -166,6 +166,7 @@ function DygraphPlotter() {
         "title": "Title",
         "showRoller": false,
         "showRangeSelector": true,
+        "rangeSelectorHeight": 20,
         "fillGraph": false,
         "legend": 'always',
         "ylabel": '',
@@ -1098,7 +1099,7 @@ function generateOtherSensorsGraphs() {
         dygs[i].plotParams.ylabel = sensor.units[0];
         dygs[i].plotParams.labelsSeparateLines = true;
         dygs[i].plotParams.highlightSeriesOpts = '';
-        dygs[i].plotParams.showRangeSelector = false;
+        dygs[i].plotParams.showRangeSelector = true;
         dygs[i].plotParams.fillGraph = true;
         dygs[i].plotParams.rollPeriod = 30;
         // dygs[i].plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
