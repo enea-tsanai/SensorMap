@@ -63,13 +63,9 @@ $dashboard-desktop-min: 845px;
   //min-width: 155px;
 }
 
-#combined-graphs-menu .combined-graphs-menu-item {
+#combined-graphs-menu .combined-graphs-menu-item { //TODO: check this
   text-align: center;
   margin: auto
-}
-
-.combined-graphs-menu-item h1, h2, h3, h4, h5, h6 {
-  text-align: center;
 }
 
 .graphs-plot-button {
@@ -86,4 +82,14 @@ div.dashboard-small > h4 {
 
 .dashboard-small {
   font-size: smaller;
+}
+
+.panel-heading a:after {
+  font-family:'Glyphicons Halflings';
+  content:"\e159";
+  float: right;
+  color: grey;
+}
+.panel-heading a.collapsed:after {
+  content:"\e158";
 }
