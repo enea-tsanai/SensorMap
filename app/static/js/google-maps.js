@@ -63,7 +63,6 @@ function loadSites() {
                 });
                 newSite = $.extend(new Site(), site);
                 newSite.sensors = sensors;
-				newSite.initView("site-about");
                 sites.push(newSite);
             });
         }
@@ -134,7 +133,9 @@ function bindInfoWindow(marker, map, infowindow, site) {
 				selectedSensors.push(site);
 				//TODO: add local icon
 				marker.setIcon({url: 'http://maps.gstatic.com/mapfiles/markers2/icon_green.png'});
-                
+
+                site.initView("site-about");
+
                 // InfoWindow
                 //TODO: Id of ballon should be the site id
                 //TODO: Include this in Dom elements
@@ -142,6 +143,7 @@ function bindInfoWindow(marker, map, infowindow, site) {
                 infowindow.setContent(windowContent);
                 infowindow.open(map, marker);
                 populateLastMetricsTab();
+
             }
 		}
 		// infoWindow Pane

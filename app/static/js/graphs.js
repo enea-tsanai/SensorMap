@@ -158,9 +158,8 @@ Site.prototype.initView = function (view) {
 };
 
 Site.prototype.appendView = function (view) {
-    console.log(this.views);
-
-    $("#"+view).append(this.views[view]);
+    $('a#about-site-title').text("About " + this.name);
+    $("#"+view).empty().append(this.views[view]);
 };
 
 
