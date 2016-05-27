@@ -93,3 +93,30 @@ div.dashboard-small > h4 {
 .panel-heading a.collapsed:after {
   content:"\e158";
 }
+
+#data-viewer-filters {
+  .panel-heading a.collapsed:after {
+    content: none;
+  }
+  .panel-heading a:after {
+    content: none;
+  }
+  .panel-heading a:before {
+    font-family:'Glyphicons Halflings';
+    content:"\e259";
+    float: left;
+    color: grey;
+  }
+  .panel-heading a.collapsed:before {
+    content:"\e258";
+  }
+  .panel-heading {
+    background-color: #FFFFFF;
+  }
+  .panel {
+    border: none;
+  }
+  p.panel-title {
+    font-size: smaller;
+  }
+}
