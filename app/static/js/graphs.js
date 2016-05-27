@@ -158,8 +158,8 @@ Site.prototype.initView = function (view) {
 };
 
 Site.prototype.appendView = function (view) {
-    $('a#about-site-title').text("About " + this.name);
-    $("#"+view).empty().append(this.views[view]);
+    Dashboard.aboutSection.set(this.name, this.views[view]);
+    Dashboard.dataViewerSection.set(DASHBOARD_DATA_VIEWER_SECTION);
 };
 
 
@@ -701,11 +701,11 @@ function showGraphof(site, divElement) {
         else
             graphTitle = site.probe + ": " + site.labels[1] + " vs " + site.labels[0];
 
-        var x = (sidebarState.localeCompare("minimized") == 0) ?
+        var x = (Dashboard.state.localeCompare("minimized") == 0) ?
         $("#" + divElement).parent().width() * gWidthRatioWhenMinimized :
         $("#" + divElement).parent().width() * gWidthRatioWhenMaximized;
 
-        var y = (sidebarState.localeCompare("minimized") == 0) ?
+        var y = (Dashboard.state.localeCompare("minimized") == 0) ?
         $("#" + divElement).parent().width() * gHeightRatioWhenMinimized :
         $("#" + divElement).parent().width() * gHeightRatioWhenMaximized
 
@@ -733,12 +733,12 @@ function showGraphof(site, divElement) {
             "showRangeSelector": true
         });
     } else {
-        if (sidebarState.localeCompare("minimized") == 0) {
+        if (Dashboard.state.localeCompare("minimized") == 0) {
             resizeGraphs(gWidthRatioWhenMinimized, gHeightRatioWhenMinimized);
 //			dygraphs[divElement].width_ = 100;
 //			dygraphs[divElement].height_ = 100;
         }
-        else if (sidebarState.localeCompare("maximized") == 0) {
+        else if (Dashboard.state.localeCompare("maximized") == 0) {
             resizeGraphs(gWidthRatioWhenMaximized, gHeightRatioWhenMaximized);
 //			dygraphs[divElement].width = 500;
 //			dygraphs[divElement].height = 500;

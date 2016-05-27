@@ -124,7 +124,7 @@ function bindInfoWindow(marker, map, infowindow, site) {
 			if (selectedMarkers.indexOf(marker) == -1) {
 				// loadSiteData();
                 // Place camera at center and on top of marker
-				if (sidebarState.localeCompare("minimized") == 0)
+				if (Dashboard.state.localeCompare("minimized") == 0)
 					offsetCenter(marker.getPosition(), -($(window).width() * 0.15), 0);
 				else
 					map.panTo(marker.getPosition());
@@ -173,7 +173,7 @@ function hideMarkers() {
 
 function clearMap() {
 	hideMarkers();
-	clearDashboardSelectedSensors();
+	clearDashboard();
 }
 
 function toggleBounce() {

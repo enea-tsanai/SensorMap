@@ -46,8 +46,8 @@
     <!-- Maps information goes here -->
 	<script type="text/javascript"
 			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyHouJvIaHwiAcMpxP152Vfd0INgbawjo"></script>
-	<script type="text/javascript" src="../static/js/dashboard.js"></script>
-	<script type="text/javascript" src="../static/js/dom-generator.js"></script>
+    <script type="text/javascript" src="../static/js/dom-generator.js"></script>
+    <script type="text/javascript" src="../static/js/dashboard.js"></script>
 	<script type="text/javascript" src="../static/js/graphs.js"></script>
     <script type="text/javascript" src="../static/js/google-maps.js"></script>
 
@@ -131,7 +131,7 @@
                         <div id="collapse1" class="panel-collapse collapse in">
                             <div class="panel-body">
                                 <div class="row">
-                                    <div id="site-about" class="col-sm-10 col-sm-offset-1"><div class="alert alert-info">Select a green site from the map to display information here.</div></div>
+                                    <div id="site-about" class="col-sm-10 col-sm-offset-1"></div>
                                 </div>
                             </div>
                         </div>
@@ -142,157 +142,7 @@
                                 <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse2">Data Viewer</a>
                             </h4>
                         </div>
-                        <div id="collapse2" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <div>
-                                    <ul class="nav nav-tabs" id="selection-tabs">
-                                        <li class="active"><a href="#all-quads" role="tab" data-toggle="tab">Quadrants</a></li>
-                                        <li><a role="tab" data-toggle="tab" href="#rain">Rain</a></li>
-                                        <li><a role="tab" data-toggle="tab" href="#cistern">Cistern</a></li>
-                                        <li><a role="tab" data-toggle="tab" href="#other-sensors">Other Sensors</a></li>
-                                    </ul>
-                                </div>
-                                <div class="tab-content">
-                                    <div id="all-quads" role="tabpanel" class="tab-pane active tab-plot">
-                                        <div id="combined-graphs-menu" class="row">
-                                            <div class="btn-toolbar" role="toolbar" aria-label="...">
-                                                <div class="btn-group btn-group-sm" role="group" aria-label="..." data-toggle="buttons">
-                                                    <div><h6>Quadrants</h6></div>
-                                                    <label class="btn btn-default">
-                                                        <input type="checkbox" name="Quadrant" value="q-1">1
-                                                    </label>
-                                                    <label class="btn btn-default">
-                                                        <input type="checkbox" name="Quadrant" value="q-2">2
-                                                    </label>
-                                                    <label class="btn btn-default">
-                                                        <input type="checkbox" name="Quadrant" value="q-3">3
-                                                    </label>
-                                                    <label class="btn btn-default">
-                                                        <input type="checkbox" name="Quadrant" value="q-4">4
-                                                    </label>
-                                                </div>
-                                                <div class="btn-group btn-group-sm" role="group" aria-label="..." data-toggle="buttons">
-                                                    <div><h6>Probes</h6></div>
-                                                    <label class="btn btn-default">
-                                                        <input type="checkbox" name="Probe" value="p-1">1
-                                                    </label>
-                                                    <label class="btn btn-default">
-                                                        <input type="checkbox" name="Probe" value="p-2">2
-                                                    </label>
-                                                </div>
-                                                <div class="btn-group btn-group-sm" role="group" aria-label="..." data-toggle="buttons">
-                                                    <div><h6>Temperature</h6></div>
-                                                    <label class="btn btn-default">
-                                                        <input type="checkbox" name="Temp" value="t-1">1
-                                                    </label>
-                                                </div>
-                                                <div class="btn-group btn-group-sm">
-                                                    <div><h6>View Mode</h6></div>
-                                                    <button data-toggle="dropdown" class="btn btn-default dropdown-toggle">Separated<span class="caret"></span></button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><input type="radio" id="separated" name="view-mode" value="separated" checked><label for="separated">Separated</label></li>
-                                                        <li><input type="radio" id="combined" name="view-mode" value="combined"><label for="combined">Combined</label></li>
-                                                        <li><input type="radio" id="synchronized" name="view-mode" value="synchronized"><label for="synchronized">Synchronized</label></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="btn-group btn-group-sm text-center">
-                                                    <div><h6>Average</h6></div>
-                                                    <input type="checkbox" name="average-checkbox" data-size="small">
-                                                </div>
-                                                <div class="btn-group btn-group-sm text-center">
-                                                    <div><h6>Date Range</h6></div>
-                                                    <div class="input-daterange input-group" id="datepicker">
-                                                        <input type="text" class="input-sm form-control" data-size="small" name="start" />
-                                                        <span class="input-group-addon">to</span>
-                                                        <input type="text" class="input-sm form-control" data-size="small" name="end" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="button"
-                                                    class="btn btn-primary btn-sm graphs-plot-button" onclick="generateMixedGraphs_()">
-                                                <span class="glyphicon glyphicon-triangle-right"></span> Plot
-                                            </button>
-                                        </div>
-                                        <hr>
-                                        <div id="plot-area"></div>
-                                    </div>
-                                    <div id="rain" role="tabpanel" class="tab-pane tab-plot">
-
-                                        <div id="rain-graphs-menu" class="row">
-                                            <div class="btn-toolbar" role="toolbar" aria-label="...">
-                                                <div class="btn-group btn-group-sm text-center">
-                                                    <div><h6>Date Range</h6></div>
-                                                    <div class="input-daterange input-group" id="rain-datepicker">
-                                                        <input type="text" class="input-sm form-control" data-size="small" name="start" />
-                                                        <span class="input-group-addon">to</span>
-                                                        <input type="text" class="input-sm form-control" data-size="small" name="end" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="button"
-                                                class="btn btn-primary btn-sm graphs-plot-button" onclick="generateRainGraphs()">
-                                            <span class="glyphicon glyphicon-triangle-right"></span> Plot
-                                            </button>
-                                        </div>
-                                        <hr>
-                                        <div id="rain-plot-area"></div>
-
-                                    </div>
-                                    <div id="cistern" role="tabpanel" class="tab-pane tab-plot">
-
-                                        <div id="cistern-graphs-menu" class="row">
-                                            <div class="btn-toolbar" role="toolbar" aria-label="...">
-                                                <div class="btn-group btn-group-sm text-center">
-                                                    <div><h6>Date Range</h6></div>
-                                                    <div class="input-daterange input-group" id="cistern-datepicker">
-                                                        <input type="text" class="input-sm form-control" data-size="small" name="start" />
-                                                        <span class="input-group-addon">to</span>
-                                                        <input type="text" class="input-sm form-control" data-size="small" name="end" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="button"
-                                                    class="btn btn-primary btn-sm graphs-plot-button" onclick="generateCisternGraphs()">
-                                                <span class="glyphicon glyphicon-triangle-right"></span> Plot
-                                            </button>
-                                        </div>
-                                        <hr>
-                                        <div id="cistern-plot-area"></div>
-
-                                    </div>
-                                    <div id="other-sensors" role="tabpanel" class="tab-pane tab-plot">
-
-                                        <div id="other-sensors-graphs-menu" class="row">
-                                            <div class="btn-toolbar" role="toolbar" aria-label="...">
-                                                <div class="btn-group btn-group-sm text-center">
-                                                    <div><h6>Date Range</h6></div>
-                                                    <div class="input-daterange input-group" id="other-sensors-datepicker">
-                                                        <input type="text" class="input-sm form-control" data-size="small" name="start" />
-                                                        <span class="input-group-addon">to</span>
-                                                        <input type="text" class="input-sm form-control" data-size="small" name="end" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="button"
-                                                    class="btn btn-primary btn-sm graphs-plot-button" onclick="generateOtherSensorsGraphs()">
-                                                <span class="glyphicon glyphicon-triangle-right"></span> Plot
-                                            </button>
-                                        </div>
-                                        <hr>
-                                        <div id="other-sensors-plot-area"></div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div id="collapse2" class="panel-collapse collapse"></div>
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
