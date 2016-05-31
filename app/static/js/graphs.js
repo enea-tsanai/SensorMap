@@ -15,12 +15,36 @@ var helperFunctions = {
         }
         return NaN;
     },
+    getIndexIfObjWithAttr: function(array, attr, value) {
+        for(var i = 0; i < array.length; i++) {
+            if(array[i][attr] === value) {
+                return i;
+            }
+        }
+        return -1;
+    },
+    datePeriodComparator: function (a, b) {
+        if (a.s < b.s)
+            return -1;
+        else if (a.s > b.s)
+            return 1;
+        else
+            return 0;
+    },
     /*
-     * Returns true of rangeA fully contains rangeB
+     * Returns true if rangeA contains part of rangeB
+     */
+    datePeriodContainsPartially: function (rangeA, rangeB) {
+        console.log(rangeA, rangeB);
+        return rangeB.s >= rangeA.s && rangeB.s <= rangeA.e ||
+            rangeB.e <= rangeA.e && rangeB.e >= rangeA.s;
+    },
+    /*
+     * Returns true if rangeA fully contains rangeB
      */
     datePeriodContains: function (rangeA, rangeB) {
-        console.log(rangeA, rangeB);
-        return rangeB[0] >= rangeA[0] && rangeB[1] <= rangeA[1];
+        // console.log(rangeA, rangeB);
+        return rangeB.s >= rangeA.s && rangeB.e <= rangeA.e;
     },
     /*
      * Returns the parts of rangeB not contained in rangeA
@@ -73,6 +97,7 @@ function Sensor() {
     this.description = "";
     this.labels = [];
     this.data = [];
+    this.requestedDatePeriodsHistory = []; //array of objects
 }
 
 Sensor.prototype.getData = function () {
@@ -90,6 +115,50 @@ Sensor.prototype.addData = function (newData) {
     //     return a.timeValue.localeCompare(b.timeValue);
     // });
 };
+
+Sensor.prototype.containsLoadedPeriod = function (period) {
+    for (var i = 0; i < this.requestedDatePeriodsHistory.length; i++) {
+        if (helperFunctions.datePeriodContains(this.requestedDatePeriodsHistory[i], period))
+            return true;
+    }
+    return false;
+};
+
+//TODO: heavily test this. It works for now ...
+//TODO: This functionality might fit better to dataprovider class
+Sensor.prototype.addRequestedDatePeriodToHistory = function (period) {
+    if (!this.requestedDatePeriodsHistory.length) {
+        this.requestedDatePeriodsHistory.push(period);
+    }
+    else {
+        var toBeMerged = [];
+        for (var i = 0; i < this.requestedDatePeriodsHistory.length; i++) {
+            if (helperFunctions.datePeriodContainsPartially(period, this.requestedDatePeriodsHistory[i])) {
+                toBeMerged.push(this.requestedDatePeriodsHistory[i]);
+            }
+        }
+
+        // console.log("--- ToBeMerged ---");
+        // console.log(toBeMerged);
+
+        if (toBeMerged.length) {
+            var s = toBeMerged[0].s > period.s ? period.s : toBeMerged[0].e;
+            var e = toBeMerged[toBeMerged.length -1].e > period.e ? toBeMerged[toBeMerged.length -1].e : period.e;
+            var mergedPeriod = {'s': s, 'e': e};
+
+            // console.log("--- Merged period ---" + mergedPeriod);
+
+            // Merge included date periods
+            var sIndx = helperFunctions.getIndexIfObjWithAttr(this.requestedDatePeriodsHistory, 's', toBeMerged[0].s);
+            var eIndx = helperFunctions.getIndexIfObjWithAttr(this.requestedDatePeriodsHistory, 's', toBeMerged[toBeMerged.length - 1].s);
+            this.requestedDatePeriodsHistory.splice(sIndx, eIndx - sIndx + 1, mergedPeriod);
+        } else {
+            this.requestedDatePeriodsHistory.push(period);
+        }
+    }
+    this.requestedDatePeriodsHistory.sort(helperFunctions.datePeriodComparator);
+};
+
 
 //TODO: test if null causes problems in date filtering.. so far it works
 Sensor.prototype.getDateRange = function () {
@@ -314,48 +383,57 @@ function DygraphDataProvider() {
     this.data = [];
 }
 
-DygraphDataProvider.prototype.load = function (sensorIds, dateWindow) {
-    var requestParams = {
-        "key": "z5ywCWZ4rLh3lu*3i234StqF"
-    };
-    for (sId in sensorIds) {
-        requestParams.dataStreamId = sensorIdsensorIds[sId];
-        this.makeRequest("/getDataStream/", requestParams);
-        // if (sites[indexSite].getSensor(sensorIds[sensorId]).
-    }
-};
+// DygraphDataProvider.prototype.load = function (sensorIds, dateWindow) {
+//     var requestParams = {
+//         "key": "z5ywCWZ4rLh3lu*3i234StqF"
+//     };
+//     for (sId in sensorIds) {
+//         requestParams.dataStreamId = sensorIdsensorIds[sId];
+//         this.makeRequest("/getDataStream/", requestParams);
+//         // if (sites[indexSite].getSensor(sensorIds[sensorId]).
+//     }
+// };
 
 DygraphDataProvider.prototype.makeRequest = function (url, params) {
-
     var indexSensor = helperFunctions.getIndexSite().getSensorById(params.dataStreamId);
-    //Data is already there for the requested date period
-    if (indexSensor.data.length && helperFunctions.datePeriodContains(indexSensor.getDateRange(),
-            [params.periodFrom, params.periodTo])) {
+    var newRequestedPeriod = {'s': params.periodFrom, 'e': params.periodTo};
+
+    // Requested period already exists in requests history
+    if (indexSensor.data.length && indexSensor.containsLoadedPeriod(newRequestedPeriod)) {
         console.log("RESOLVED");
         return $.Deferred().resolve();
     }
     else {
         //There is already some data. Get the excluded dates
-        if (indexSensor.data.length) {
-            var excludedDatesToRequest = helperFunctions.getExcludedDatePeriods(indexSensor.getDateRange(),
-                [params.periodFrom, params.periodTo]);
-            console.log(excludedDatesToRequest);
-            if (excludedDatesToRequest.length) {
-                params.periodFrom = excludedDatesToRequest[0][0];
-                params.periodTo = excludedDatesToRequest[0][1];
-                console.log(params);
-                if (excludedDatesToRequest[1] != undefined) {
-                    params.rPeriodFrom = excludedDatesToRequest[1][0];
-                    params.rPeriodTo = excludedDatesToRequest[1][1];
-                }
-            }
-            // console.log(params);
-        }
+        // if (indexSensor.data.length) {
+        //     var excludedDatesToRequest = helperFunctions.getExcludedDatePeriods(indexSensor.getDateRange(),
+        //         [params.periodFrom, params.periodTo]);
+        //     console.log(excludedDatesToRequest);
+        //     if (excludedDatesToRequest.length) {
+        //         params.periodFrom = excludedDatesToRequest[0][0];
+        //         params.periodTo = excludedDatesToRequest[0][1];
+        //         console.log(params);
+        //         if (excludedDatesToRequest[1] != undefined) {
+        //             params.rPeriodFrom = excludedDatesToRequest[1][0];
+        //             params.rPeriodTo = excludedDatesToRequest[1][1];
+        //         }
+        //     }
+        //     // console.log(params);
+        // }
+
+        // console.log("----- Before adding new: Loaded periods -----");
+        // console.log(indexSensor.requestedDatePeriodsHistory);
+
+        indexSensor.addRequestedDatePeriodToHistory(newRequestedPeriod);
+
+        // console.log("----- After adding new: Loaded periods -----");
+        console.log(indexSensor.requestedDatePeriodsHistory);
+
         return $.ajax({
             url: helperFunctions.concatenateUrlAndParams(url, params),
             dataType: "json",
             success: function (response) {
-                console.log(response.items);
+                // console.log(response.items);
                 helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response.items);
             }
         });
@@ -370,6 +448,8 @@ DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
     // ];
     var requests = [];
     for (var id in ids) {
+        // requests.concat(this.makeRequest("/getDataStream",
+        //     {"dataStreamId": ids[id], "periodFrom": dateWindow.periodFrom, "periodTo": dateWindow.periodTo}));
         requests.push(new this.makeRequest("/getDataStream",
             {"dataStreamId": ids[id], "periodFrom": dateWindow.periodFrom, "periodTo": dateWindow.periodTo}));
     }
@@ -824,7 +904,7 @@ function populateLastMetricsTab() {
     g.plotParams.series["Temperature (C)"] = {axis: 'y2'};
     g.plotParams.connectSeparatedPoints = true;
     g.plotParams.labelsSeparateLines = true;
-    g.plotParams.customBars = true; //Carefull with this
+    g.plotParams.customBars = true; //Careful with this
     g.plotParams.highlightSeriesOpts = '';
     g.plotParams.showRangeSelector = false;
     // g.plotParams.dateWindow = [Date.parse("2016/03/01"), Date.parse("2016-03-02")];
