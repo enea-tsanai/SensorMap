@@ -49,16 +49,16 @@ var helperFunctions = {
     /*
      * Returns the parts of rangeB not contained in rangeA
      */
-    getExcludedDatePeriods: function (rangeA, rangeB) {
-        var excludedDatePeriods = [];
-        if (!helperFunctions.datePeriodContains(rangeA, rangeB)) {
-            if (rangeA[0] > rangeB[0])
-                excludedDatePeriods.push([rangeB[0], rangeA[0]]);
-            if (rangeA[1] < rangeB[1])
-                excludedDatePeriods.push([rangeA[1], rangeB[1]]);
-        }
-        return excludedDatePeriods;
-    },
+    // getExcludedDatePeriods: function (rangeA, rangeB) {
+    //     var excludedDatePeriods = [];
+    //     if (!helperFunctions.datePeriodContains(rangeA, rangeB)) {
+    //         if (rangeA[0] > rangeB[0])
+    //             excludedDatePeriods.push([rangeB[0], rangeA[0]]);
+    //         if (rangeA[1] < rangeB[1])
+    //             excludedDatePeriods.push([rangeA[1], rangeB[1]]);
+    //     }
+    //     return excludedDatePeriods;
+    // },
     toArrayOfArrays: function (arrayOfObjects) {
         return $.map(arrayOfObjects, function (value, index) {
             return [value];
@@ -159,6 +159,38 @@ Sensor.prototype.addRequestedDatePeriodToHistory = function (period) {
     this.requestedDatePeriodsHistory.sort(helperFunctions.datePeriodComparator);
 };
 
+/**
+ * Scans the request history and returns the date periods not included by the union of the new requested period and
+ * the previous ones stored in the requests history.
+ * @param period. The requested period to fetch data.
+ * @returns {Array}. The intermediate excluded date periods.
+ */
+Sensor.prototype.getExcludedDatePeriods = function (period) {
+    var toBeMerged = [];
+    var excludedPeriods = [];
+
+    for (var i = 0; i < this.requestedDatePeriodsHistory.length; i++) {
+        if (helperFunctions.datePeriodContainsPartially(period, this.requestedDatePeriodsHistory[i])) {
+            toBeMerged.push(this.requestedDatePeriodsHistory[i]);
+        }
+    }
+
+    if (toBeMerged.length) {
+        for (var i = 0; i < toBeMerged.length - 1; i++) {
+            excludedPeriods.push({'s': toBeMerged[i].e, 'e': toBeMerged[i+ 1].s});
+        }
+
+        var leftExcluded = toBeMerged[0].s > period.s ? {'s': period.s, 'e': toBeMerged[0].s}: 0;
+        var rightExcluded = toBeMerged[toBeMerged.length -1].e < period.e ?
+        {'s': toBeMerged[toBeMerged.length -1].e, 'e': period.e}: 0;
+
+        if (leftExcluded)
+            excludedPeriods.splice(0, 0, leftExcluded);
+        if (rightExcluded)
+            excludedPeriods.splice(excludedPeriods.length - 1, 0, rightExcluded);
+    }
+    return excludedPeriods;
+};
 
 //TODO: test if null causes problems in date filtering.. so far it works
 Sensor.prototype.getDateRange = function () {
@@ -404,6 +436,7 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
         return $.Deferred().resolve();
     }
     else {
+        var requests = [];
         //There is already some data. Get the excluded dates
         // if (indexSensor.data.length) {
         //     var excludedDatesToRequest = helperFunctions.getExcludedDatePeriods(indexSensor.getDateRange(),
@@ -421,13 +454,27 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
         //     // console.log(params);
         // }
 
-        // console.log("----- Before adding new: Loaded periods -----");
-        // console.log(indexSensor.requestedDatePeriodsHistory);
+        // console.log(indexSensor.getExcludedDatePeriods(newRequestedPeriod));
+        var excludedPeriods = indexSensor.getExcludedDatePeriods(newRequestedPeriod);
+
+        for (var i = 0; i < excludedPeriods.length; i++) {
+            params.periodFrom = excludedPeriods[i].s;
+            params.periodTo = excludedPeriods[i].e;
+
+            requests.push($.ajax({
+                url: helperFunctions.concatenateUrlAndParams(url, params),
+                dataType: "json",
+                success: function (response) {
+                    // console.log(response.items);
+                    helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response.items);
+                }
+            }));
+        }
 
         indexSensor.addRequestedDatePeriodToHistory(newRequestedPeriod);
+        // console.log(indexSensor.requestedDatePeriodsHistory);
 
-        // console.log("----- After adding new: Loaded periods -----");
-        console.log(indexSensor.requestedDatePeriodsHistory);
+        console.log(requests);
 
         return $.ajax({
             url: helperFunctions.concatenateUrlAndParams(url, params),
