@@ -15,6 +15,13 @@ var helperFunctions = {
         }
         return NaN;
     },
+    /**
+     * Returns the index of an object in an array based on an object attribute as the search key.
+     * @param array: The array of objects.
+     * @param attr: The object attribute and search key.
+     * @param value: The value of the search key.
+     * @returns {number}: The index of the object in the array.
+     */
     getIndexIfObjWithAttr: function(array, attr, value) {
         for(var i = 0; i < array.length; i++) {
             if(array[i][attr] === value) {
@@ -31,15 +38,21 @@ var helperFunctions = {
         else
             return 0;
     },
-    /*
+    /**
      * Returns true if rangeA contains part of rangeB
+     * @param rangeA
+     * @param rangeB
+     * @returns {boolean}
      */
     datePeriodContainsPartially: function (rangeA, rangeB) {
         return rangeB.s >= rangeA.s && rangeB.s <= rangeA.e ||
             rangeB.e <= rangeA.e && rangeB.e >= rangeA.s;
     },
-    /*
+    /**
      * Returns true if rangeA fully contains rangeB
+     * @param rangeA
+     * @param rangeB
+     * @returns {boolean}
      */
     datePeriodContains: function (rangeA, rangeB) {
         // console.log(rangeA, rangeB);
@@ -63,6 +76,10 @@ var helperFunctions = {
             return [value];
         });
     },
+    /**
+     * Returns the currently selected site on the map.
+     * @returns {*} the selected site or {null} if no site is selected.
+     */
     getIndexSite: function () {
         for (s in sites) {
             if (sites[s]._id === indexSite)
@@ -70,9 +87,19 @@ var helperFunctions = {
         }
         return null;
     },
+    /**
+     * Runs the input function. Useful in callback functions in async tasks.
+     * @param fn
+     */
     call: function (fn) {
         fn();
     },
+    /**
+     * Concatenates request url and params. Used in ajax requests.
+     * @param url
+     * @param requestParams
+     * @returns {*}
+     */
     concatenateUrlAndParams: function (url, requestParams) {
         if (!jQuery.isEmptyObject(requestParams)) {
             var params = "";
@@ -89,7 +116,10 @@ var helperFunctions = {
 };
 
 
-// Sensor Class
+/**
+ * Sensor Class
+ * @constructor
+ */
 function Sensor() {
     this._id = "";
     this.name = "";
@@ -201,7 +231,10 @@ Sensor.prototype.getDateRange = function () {
 };
 
 
-// Site Class
+/**
+ * Site Class
+ * @constructor
+ */
 function Site() {
     this._id = "";
     this.name = "";
@@ -235,6 +268,10 @@ Site.prototype.getSensorsById = function (sensorIds) {
     return sensors;
 };
 
+/**
+ * Initializes html views of the site.
+ * @param view: The div id to place the site view.
+ */
 Site.prototype.initView = function (view) {
     if (view === "site-about") {
         var html = this.description;
@@ -257,13 +294,20 @@ Site.prototype.initView = function (view) {
     }
 };
 
+/**
+ * Appends the site view in the page html.
+ * @param view: The site view id.
+ */
 Site.prototype.appendView = function (view) {
     Dashboard.aboutSection.set(this.name, this.views[view]);
     Dashboard.dataViewerSection.set(DASHBOARD_DATA_VIEWER_SECTION);
 };
 
 
-// DygraphPlotter Class
+/**
+ * DygraphPlotter Class
+ * @constructor
+ */
 function DygraphPlotter() {
     this.dataProvider = new DygraphDataProvider();
     this.hasSeparateLegendDiv = true;
@@ -404,7 +448,10 @@ DygraphPlotter.prototype.loadAndPlot = function (sensorIds, period) {
 };
 
 
-// DygraphDataProvider class
+/**
+ * DygraphDataProvider class
+ * @constructor
+ */
 function DygraphDataProvider() {
     this.dataCallbacks = $.Callbacks();
     this.lastRangeReqNum = null;
@@ -425,6 +472,14 @@ function DygraphDataProvider() {
 //     }
 // };
 
+/**
+ * Generates an ajax request: If the request already exists in the requests history, it resolves the request. If
+ * not, it checks if the request partially exists (contains dates for which there is already fetched data) and generates
+ * one request (no dates included in the requests history) or more sub-requests (non existing dates in the history).
+ * @param url: The request url without any params.
+ * @param params: The request url params.
+ * @returns {resolved Deferred} or {array} of ajax requests.
+ */
 DygraphDataProvider.prototype.makeRequest = function (url, params) {
     var indexSensor = helperFunctions.getIndexSite().getSensorById(params.dataStreamId);
     var newRequestedPeriod = {'s': params.periodFrom, 'e': params.periodTo};
@@ -469,6 +524,12 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
     }
 };
 
+/**
+ * Generates requests for the input parameters.
+ * @param ids: The ids of the data sources.
+ * @param dateWindow: The date period for the requested data.
+ * @returns {Array} of requests.
+ */
 DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
     var requests = [];
     for (var id in ids) {
@@ -480,6 +541,13 @@ DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
     return requests;
 };
 
+/**
+ * Handles async data requests.
+ * @param ids: The ids of the data sources.
+ * @param dateWindow: The date period for the requested data.
+ * @param dataHandlingFunctions: Array of functions to be executed after all the requested data has been fetched.
+ * @private
+ */
 DygraphDataProvider.prototype._onDoneFetchingData = function (ids, dateWindow, dataHandlingFunctions) {
     $.when.apply($, this.generateRequests(ids, dateWindow)).done(function () {
         dataHandlingFunctions.forEach(helperFunctions.call);
@@ -487,7 +555,7 @@ DygraphDataProvider.prototype._onDoneFetchingData = function (ids, dateWindow, d
 };
 
 /**
- * @param: an array of objects that contain pairs of values to be plotted
+ * @param: an array of objects that contains pairs of values to be plotted
  */
 DygraphDataProvider.prototype.addDataStreams = function (dataStreams) {
     this.numberOfStreams = dataStreams.length;
