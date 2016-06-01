@@ -35,7 +35,6 @@ var helperFunctions = {
      * Returns true if rangeA contains part of rangeB
      */
     datePeriodContainsPartially: function (rangeA, rangeB) {
-        console.log(rangeA, rangeB);
         return rangeB.s >= rangeA.s && rangeB.s <= rangeA.e ||
             rangeB.e <= rangeA.e && rangeB.e >= rangeA.s;
     },
@@ -437,35 +436,28 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
     }
     else {
         var requests = [];
-        //There is already some data. Get the excluded dates
-        // if (indexSensor.data.length) {
-        //     var excludedDatesToRequest = helperFunctions.getExcludedDatePeriods(indexSensor.getDateRange(),
-        //         [params.periodFrom, params.periodTo]);
-        //     console.log(excludedDatesToRequest);
-        //     if (excludedDatesToRequest.length) {
-        //         params.periodFrom = excludedDatesToRequest[0][0];
-        //         params.periodTo = excludedDatesToRequest[0][1];
-        //         console.log(params);
-        //         if (excludedDatesToRequest[1] != undefined) {
-        //             params.rPeriodFrom = excludedDatesToRequest[1][0];
-        //             params.rPeriodTo = excludedDatesToRequest[1][1];
-        //         }
-        //     }
-        //     // console.log(params);
-        // }
-
         // console.log(indexSensor.getExcludedDatePeriods(newRequestedPeriod));
         var excludedPeriods = indexSensor.getExcludedDatePeriods(newRequestedPeriod);
 
-        for (var i = 0; i < excludedPeriods.length; i++) {
-            params.periodFrom = excludedPeriods[i].s;
-            params.periodTo = excludedPeriods[i].e;
+        if (excludedPeriods.length) {
+            for (var i = 0; i < excludedPeriods.length; i++) {
+                params.periodFrom = excludedPeriods[i].s;
+                params.periodTo = excludedPeriods[i].e;
 
-            requests.push($.ajax({
+                requests.push(new $.ajax({
+                    url: helperFunctions.concatenateUrlAndParams(url, params),
+                    dataType: "json",
+                    success: function (response) {
+                        // console.log(response.items);
+                        helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response.items);
+                    }
+                }));
+            }
+        } else {
+            requests.push(new $.ajax({
                 url: helperFunctions.concatenateUrlAndParams(url, params),
                 dataType: "json",
                 success: function (response) {
-                    // console.log(response.items);
                     helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response.items);
                 }
             }));
@@ -473,31 +465,16 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
 
         indexSensor.addRequestedDatePeriodToHistory(newRequestedPeriod);
         // console.log(indexSensor.requestedDatePeriodsHistory);
-
-        console.log(requests);
-
-        return $.ajax({
-            url: helperFunctions.concatenateUrlAndParams(url, params),
-            dataType: "json",
-            success: function (response) {
-                // console.log(response.items);
-                helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response.items);
-            }
-        });
+        return requests;
     }
 };
 
 DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
-    // var requests = [
-    //     new this.makeRequest("/getDataStream?dataStreamId=18704"),
-    //     new this.makeRequest("/getDataStream?dataStreamId=18711"),
-    //     new this.makeRequest("/getDataStream?dataStreamId=18718")
-    // ];
     var requests = [];
     for (var id in ids) {
-        // requests.concat(this.makeRequest("/getDataStream",
+        // requests.push(new this.makeRequest("/getDataStream",
         //     {"dataStreamId": ids[id], "periodFrom": dateWindow.periodFrom, "periodTo": dateWindow.periodTo}));
-        requests.push(new this.makeRequest("/getDataStream",
+        requests = requests.concat(this.makeRequest("/getDataStream",
             {"dataStreamId": ids[id], "periodFrom": dateWindow.periodFrom, "periodTo": dateWindow.periodTo}));
     }
     return requests;
