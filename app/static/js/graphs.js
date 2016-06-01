@@ -1095,7 +1095,7 @@ function generateMixedGraphs_() {
         g.plotParams.labelsSeparateLines = true;
         g.plotParams.customBars = showAverages; //Carefull with this
         g.plotParams.highlightSeriesOpts = '';
-        g.plotParams.showRangeSelector = false;
+        g.plotParams.showRangeSelector = true;
         // g.plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
 
         // Additional Options
@@ -1143,7 +1143,7 @@ function generateMixedGraphs_() {
             g1.plotParams.labelsSeparateLines = true;
             g1.plotParams.customBars = showAverages; //Carefull with this
             g1.plotParams.highlightSeriesOpts = '';
-            g1.plotParams.showRangeSelector = false;
+            g1.plotParams.showRangeSelector = true;
             // g1.plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
 
             // Additional Options
@@ -1233,7 +1233,7 @@ function generateRainGraphs() {
         dygs[i].plotParams.ylabel = sensor.units[0];
         dygs[i].plotParams.labelsSeparateLines = true;
         dygs[i].plotParams.highlightSeriesOpts = '';
-        dygs[i].plotParams.showRangeSelector = false;
+        dygs[i].plotParams.showRangeSelector = true;
         dygs[i].plotParams.fillGraph = true;
         dygs[i].plotParams.rollPeriod = 30;
         dygs[i].plotParams.color = "#5BAFF3";
@@ -1267,7 +1267,7 @@ function generateCisternGraphs() {
         dygs[i].plotParams.ylabel = sensor.units[0];
         dygs[i].plotParams.labelsSeparateLines = true;
         dygs[i].plotParams.highlightSeriesOpts = '';
-        dygs[i].plotParams.showRangeSelector = false;
+        dygs[i].plotParams.showRangeSelector = true;
         dygs[i].plotParams.fillGraph = true;
         dygs[i].plotParams.rollPeriod = 30;
         // dygs[i].plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
