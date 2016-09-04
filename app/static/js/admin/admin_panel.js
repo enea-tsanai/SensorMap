@@ -72,10 +72,79 @@ $(document).ready(function () {
         title: 'Sites',
         sorting: true, //Enable sorting
         actions: {
-            listAction: API_ROOT + 'admin/sites',
-            createAction: API_ROOT + 'createSite',
-            updateAction: '/GettingStarted/UpdatePerson',
-            deleteAction: '/GettingStarted/DeletePerson'
+            //listAction: API_ROOT + 'admin/sites',
+            listAction: function(postData, jtParams) {
+                    return $.Deferred(function ($dfd) {
+                        $.ajax({
+                            url: API_ROOT + 'admin/sites',
+                            type: 'GET',
+                            dataType: 'json',
+                            //data: postData,
+                            success: function (data) {
+                                console.log(data);
+                                $dfd.resolve(data);
+                            },
+                            error: function () {
+                                $dfd.reject();
+                            }
+                        });
+                    });
+                },
+            //createAction: API_ROOT + 'admin/createSite',
+            createAction: function(postData) {
+                    return $.Deferred(function ($dfd) {
+                        $.ajax({
+                            url: API_ROOT + 'admin/createSite',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: postData,
+                            success: function (data) {
+                                $dfd.resolve(data);
+                            },
+                            error: function () {
+                                $dfd.reject();
+                            }
+                        });
+                    });
+                },
+            updateAction: function(postData) {
+                    console.log(postData);
+                    return $.Deferred(function ($dfd) {
+                        $.ajax({
+                            url: API_ROOT + 'admin/updateSite/' + postData.record._id,
+                            type: 'PUT',
+                            dataType: 'json',
+                            data: postData,
+                            success: function (data) {
+                                $dfd.resolve(data);
+                            },
+                            error: function () {
+                                $dfd.reject();
+                            }
+                        });
+                    });
+                },
+            //updateAction: API_ROOT + 'admin/updateSite',
+            //deleteAction: API_ROOT + 'admin/deleteSite',
+            deleteAction: function(postData) {
+                    console.log(postData._id);
+                    console.log(postData._id.toString());
+                    return $.Deferred(function ($dfd) {
+                        $.ajax({
+                            url: API_ROOT + 'admin/site/' + postData._id,
+                            type: 'DELETE',
+                            dataType: 'json',
+                            //data: postData,
+                            success: function (data) {
+
+                                $dfd.resolve(data);
+                            },
+                            error: function () {
+                                $dfd.reject();
+                            }
+                        });
+                    });
+                }
         },
         fields: {
             _id: {

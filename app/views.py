@@ -7,6 +7,8 @@ from bson import Binary, Code, json_util
 from bson.json_util import dumps, loads
 # import datetime
 from dateutil.parser import parse
+from bson.objectid import ObjectId
+
 import pprint
 
 from flask_security import Security, UserMixin, RoleMixin, login_required, \
@@ -23,6 +25,7 @@ from flask_admin.contrib.mongoengine import ModelView
 from flask_admin import helpers
 
 from flask import render_template, url_for, request, session, redirect
+
 
 
 # import bcrypt
@@ -61,55 +64,63 @@ def logout():
 	return redirect(url_for('admin'))
 
 
-@app.route('/admin/sites', methods=['POST', 'GET'])
+@app.route('/admin/sites', methods=['GET'])
 def admin_get_sites():
 	if 'username' in session:
-
 		docs_list = list(mongo.db.sites.find())
-		# print  docs_list
+		for site in docs_list:
+			site['_id'] = str(site['_id'])
 		records = ({"Result": "OK", "Records": docs_list})
 		return json.dumps(records, default=json_util.default)
-	# records = json.dumps(docs_list, default=json_util.default)
-
-	# return jsonify({"Result":"OK", "Records": docs_list})
-	# 		{"_id":1,"name":"Benjamin Button","overview":17,"description":"\/Date(1320259705710)\/", "location": "weew"}]})
-	# return json.dumps(docs_list, default=json_util.default)
 	else:
 		return {}
 
 
-@app.route('/getSites', methods=['POST', 'GET'])
-def get_sites():
-	# cursor = mongo.db.sites.find()
-	# records = dict((str(record['_id']), record) for record in cursor)
-
-	docs_list = list(mongo.db.sites.find())
-	return json.dumps(docs_list, default=json_util.default)
-
-
-@app.route('/createSite', methods=['POST'])
+@app.route('/admin/createSite', methods=['POST'])
 def create_site():
-	print request.form
-	site = dict.fromkeys(['name', 'description', 'overview'])
-	site['name'] = request.form['name']
-	site['description'] = request.form['description']
-	site['overview'] = request.form['overview']
-	site['location'] = dict.fromkeys(['x', 'y'])
-	site['location']['x'] = request.form['x']
-	site['location']['y'] = request.form['y']
-	# site.location = {
-	# 	'x': request.form['location']['x'],
-	# 	'y': request.form['location']['y']
-	# }
-	# site = {"author": "Mike",
-	# 		"text": "My first blog post!",
-	# 		"tags": ["mongodb", "python", "pymongo"]}
-	sites = mongo.db.sites
-	site_id = sites.insert_one(site).inserted_id
+	if 'username' in session:
+		print request.form
+		site = dict.fromkeys(['name', 'description', 'overview'])
+		site['name'] = request.form['name']
+		site['description'] = request.form['description']
+		site['overview'] = request.form['overview']
+		site['location'] = dict.fromkeys(['x', 'y'])
+		site['location']['x'] = request.form['x']
+		site['location']['y'] = request.form['y']
+		# site.location = {
+		# 	'x': request.form['location']['x'],
+		# 	'y': request.form['location']['y']
+		# }
+		# site = {"author": "Mike",
+		# 		"text": "My first blog post!",
+		# 		"tags": ["mongodb", "python", "pymongo"]}
+		sites = mongo.db.sites
+		site_id = sites.insert_one(site).inserted_id
 
-	new_site = sites.find_one({"_id": site_id})
-	record = ({"Result": "OK", "Record": new_site})
-	return json.dumps(record, default=json_util.default)
+		new_site = sites.find_one({"_id": site_id})
+		new_site["_id"] = str(new_site["_id"])
+		record = ({"Result": "OK", "Record": new_site})
+		return json.dumps(record, default=json_util.default)
+	return {}
+
+
+@app.route('/admin/updateSite/<string:id>', methods=['PUT'])
+def update_site(id):
+	# if 'username' in session:
+	print id
+
+
+# else:
+# 	return {'Request Failed.'}
+
+@app.route('/admin/site/<string:doc_id>', methods=['DELETE'])
+def delete_site(doc_id):
+	if 'username' in session:
+		print ObjectId(doc_id)
+		result = mongo.db.sites.delete_one({'_id': ObjectId(doc_id)})
+		return json.dumps({"Result": "OK"}, default=json_util.default)
+	else:
+		return {'Request Failed.'}
 
 
 @app.route('/')
@@ -121,6 +132,15 @@ def index():
 @app.route('/map')
 def map_render():
 	return render_template('map-tool.html')
+
+
+@app.route('/getSites', methods=['POST', 'GET'])
+def get_sites():
+	# cursor = mongo.db.sites.find()
+	# records = dict((str(record['_id']), record) for record in cursor)
+
+	docs_list = list(mongo.db.sites.find())
+	return json.dumps(docs_list, default=json_util.default)
 
 
 @app.route('/tests/<int:test_id>')
