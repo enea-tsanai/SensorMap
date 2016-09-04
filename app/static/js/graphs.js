@@ -15,7 +15,7 @@ var helperFunctions = {
         }
         return NaN;
     },
-    /**
+    /** 
      * Returns the index of an object in an array based on an object attribute as the search key.
      * @param array: The array of objects.
      * @param attr: The object attribute and search key.
@@ -115,9 +115,8 @@ var helperFunctions = {
     }
 };
 
-
 /**
- * Sensor Class
+ * 
  * @constructor
  */
 function Sensor() {
