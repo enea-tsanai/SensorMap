@@ -4,6 +4,22 @@ $(document).ready(function () {
     CKEDITOR.dtd.$editable.span = 1;
     CKEDITOR.dtd.$editable.a = 1;
 
+    //var paramsDecoder = function(url) {
+    //    console.log(url);
+    //  return JSON.parse('{"' + decodeURI(url.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    //    //return decodeURI(url);
+    //};
+
+    function getJsonFromUrl(url) {
+      var query = url;
+      var result = {};
+      query.split("&").forEach(function(part) {
+        var item = part.split("=");
+        result[item[0]] = decodeURIComponent(item[1]);
+      });
+      return result;
+    }
+
     var streams = {
         title: '',
         edit: false,
@@ -84,17 +100,17 @@ $(document).ready(function () {
                                 console.log(data);
                                 $dfd.resolve(data);
                             },
-                            error: function () {
-                                $dfd.reject();
+                            error: function (err) {
+                                console.log(err);
+                                $dfd.reject(err);
                             }
                         });
                     });
                 },
-            //createAction: API_ROOT + 'admin/createSite',
             createAction: function(postData) {
                     return $.Deferred(function ($dfd) {
                         $.ajax({
-                            url: API_ROOT + 'admin/createSite',
+                            url: API_ROOT + 'admin/site',
                             type: 'POST',
                             dataType: 'json',
                             data: postData,
@@ -107,14 +123,17 @@ $(document).ready(function () {
                         });
                     });
                 },
-            updateAction: function(postData) {
-                    console.log(postData);
+            updateAction: function(postData, jtParams) {
                     return $.Deferred(function ($dfd) {
+                        var parsedData = getJsonFromUrl(postData);
+                        var _id = parsedData._id;
+                        delete parsedData._id;
+                        console.log(parsedData);
                         $.ajax({
-                            url: API_ROOT + 'admin/updateSite/' + postData.record._id,
+                            url: API_ROOT + 'admin/site/' + _id,
                             type: 'PUT',
                             dataType: 'json',
-                            data: postData,
+                            data: parsedData,
                             success: function (data) {
                                 $dfd.resolve(data);
                             },
@@ -124,11 +143,7 @@ $(document).ready(function () {
                         });
                     });
                 },
-            //updateAction: API_ROOT + 'admin/updateSite',
-            //deleteAction: API_ROOT + 'admin/deleteSite',
             deleteAction: function(postData) {
-                    console.log(postData._id);
-                    console.log(postData._id.toString());
                     return $.Deferred(function ($dfd) {
                         $.ajax({
                             url: API_ROOT + 'admin/site/' + postData._id,
@@ -136,7 +151,6 @@ $(document).ready(function () {
                             dataType: 'json',
                             //data: postData,
                             success: function (data) {
-
                                 $dfd.resolve(data);
                             },
                             error: function () {
@@ -269,8 +283,8 @@ $(document).ready(function () {
             //data.form.validationEngine();
         },
         formSubmitting: function (event, data) {
-            //$('textarea#Edit-overview').val(overviewBody.getData());
-            //$('textarea#Edit-description').val(descriptionBody.getData());
+            $('textarea#Edit-overview').val(overviewBody.getData());
+            $('textarea#Edit-description').val(descriptionBody.getData());
             return data.form.validationEngine('validate');
         },
         formClosed: function (event, data) {

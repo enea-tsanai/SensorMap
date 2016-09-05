@@ -25,11 +25,83 @@ from flask_admin.contrib.mongoengine import ModelView
 from flask_admin import helpers
 
 from flask import render_template, url_for, request, session, redirect
+from flask_restful import Resource, Api, abort
 
-
+api = Api(app)
 
 # import bcrypt
 
+APP_URL = "http://127.0.0.1:5000"
+
+
+def abort_if_doesnt_exist(doc_id, collection):
+	return ''
+
+
+class Site(Resource):
+	collection = 'sites'
+
+	def post(self):
+		if 'username' in session:
+			print request.form
+			site = dict.fromkeys(['name', 'description', 'overview'])
+			site['name'] = request.form['name']
+			site['description'] = request.form['description']
+			site['overview'] = request.form['overview']
+			site['location'] = dict.fromkeys(['x', 'y'])
+			site['location']['x'] = request.form['x']
+			site['location']['y'] = request.form['y']
+			# site.location = {
+			# 	'x': request.form['location']['x'],
+			# 	'y': request.form['location']['y']
+			# }
+			# site = {"author": "Mike",
+			# 		"text": "My first blog post!",
+			# 		"tags": ["mongodb", "python", "pymongo"]}
+			sites = mongo.db.sites
+			site_id = sites.insert_one(site).inserted_id
+
+			new_site = sites.find_one({"_id": site_id})
+			new_site["_id"] = str(new_site["_id"])
+			record = ({"Result": "OK", "Record": new_site})
+			return jsonify(record)
+		abort(403, message="Request Failed")
+
+	def get(self, _id):
+		abort_if_doesnt_exist(_id, 'sites')
+		return ''
+
+	def delete(self, _id):
+		if 'username' in session:
+			print ObjectId(_id)
+			result = mongo.db.sites.delete_one({'_id': ObjectId(_id)})
+			return jsonify({"Result": "OK"})
+		else:
+			return {'Request Failed.'}
+
+	def put(self, _id):
+		if 'username' in session:
+			print _id
+			data = request.form
+			print data
+			up = mongo.db.sites.update({'_id': ObjectId(_id)}, {'$set': data})
+			return jsonify({"Result": "OK", "Record": up})
+		return {'Request Failed.'}
+
+
+class Sites(Resource):
+	def get(self):
+		if 'username' in session:
+			docs_list = list(mongo.db.sites.find())
+			for site in docs_list:
+				site['_id'] = str(site['_id'])
+			records = ({"Result": "OK", "Records": docs_list})
+			return jsonify(records)
+		abort(403, message="Request Failed")
+
+
+api.add_resource(Sites, '/admin/sites')
+api.add_resource(Site, '/admin/site', '/admin/site/<_id>')
 
 
 @app.route('/admin')
@@ -64,44 +136,32 @@ def logout():
 	return redirect(url_for('admin'))
 
 
-@app.route('/admin/sites', methods=['GET'])
-def admin_get_sites():
-	if 'username' in session:
-		docs_list = list(mongo.db.sites.find())
-		for site in docs_list:
-			site['_id'] = str(site['_id'])
-		records = ({"Result": "OK", "Records": docs_list})
-		return json.dumps(records, default=json_util.default)
-	else:
-		return {}
-
-
-@app.route('/admin/createSite', methods=['POST'])
-def create_site():
-	if 'username' in session:
-		print request.form
-		site = dict.fromkeys(['name', 'description', 'overview'])
-		site['name'] = request.form['name']
-		site['description'] = request.form['description']
-		site['overview'] = request.form['overview']
-		site['location'] = dict.fromkeys(['x', 'y'])
-		site['location']['x'] = request.form['x']
-		site['location']['y'] = request.form['y']
-		# site.location = {
-		# 	'x': request.form['location']['x'],
-		# 	'y': request.form['location']['y']
-		# }
-		# site = {"author": "Mike",
-		# 		"text": "My first blog post!",
-		# 		"tags": ["mongodb", "python", "pymongo"]}
-		sites = mongo.db.sites
-		site_id = sites.insert_one(site).inserted_id
-
-		new_site = sites.find_one({"_id": site_id})
-		new_site["_id"] = str(new_site["_id"])
-		record = ({"Result": "OK", "Record": new_site})
-		return json.dumps(record, default=json_util.default)
-	return {}
+# @app.route('/admin/createSite', methods=['POST'])
+# def create_site():
+# 	if 'username' in session:
+# 		print request.form
+# 		site = dict.fromkeys(['name', 'description', 'overview'])
+# 		site['name'] = request.form['name']
+# 		site['description'] = request.form['description']
+# 		site['overview'] = request.form['overview']
+# 		site['location'] = dict.fromkeys(['x', 'y'])
+# 		site['location']['x'] = request.form['x']
+# 		site['location']['y'] = request.form['y']
+# 		# site.location = {
+# 		# 	'x': request.form['location']['x'],
+# 		# 	'y': request.form['location']['y']
+# 		# }
+# 		# site = {"author": "Mike",
+# 		# 		"text": "My first blog post!",
+# 		# 		"tags": ["mongodb", "python", "pymongo"]}
+# 		sites = mongo.db.sites
+# 		site_id = sites.insert_one(site).inserted_id
+#
+# 		new_site = sites.find_one({"_id": site_id})
+# 		new_site["_id"] = str(new_site["_id"])
+# 		record = ({"Result": "OK", "Record": new_site})
+# 		return json.dumps(record, default=json_util.default)
+# 	return {}
 
 
 @app.route('/admin/updateSite/<string:id>', methods=['PUT'])
@@ -113,14 +173,14 @@ def update_site(id):
 # else:
 # 	return {'Request Failed.'}
 
-@app.route('/admin/site/<string:doc_id>', methods=['DELETE'])
-def delete_site(doc_id):
-	if 'username' in session:
-		print ObjectId(doc_id)
-		result = mongo.db.sites.delete_one({'_id': ObjectId(doc_id)})
-		return json.dumps({"Result": "OK"}, default=json_util.default)
-	else:
-		return {'Request Failed.'}
+# @app.route('/admin/site/<string:doc_id>', methods=['DELETE'])
+# def delete_site(doc_id):
+# 	if 'username' in session:
+# 		print ObjectId(doc_id)
+# 		result = mongo.db.sites.delete_one({'_id': ObjectId(doc_id)})
+# 		return json.dumps({"Result": "OK"}, default=json_util.default)
+# 	else:
+# 		return {'Request Failed.'}
 
 
 @app.route('/')
