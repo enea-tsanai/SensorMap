@@ -100,8 +100,45 @@ class Sites(Resource):
 		abort(403, message="Request Failed")
 
 
+# class Sensor(Resource):
+# 	def post(self, site_id, sensor_id):
+# 		if 'username' in session:
+# 			print request.form
+# 			sensor = dict.fromkeys(['name', 'description', 'units'])
+# 			sensor['name'] = request.form['name']
+# 			sensor['description'] = request.form['description']
+# 			sensor['units'] = request.form['units']
+#
+# 			sites = mongo.db.sites
+# 			site_id = sites.insert_one(site).inserted_id
+#
+# 			mongo.db.sites.update({'_id': site_id}, { '$push': {'sensors': {'_id': _id}}}, {'multi': True})
+#
+#
+# 			new_site = sites.find_one({"_id": site_id})
+# 			new_site["_id"] = str(new_site["_id"])
+# 			record = ({"Result": "OK", "Record": new_site})
+# 			return jsonify(record)
+# 		abort(403, message="Request Failed")
+# 	def put(self, _id):
+#
+# 	def delete(self, site_id, _id):
+# 		if 'username' in session:
+# 			print ObjectId(_id)
+#
+# 			mongo.db.sites.update({'_id': site_id}, { '$pull': {'sensors': {'_id': _id}}}, {'multi': True})
+#
+# 			result = mongo.db.sites.delete_one({'_id': ObjectId(_id)})
+# 			return jsonify({"Result": "OK"})
+# 		else:
+# 			return {'Request Failed.'}
+
+
 api.add_resource(Sites, '/admin/sites')
 api.add_resource(Site, '/admin/site', '/admin/site/<_id>')
+
+# api.add_resource(Sensor, '/admin/site/<site_id>/sensor',
+# 				 '/admin/site/<site_id>/sensor/<sensor_id>')
 
 
 @app.route('/admin')
