@@ -8,9 +8,10 @@ var Types = keystone.Field.Types;
 var Sensor = new keystone.List('Sensor');
 
 Sensor.add({
-    name: { type: Types.Name, required: true },
+    sensorID: {type: Types.Key, required: true, initial: true },
+    name: { type: String, required: true },
     description: { type: Types.Html, wysiwyg: true },
-    // units: [],
+    units: { type: Types.TextArray },
     site: { type: Types.Relationship, ref: 'Site' },
     createdAt: { type: Date, default: Date.now },
 });
