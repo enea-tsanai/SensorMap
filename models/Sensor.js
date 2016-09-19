@@ -2,7 +2,7 @@ var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
 /**
- * Enquiry Model
+ * Sensor Model
  * =============
  */
 var Sensor = new keystone.List('Sensor');

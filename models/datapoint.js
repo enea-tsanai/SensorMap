@@ -8,9 +8,9 @@ var Types = keystone.Field.Types;
 var Datapoint = new keystone.List('Datapoint');
 
 Datapoint.add({
-    sensorID: { type: Types.Key, required: true, initial: true },
-    timeValue: { type: Types.Datetime, required: true },
-    value: { type: Types.Number, required: true }
+    sensorID: { type: Types.Relationship, ref: 'Sensor' },
+    timeValue: { type: Types.Datetime, required: true, initial: true },
+    value: { type: Types.Number, required: true, initial: true }
 });
 
 Datapoint.defaultSort = '-createdAt';
