@@ -1,17 +1,12 @@
 extends ../layouts/default
 
 block head
-    //link(href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', rel='stylesheet')
-    //link(href='/styles/bootstrap/enhancements/bootstrap-switch.min.css', rel='stylesheet')
-    //link(href='/styles/bootstrap/enhancements/dropdown-enhancement.css', rel='stylesheet')
-    //link(href='/styles/bootstrap/enhancements/bootstrap-datepicker3.standalone.min.css', rel='stylesheet')
-    //link(href='/styles/tool-helpers/split-pane.css', rel='stylesheet')
-    //link(href='/styles/dygraph/dygraphs.css', rel='stylesheet')
     link(href='/styles/map-tool.css', rel='stylesheet',)
 
 block js
 
     // Dygraph
+    script(src='/js/config.js')
     script(src='/js/dygraph/dygraph-combined.js')
     // <script src="http://dygraphs.com/extras/synchronizer.js"></script>
     script(src='/js/dygraph/sync.js')
