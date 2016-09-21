@@ -53,7 +53,7 @@ function loadSites() {
         return $.Deferred().resolve();
     }
     return $.ajax({
-        url: "/getSites",
+        url: API.SITES,
         dataType: "json",
         success: function (results) {
             $.each(results, function (i, site) {

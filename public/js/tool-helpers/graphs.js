@@ -532,9 +532,9 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
 DygraphDataProvider.prototype.generateRequests = function (ids, dateWindow) {
     var requests = [];
     for (var id in ids) {
-        // requests.push(new this.makeRequest("/getDataStream",
+        // requests.push(new this.makeRequest(API.DATA_STREAM,
         //     {"dataStreamId": ids[id], "periodFrom": dateWindow.periodFrom, "periodTo": dateWindow.periodTo}));
-        requests = requests.concat(this.makeRequest("/getDataStream",
+        requests = requests.concat(this.makeRequest(API.DATA_STREAM,
             {"dataStreamId": ids[id], "periodFrom": dateWindow.periodFrom, "periodTo": dateWindow.periodTo}));
     }
     return requests;
