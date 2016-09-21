@@ -45,7 +45,7 @@ keystone.set('routes', require('./routes'));
 // Configure the navigation bar in Keystone's Admin UI
 keystone.set('nav', {
 	GreenInfrastructures: ['sites', 'sensors', 'datapoints'],
-	settings: ['restrict-data'],
+	settings: ['views', 'restrict-data'],
 	// galleries: 'galleries',
 	// enquiries: 'enquiries',
 	users: 'users',
