@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
+var async = require('async');
 
 
 /**
@@ -9,30 +10,38 @@ var Types = keystone.Field.Types;
 var Site = new keystone.List('Site');
 
 Site.add({
-    name: { type: String, required: true },
-    overview: { type: Types.Html, wysiwyg: true },
-    description: { type: Types.Html, wysiwyg: true },
-    location: { type: Types.Location, defaults: { country: 'Unites States' }, required: true, initial: true},
-    sensors: { type: Types.Relationship, ref: 'Sensor', many: true, hidden: true },
-    createdAt: { type: Date, default: Date.now }
+    name: {type: String, required: true},
+    overview: {type: Types.Html, wysiwyg: true},
+    description: {type: Types.Html, wysiwyg: true},
+    location: {type: Types.Location, defaults: {country: 'Unites States'}, required: true, initial: true},
+    sensors: {type: Types.Relationship, ref: 'Sensor', many: true, hidden: true},
+    createdAt: {type: Date, default: Date.now}
 });
 
-Site.relationship({ path: 'sensors', ref: 'Sensor', refPath: 'site' });
+Site.relationship({path: 'sensors', ref: 'Sensor', refPath: 'site'});
 
-Site.schema.pre('remove', function(next) {
+Site.schema.pre('remove', function (next) {
 
     var index = this;
 
-    keystone.list('Sensor').model.find( { _id: { $in: index.sensors } } ).remove(function (err) {
-
-        if (err) {
-            console.error("===== Error removing sensors =====");
-            console.error(err);
-            next(err);
-        }
-
-        next();
-    });
+    async.parallel([
+            // Remove associated Sensors
+            function (cb) {
+                keystone.list('Sensor').model.find({_id: {$in: index.sensors}}).remove(cb);
+            },
+            function (cb) {
+                keystone.list('View').model.find({site: index._id}).remove(cb);
+            }
+        ],
+        // Remove associated Views
+        function (err, results) {
+            if (err) {
+                console.error("===== Error when removing site =====");
+                console.error(err);
+                next(err);
+            }
+            next();
+        });
 
 });
 
