@@ -3,7 +3,7 @@ var keystone = require('keystone'),
 
 exports = module.exports = function (req, res) {
     
-    Site.model.find().exec(function (err, sites) {
+    Site.model.find().populate('sensors').exec(function (err, sites) {
 
         if (err) {
             console.log('[api.sites] - Error getting existing sites.', err);

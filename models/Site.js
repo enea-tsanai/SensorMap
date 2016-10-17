@@ -1,6 +1,7 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
+
 /**
  * Site Model
  * =============
@@ -12,11 +13,28 @@ Site.add({
     overview: { type: Types.Html, wysiwyg: true },
     description: { type: Types.Html, wysiwyg: true },
     location: { type: Types.Location, defaults: { country: 'Unites States' }, required: true, initial: true},
-    // sensors: { type: Types.Relationship, ref: 'Sensor', many: true },
-    createdAt: { type: Date, default: Date.now },
+    sensors: { type: Types.Relationship, ref: 'Sensor', many: true, hidden: true },
+    createdAt: { type: Date, default: Date.now }
 });
 
 Site.relationship({ path: 'sensors', ref: 'Sensor', refPath: 'site' });
+
+Site.schema.pre('remove', function(next) {
+
+    var index = this;
+
+    keystone.list('Sensor').model.find( { _id: { $in: index.sensors } } ).remove(function (err) {
+
+        if (err) {
+            console.error("===== Error removing sensors =====");
+            console.error(err);
+            next(err);
+        }
+
+        next();
+    });
+
+});
 
 
 Site.defaultSort = '-createdAt';

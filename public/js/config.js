@@ -1,4 +1,4 @@
-DOMAIN = 'http://127.0.0.1:3000';
+DOMAIN = 'http://localhost:3000';
 
 API_ROOT = '/api';
 

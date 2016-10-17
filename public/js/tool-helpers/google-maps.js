@@ -53,10 +53,12 @@ function loadSites() {
         return $.Deferred().resolve();
     }
     return $.ajax({
+		type: 'GET',
         url: API.SITES,
         dataType: "json",
-        success: function (results) {
+		success: function (results) {
             $.each(results, function (i, site) {
+				console.log(site);
                 var sensors = [];
                 site.sensors.forEach(function (sensor) {
                     sensors.push($.extend(new Sensor(), sensor));
