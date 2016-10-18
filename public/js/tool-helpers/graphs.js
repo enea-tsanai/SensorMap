@@ -275,21 +275,9 @@ Site.prototype.initView = function (view) {
     if (view === "site-about") {
         var html = this.description;
 
-        numOfImages = this.images.length;
-        if (numOfImages) {
-            var liImages = "";
-            var srsImages = "";
-
-            for (i = 1; i < numOfImages; i++) {
-                liImages += "<li data-target=\"#carousel-site-about\" data-slide-to=\"" + i + "\"></li>";
-                srsImages += "<div class=\"item\">\n    <img src=\"" + "../static/img/" + this.images[i].path + "\" alt=\"...\">\n    <div class=\"carousel-caption\">\n        <h4>" + this.images[i].description + "</h4>\n    </div>\n</div>";
-            }
-            html += "<div class=\"row text-center\">\n    <div class=\"col-md-12\">\n        <div id=\"carousel-site-about\" class=\"carousel slide\" data-ride=\"carousel\" style=\"max-width: 330px; margin: 0 auto;\">\n    <!-- Indicators -->\n    <ol class=\"carousel-indicators\">\n        <li data-target=\"#carousel-site-about\" data-slide-to=\"0\" class=\"active\"></li>\n       " + liImages +    "\n    </ol>\n    <div class=\"carousel-inner\" role=\"listbox\">\n    <div class=\"item active\">\n        <img src=\"" + "../static/img/" +this.images[0].path + "\" alt=\"...\">\n        <div class=\"carousel-caption\"><h4>" + this.images[0].description + "</h4></div>\n    </div>\n    " + srsImages + "</div>\n    <a class=\"left carousel-control\" href=\"#carousel-site-about\" role=\"button\" data-slide=\"prev\">\n        <span class=\"glyphicon glyphicon-chevron-left\"></span>\n    </a>\n    <a class=\"right carousel-control\" href=\"#carousel-site-about\" role=\"button\" data-slide=\"next\">\n        <span class=\"glyphicon glyphicon-chevron-right\"></span>\n    </a>\n\n</div>\n    </div>\n</div>";
-        }
         this.views["site-about"] = html;
         this.appendView("site-about");
-        if (numOfImages)
-            $('.carousel').carousel({interval: 3000});
+
     }
 };
 
@@ -1037,8 +1025,11 @@ function generateMixedGraphs_() {
     var endDate = $('#datepicker').find('input[name="end"]').datepicker("getDate").toISOString();
     var dateWindow = [startDate, endDate];
 
+    console.log('Clicked: ', quadrantsChecked);
+    
     $.each($("input[name='Quadrant']:checked"), function () {
         quadrantsChecked.push($(this).val());
+        console.log('Clicked: ', quadrantsChecked);
     });
     $.each($("input[name='Probe']:checked"), function () {
         probesChecked.push($(this).val());

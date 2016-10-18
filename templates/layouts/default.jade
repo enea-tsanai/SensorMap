@@ -15,10 +15,11 @@ html
         //- Customise the stylesheet for your site by editing /public/styles/site.less
         //- All .less files will be automatically compiled and minified in production.
         link(href="/styles/site.min.css", rel="stylesheet")
+        //link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin="anonymous")
 
         //- This file provides the default styling for the KeystoneJS Content Editor
         if user && user.canAccessKeystone
-            link(href="/keystone/styles/content/editor.min.css", rel="stylesheet")
+            link(rel="stylesheet", href="/keystone/styles/content/editor.min.css")
 
         //- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
         //- Safely remove this block if you are not targeting IE8
