@@ -101,17 +101,17 @@ var Dashboard = {
     },
     dataViewerSection: {
         set: function (content) {
-            $('#collapse2').empty().append(content);
-            //Init Switch
-            $("[name='average-checkbox']").bootstrapSwitch();
-
-            //Init datepickers TODO: This should be placed together with the stored html in the database
-            $('.input-daterange').datepicker({endDate: "today", todayBtn: "linked"});
-            $('.input-daterange').find('input[name="start"]').datepicker('setDate', "04/04/2016").datepicker('update');
-            $('.input-daterange').find('input[name="end"]').datepicker('setDate', "today").datepicker('update');
+            // $('#collapse2').empty().append(content);
+            // //Init Switch
+            // $("[name='average-checkbox']").bootstrapSwitch();
+            //
+            // //Init datepickers TODO: This should be placed together with the stored html in the database
+            // $('.input-daterange').datepicker({endDate: "today", todayBtn: "linked"});
+            // $('.input-daterange').find('input[name="start"]').datepicker('setDate', "04/04/2016").datepicker('update');
+            // $('.input-daterange').find('input[name="end"]').datepicker('setDate', "today").datepicker('update');
         },
         reset: function() {
-            this.set('<div class="panel-body"><div class="row"><div id="site-about" class="col-sm-10 col-sm-offset-1">' + NOT_SELECTED_SITE_WARNING + '</div></div></div>');
+            this.set('', NOT_SELECTED_SITE_WARNING);
         }
     },
     clear: function () {
@@ -119,7 +119,7 @@ var Dashboard = {
     },
     _resetSections: function () {
         this.aboutSection.reset();
-        this.dataViewerSection.reset();
+        // this.dataViewerSection.reset();
     }
 };
 

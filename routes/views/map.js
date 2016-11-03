@@ -6,7 +6,7 @@ exports = module.exports = function (req, res) {
     var locals = res.locals;
 
     // Set locals
-
+    locals.section = 'map';
     // Load the galleries by sortOrder
 
     // Render the view

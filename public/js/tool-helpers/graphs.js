@@ -15,16 +15,16 @@ var helperFunctions = {
         }
         return NaN;
     },
-    /** 
+    /**
      * Returns the index of an object in an array based on an object attribute as the search key.
      * @param array: The array of objects.
      * @param attr: The object attribute and search key.
      * @param value: The value of the search key.
      * @returns {number}: The index of the object in the array.
      */
-    getIndexIfObjWithAttr: function(array, attr, value) {
-        for(var i = 0; i < array.length; i++) {
-            if(array[i][attr] === value) {
+    getIndexIfObjWithAttr: function (array, attr, value) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i][attr] === value) {
                 return i;
             }
         }
@@ -116,7 +116,7 @@ var helperFunctions = {
 };
 
 /**
- * 
+ *
  * @constructor
  */
 function Sensor() {
@@ -171,7 +171,7 @@ Sensor.prototype.addRequestedDatePeriodToHistory = function (period) {
 
         if (toBeMerged.length) {
             var s = toBeMerged[0].s > period.s ? period.s : toBeMerged[0].e;
-            var e = toBeMerged[toBeMerged.length -1].e > period.e ? toBeMerged[toBeMerged.length -1].e : period.e;
+            var e = toBeMerged[toBeMerged.length - 1].e > period.e ? toBeMerged[toBeMerged.length - 1].e : period.e;
             var mergedPeriod = {'s': s, 'e': e};
 
             // console.log("--- Merged period ---" + mergedPeriod);
@@ -205,12 +205,12 @@ Sensor.prototype.getExcludedDatePeriods = function (period) {
 
     if (toBeMerged.length) {
         for (var i = 0; i < toBeMerged.length - 1; i++) {
-            excludedPeriods.push({'s': toBeMerged[i].e, 'e': toBeMerged[i+ 1].s});
+            excludedPeriods.push({'s': toBeMerged[i].e, 'e': toBeMerged[i + 1].s});
         }
 
-        var leftExcluded = toBeMerged[0].s > period.s ? {'s': period.s, 'e': toBeMerged[0].s}: 0;
-        var rightExcluded = toBeMerged[toBeMerged.length -1].e < period.e ?
-        {'s': toBeMerged[toBeMerged.length -1].e, 'e': period.e}: 0;
+        var leftExcluded = toBeMerged[0].s > period.s ? {'s': period.s, 'e': toBeMerged[0].s} : 0;
+        var rightExcluded = toBeMerged[toBeMerged.length - 1].e < period.e ?
+        {'s': toBeMerged[toBeMerged.length - 1].e, 'e': period.e} : 0;
 
         if (leftExcluded)
             excludedPeriods.splice(0, 0, leftExcluded);
@@ -224,8 +224,15 @@ Sensor.prototype.getExcludedDatePeriods = function (period) {
 Sensor.prototype.getDateRange = function () {
     var from = new Date(this.data[this.data.length - 1].timeValue);
     var to = new Date(this.data[0].timeValue);
-    from.setHours(0); from.setMinutes(0); from.setSeconds(0); from.setMilliseconds(0);
-    to.setDate(to.getDate() + 1); to.setHours(0); to.setMinutes(0); to.setSeconds(0); to.setMilliseconds(0);
+    from.setHours(0);
+    from.setMinutes(0);
+    from.setSeconds(0);
+    from.setMilliseconds(0);
+    to.setDate(to.getDate() + 1);
+    to.setHours(0);
+    to.setMinutes(0);
+    to.setSeconds(0);
+    to.setMilliseconds(0);
     return this.data.length ? [from.toISOString(), to.toISOString()] : null;
 };
 
@@ -286,8 +293,19 @@ Site.prototype.initView = function (view) {
  * @param view: The site view id.
  */
 Site.prototype.appendView = function (view) {
-    Dashboard.aboutSection.set(this.name, this.views[view]);
-    Dashboard.dataViewerSection.set(DASHBOARD_DATA_VIEWER_SECTION);
+    
+    // var sensorsCheckList = "";
+    //
+    // sensors.forEach(function (s) {
+    //    sensorsCheckList += '<li><input type="checkbox" id="'+ s._id +'" name="NAME" value="VALUE"><label for="'+ s._id +'">s._id</label></li>';
+    // });
+    //
+    // var test = "\n\n\n\n\n<div class=\"row\">\n\t<div class=\"panel-group\" id=\"data-viewer-filters\">\n\t\t<div class=\"panel panel-default\">\n\t\t\t<div class=\"panel-heading\">\n\t\t\t\t<p class=\"panel-title\">\n\t\t\t\t\t<a id=\"data-selector\" data-toggle=\"collapse\" data-parent=\"#data-viewer-filters\" href=\"#data-viewer-filters-col-1\">Data Selector</a>\n\t\t\t\t</p>\n\t\t\t</div>\n\t\t\t<div id=\"data-viewer-filters-col-1\" class=\"panel-collapse collapse in\">\n\t\t\t\t<div class=\"panel-body\">\n\t\t\t\t\t\n\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t<div class=\"col-xs-12\">\n\t\t\t\t\t\t\t<div class=\"btn-group\">\n\t\t\t\t\t\t\t\t<button class=\"btn btn-primary\" data-label-placement>Checked option</button>\n\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-primary dropdown-toggle\"><span class=\"caret\"></span></button>\n\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">\n\t\t\t\t\t\t\t\t\t<!-- loop sensors -->\n\t\t\t\t\t\t\t\t\t<li><input type=\"checkbox\" id=\"ID\" name=\"NAME\" value=\"VALUE\"><label for=\"ID\">Label</label></li>\n\t\t\t\t\t\t\t\t\t<!-- Other items -->\n\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"panel panel-default\">\n\t\t\t<div class=\"panel-heading\">\n\t\t\t\t<p class=\"panel-title\">\n\t\t\t\t\t<a class=\"collapsed\" data-toggle=\"collapse\" data-parent=\"#data-viewer-filters\" href=\"#data-viewer-filters-col-2\">Data Filters</a>\n\t\t\t\t</p>\n\t\t\t</div>\n\t\t\t<div id=\"data-viewer-filters-col-2\" class=\"panel-collapse collapse\">\n\n\t\t\t\t<div class=\"panel-body\">\n\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t<div class=\"col-xs-12 col-sm-4 col-md-4 text-center\">\n\t\t\t\t\t\t\t<div><h6>View Mode</h6></div>\n\t\t\t\t\t\t\t<div class=\"btn-group btn-group-sm\">\n\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-default dropdown-toggle\">Separated<span class=\"caret\"></span></button>\n\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">\n\t\t\t\t\t\t\t\t\t<li><input type=\"radio\" id=\"separated\" name=\"view-mode\" value=\"separated\" checked><label for=\"separated\">Separated</label></li>\n\t\t\t\t\t\t\t\t\t<li><input type=\"radio\" id=\"combined\" name=\"view-mode\" value=\"combined\"><label for=\"combined\">Combined</label></li>\n\t\t\t\t\t\t\t\t\t<li><input type=\"radio\" id=\"synchronized\" name=\"view-mode\" value=\"synchronized\"><label for=\"synchronized\">Synchronized</label></li>\n\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"col-xs-12 col-sm-3 col-md-3 text-center\">\n\t\t\t\t\t\t\t<div><h6>Average</h6></div>\n\t\t\t\t\t\t\t<div class=\"btn-group btn-group-sm text-center\">\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" name=\"average-checkbox\" data-size=\"small\">\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"col-xs-12 col-sm-5 col-md-5 text-center\">\n\t\t\t\t\t\t\t<div><h6>Date Range</h6></div>\n\t\t\t\t\t\t\t<div class=\"btn-group btn-group-sm text-center\">\n\t\t\t\t\t\t\t\t<div class=\"input-daterange input-group\" id=\"datepicker\">\n\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"input-sm form-control\" data-size=\"small\" name=\"start\" />\n\t\t\t\t\t\t\t\t\t<span class=\"input-group-addon\">to</span>\n\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"input-sm form-control\" data-size=\"small\" name=\"end\" />\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n<div class=\"text-center\">\n\t<button type=\"button\"\n\t\t\t\t\tclass=\"btn btn-primary btn-sm graphs-plot-button\" onclick=\"generateMixedGraphs_()\">\n\t\t<span class=\"glyphicon glyphicon-triangle-right\"></span> Plot\n\t</button>\n</div>\n<hr>\n<div id=\"plot-area\"></div>";
+    
+    
+    // Dashboard.aboutSection.set(this.name, this.views[view]);
+    // Dashboard.aboutSection.set(this.name, test);
+    // Dashboard.dataViewerSection.set(DASHBOARD_DATA_VIEWER_SECTION);
 };
 
 
@@ -471,6 +489,8 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
     var indexSensor = helperFunctions.getIndexSite().getSensorById(params.dataStreamId);
     var newRequestedPeriod = {'s': params.periodFrom, 'e': params.periodTo};
 
+    console.log('making request... ', params);
+
     // Requested period already exists in requests history
     if (indexSensor.data.length && indexSensor.containsLoadedPeriod(newRequestedPeriod)) {
         console.log("RESOLVED");
@@ -500,7 +520,9 @@ DygraphDataProvider.prototype.makeRequest = function (url, params) {
                 url: helperFunctions.concatenateUrlAndParams(url, params),
                 dataType: "json",
                 success: function (response) {
-                    helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response.items);
+                    console.log(response);
+                    helperFunctions.getIndexSite().getSensorById(params.dataStreamId).addData(response);
+                    console.log(helperFunctions.getIndexSite());
                 }
             }));
         }
@@ -1026,7 +1048,7 @@ function generateMixedGraphs_() {
     var dateWindow = [startDate, endDate];
 
     console.log('Clicked: ', quadrantsChecked);
-    
+
     $.each($("input[name='Quadrant']:checked"), function () {
         quadrantsChecked.push($(this).val());
         console.log('Clicked: ', quadrantsChecked);
@@ -1042,18 +1064,18 @@ function generateMixedGraphs_() {
     var temperatureLabels = [];
 
     var buttonsToSensorIds = {
-        "q-1_p-1": 18704,
-        "q-1_p-2": 18711,
-        "q-1_t-1": 18762,
-        "q-2_p-1": 18718,
-        "q-2_p-2": 18725,
-        "q-2_t-1": 18767,
-        "q-3_p-1": 18732,
-        "q-3_p-2": 18739,
-        "q-3_t-1": 18772,
-        "q-4_p-1": 18746,
-        "q-4_p-2": 18753,
-        "q-4_t-1": 18777
+        "q-1_p-1": "580564de4b2d55fb41f4e8cc",
+        // "q-1_p-2": 18711,
+        // "q-1_t-1": 18762,
+        // "q-2_p-1": 18718,
+        // "q-2_p-2": 18725,
+        // "q-2_t-1": 18767,
+        // "q-3_p-1": 18732,
+        // "q-3_p-2": 18739,
+        // "q-3_t-1": 18772,
+        // "q-4_p-1": 18746,
+        // "q-4_p-2": 18753,
+        // "q-4_t-1": 18777
     };
 
     for (var q in quadrantsChecked) {
@@ -1196,7 +1218,7 @@ function generateMixedGraphs_() {
         }
 
         if (viewMode === "synchronized") {
-            $.when( probesGraphComplete, tempsGraphComplete ).done(function () {
+            $.when(probesGraphComplete, tempsGraphComplete).done(function () {
                 Dygraph.synchronize(synchedDygraphs);
             });
         }

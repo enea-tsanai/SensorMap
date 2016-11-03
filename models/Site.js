@@ -15,7 +15,8 @@ Site.add({
     description: {type: Types.Html, wysiwyg: true},
     location: {type: Types.Location, defaults: {country: 'Unites States'}, required: true, initial: true},
     sensors: {type: Types.Relationship, ref: 'Sensor', many: true, hidden: true},
-    createdAt: {type: Date, default: Date.now}
+    views: {type: Types.Relationship, ref: 'View', many: true, hidden: true},
+    createdAt: {type: Date, default: Date.now, hidden: true }
 });
 
 Site.relationship({path: 'sensors', ref: 'Sensor', refPath: 'site'});

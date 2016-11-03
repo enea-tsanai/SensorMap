@@ -1,24 +1,19 @@
 // Map
 var map = null;
 var center = {lat: 40.036577, lng: -75.342661};
-var regionArray = []; 
 var markers = [];
 var selectedMarker = null;
 var selectedMarkers = [];
-var sensorArray = [];
 
 // Info window
 var infowindow = null;
-var sensorJSONRaw = {};
-var dummyCoords = [{x: 40.036602, y: -75.345526},
-	{x: 40.036266, y: -75.340768},
-	{x: 40.036568, y: -75.342916},
-	{x: 40.036210, y: -75.338388},
-	{x: 40.035802, y: -75.342565}];
-var Sensors = [];
 var selectedSensors = [];
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
+
+var minZoom = 7;
+var maxZoom = 15;
+var bounds = new google.maps.LatLngBounds();
 
 window.onkeydown = function(e) {
 	console.log(e.which);
@@ -36,7 +31,7 @@ function initialize() {
 
 	var mapOptions = {
 		center: center,
-		zoom: 17,
+		zoom: minZoom,
 		scrollwheel: false
 	};
 
@@ -46,52 +41,76 @@ function initialize() {
 	infowindow = new google.maps.InfoWindow({
 		content: "Waiting for content..."
 	});
+
+
+
 }
 
 function loadSites() {
-    if (sites.length) {
+
+	if (sites.length) {
+		map.fitBounds(bounds);
         return $.Deferred().resolve();
     }
+
     return $.ajax({
 		type: 'GET',
         url: API.SITES,
+		crossDomain: false,
         dataType: "json",
 		success: function (results) {
+
             $.each(results, function (i, site) {
-				console.log(site);
+
+				log('Loaded Site', site);
+
                 var sensors = [];
                 site.sensors.forEach(function (sensor) {
                     sensors.push($.extend(new Sensor(), sensor));
                 });
-                newSite = $.extend(new Site(), site);
+
+				var newSite = $.extend(new Site(), site);
                 newSite.sensors = sensors;
                 sites.push(newSite);
+
             });
+
         }
     });
+
 }
 
 /*
  * Populate sites on map
 */
 function populateSitesOnMap() {
-	clearMap();
+
+	clearData();
+
     $.when(loadSites()).done(function(results) {
+
         for (var s in sites) {
+			log('Placing marker', sites[s].location.geo);
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(sites[s].location.geo[1], sites[s].location.geo[0]),
                 map: map,
                 // label: "A",
                 icon: {url: 'http://maps.gstatic.com/mapfiles/markers2/marker.png'},
-                //animation: google.maps.Animation.DROP,
+                animation: google.maps.Animation.DROP,
                 title: sites[s].name
             });
 
             markers.push(marker);
             marker.setMap(map);
+			bounds.extend(marker.position);
+
             bindInfoWindow(marker, map, infowindow, sites[s]);
         }
+
+		map.fitBounds(bounds);
+
     });
+
 }
 
 var ctrlPressed = false;
@@ -105,8 +124,11 @@ function clearSelectedMarkers() {
 }
 
 function bindInfoWindow(marker, map, infowindow, site) {
+
 	google.maps.event.addListener(marker, 'click', function () {
+
 		if (ctrlPressed) {
+
 			if (selectedMarkers.indexOf(marker) == -1) {
 				selectedMarkers.push(marker);
 				marker.setIcon({url: 'http://maps.gstatic.com/mapfiles/markers2/icon_green.png'});
@@ -114,8 +136,10 @@ function bindInfoWindow(marker, map, infowindow, site) {
 				selectedSensors.push(site);
 				updateSiteWindowPane();
 			}
+
 		}
 		else {
+
 			// Handle 1 selected marker on map
 			clearSelectedMarkers();
 			clearSelectedSensors();
@@ -124,7 +148,10 @@ function bindInfoWindow(marker, map, infowindow, site) {
             indexSite = site._id;
 
 			if (selectedMarkers.indexOf(marker) == -1) {
-				// loadSiteData();
+
+				log('Selected site', site);
+
+
                 // Place camera at center and on top of marker
 				if (Dashboard.state.localeCompare("minimized") == 0)
 					offsetCenter(marker.getPosition(), -($(window).width() * 0.15), 0);
@@ -135,16 +162,16 @@ function bindInfoWindow(marker, map, infowindow, site) {
 				selectedSensors.push(site);
 				//TODO: add local icon
 				marker.setIcon({url: 'http://maps.gstatic.com/mapfiles/markers2/icon_green.png'});
-
-                site.initView("site-about");
-
+				
                 // InfoWindow
                 //TODO: Id of ballon should be the site id
-                //TODO: Include this in Dom elements
-                var windowContent = '<div class="site-overview-balloon">\n    <div class="site-overview-balloon-header"><h4>' + site.name + '</h4>\n        <ul class="nav nav-tabs nav-justified">\n            <li class="active"><a href="#AboutSite" data-toggle="tab">About this site</a></li>\n            <li><a href="#LMetrics" data-toggle="tab">Latest Metrics</a></li>\n        </ul>\n    </div>\n    <div class="site-overview-balloon-tab tab-content">\n        <div id = "AboutSite" class="about-site tab-pane fade in active">\n            ' + site.overview + '\n        </div>\n        <div id = "LMetrics" class="tab-pane fade tab-plot"></div>\n    </div>\n</div>';
-                infowindow.setContent(windowContent);
-                infowindow.open(map, marker);
-                // populateLastMetricsTab();
+
+				var markerSection = '<div id="site-marker-section"></div>';
+
+                infowindow.setContent(markerSection);
+				infowindow.open(map, marker);
+
+				ViewsManager.populateSections(site);
 
             }
 		}
@@ -173,9 +200,21 @@ function hideMarkers() {
 	}
 }
 
-function clearMap() {
+
+var clearData = function () {
+
 	hideMarkers();
 	clearDashboard();
+	ViewsManager.reset();
+	ViewsManager.initSections();
+
+};
+
+function clearMap() {
+
+	clearData();
+	smoothZoom(map, minZoom, map.getZoom(), false);
+
 }
 
 function toggleBounce() {
@@ -216,16 +255,39 @@ function clearSelectedSensors () {
 	selectedSensors.length = 0;
 }
 
-//TODO: Remove this
-function updateSiteWindowPane() {
-	// var sensorsData = [];
-	// if (selectedSensors.length == 1) {
-	// 	populateLastMetricsTab();
-	// } else {
-	// 	for (sensor in selectedSensors) {
-	// 		//TODO: Handle multiple selected sites
-	// 	}
-	// }
+// Smooth zoom function: http://stackoverflow.com/questions/4752340/how-to-zoom-in-smoothly-on-a-marker-in-google-maps
+function smoothZoom (map, level, cnt, mode) {
+	//alert('Count: ' + cnt + 'and Max: ' + level);
+
+	// If mode is zoom in
+	if (mode == true) {
+
+		if (cnt >= level) {
+			return;
+		}
+		else {
+			var z = google.maps.event.addListener(map, 'zoom_changed', function (event) {
+				google.maps.event.removeListener(z);
+				smoothZoom(map, level, cnt + 1, true);
+			});
+			setTimeout(function () {
+				map.setZoom(cnt)
+			}, 80);
+		}
+	} else {
+		if (cnt <= level) {
+			return;
+		}
+		else {
+			var z = google.maps.event.addListener(map, 'zoom_changed', function (event) {
+				google.maps.event.removeListener(z);
+				smoothZoom(map, level, cnt - 1, false);
+			});
+			setTimeout(function () {
+				map.setZoom(cnt)
+			}, 80);
+		}
+	}
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);

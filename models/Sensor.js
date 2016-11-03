@@ -14,7 +14,7 @@ Sensor.add({
     description: { type: Types.Html, wysiwyg: true },
     units: { type: Types.TextArray },
     site: { type: Types.Relationship, ref: 'Site', required: true, initial: true },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now, hidden: true }
 });
 
 Sensor.schema.pre('save', function(next) {

@@ -13,8 +13,10 @@ block css
 
 block js
 
-    // Dygraph
+    // Global settings
     script(src='/js/config.js')
+
+    // Dygraph
     script(src='/js/dygraph/dygraph-combined.js')
     // <script src="http://dygraphs.com/extras/synchronizer.js"></script>
     script(src='/js/dygraph/sync.js')
@@ -32,6 +34,7 @@ block js
 
     // Maps information goes here
     script(type='text/javascript', src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDyHouJvIaHwiAcMpxP152Vfd0INgbawjo')
+    script(type='text/javascript', src='/js/tool-helpers/services.js')
     script(type='text/javascript', src='/js/tool-helpers/dom-generator.js')
     script(type='text/javascript', src='/js/tool-helpers/dashboard.js')
     script(type='text/javascript', src='/js/tool-helpers/graphs.js')
@@ -65,7 +68,7 @@ block content
                 // dashboard
                 #dashboard-wrapper
                     #dashboard-header
-                        .navbar.navbar-default
+                        .navbar.navbar-dash
                             .navbar-header.pull-left
                                 a#dashboard-title.navbar-text.navbar-right(href='#')
                                     span#dashboard-title-icon.glyphicon.glyphicon-dashboard
@@ -76,25 +79,34 @@ block content
                                 button#close.btn.btn-default.navbar-btn.btn-xs(type='button', data-toggle='tooltip', data-placement='right', title='Close Dashboard')
                                     span.glyphicon.glyphicon-chevron-left
                     #accordion.panel-group
-                        .panel.panel-default
-                            .panel-heading
-                                h4.panel-title
-                                    a#about-site-title(data-toggle='collapse', data-parent='#accordion', href='#collapse1') About
+                        .panel.panel-dash
+                            .panel-heading.panel-heading-dash
+                                a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapse1', aria-expanded='true', aria-controls='collapseOne')
+                                    span
+                                        i.glyphicon.glyphicon-home
+                                        |  The Site
                             #collapse1.panel-collapse.collapse.in
-                                .panel-body
+                                .panel-body.panel-body-dash
                                     .row
-                                        #site-about.col-sm-10.col-sm-offset-1
-                        .panel.panel-default
-                            .panel-heading
-                                h4.panel-title
-                                    a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapse2') Data Viewer
+                                        #site-about-section.col-sm-10.col-sm-offset-1
+                        .panel.panel-dash
+                            .panel-heading.panel-heading-dash
+                                a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapse2', aria-expanded='true', aria-controls='collapseOne')
+                                    span
+                                        i.glyphicon.glyphicon-stats
+                                        |  Graphs
                             #collapse2.panel-collapse.collapse
-                        .panel.panel-default
-                            .panel-heading
-                                h4.panel-title
-                                    a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapse3') More
+                                .panel-body.panel-body-dash
+                                    .row
+                                        #site-data-viewer-section.col-sm-10.col-sm-offset-1
+                        .panel.panel-dash
+                            .panel-heading.panel-heading-dash
+                                a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
+                                    span
+                                        i.glyphicon.glyphicon-equalizer
+                                        |  More Information
                             #collapse3.panel-collapse.collapse
-                                .panel-body
+                                .panel-body.panel-body-dash
                                     | Lorem ipsum dolor sit amet, consectetur adipisicing elit,
                                     | sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
                                     | quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
