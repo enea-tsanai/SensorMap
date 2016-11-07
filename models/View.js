@@ -15,6 +15,7 @@ View.add({
     pageSection: { type: Types.Select, required: true, initial: true, options: 'Marker, About, Data Viewer', emptyOption: false },
     content: { type: Types.Html, wysiwyg: true , dependsOn: { viewType: 'HTML Content' } },
     sensors: { type: Types.Relationship, ref: 'Sensor', many: true, filters: { site: ':site' }, dependsOn: { viewType: 'Data from Sensors' } },
+    advancedToolbar: { type: Types.Boolean, dependsOn: { viewType: 'Data from Sensors' } },
     priority: { type: Types.Number, format: '0' },
     createdAt: { type: Date, default: Date.now, hidden: true }
 });

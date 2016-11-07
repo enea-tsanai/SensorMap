@@ -383,7 +383,7 @@ DygraphPlotter.prototype.appendHTML = function () {
 
 DygraphPlotter.prototype.plot = function () {
     console.log("Plotting..");
-    // console.log(this.dataProvider.data);
+    log('Response', this.dataProvider.data);
     //TODO: Check the following: may be undifined
     dygraphs[this.divElement] = new Dygraph(document.getElementById(this.divElement), this.dataProvider.data, this.plotParams);
     dygraphs[this.divElement].resize(); //Force drawing. Resolves issues inside tabs
@@ -1224,6 +1224,197 @@ function generateMixedGraphs_() {
         }
     }
 }
+
+
+var generateGraphs = function (view) {
+
+    // log('View plot area', view);
+
+    $("#" + view._id + "-plot-area").empty();
+
+    var sensorsInGraph = [];
+    var synchedDygraphs = [];
+    
+    var viewMode = $('input[name="' + view._id + '-view-mode"]:checked').val();
+    var showAverages = $('input[name="' + view._id + '-average-checkbox"]').bootstrapSwitch('state');
+    var startDate = $('#' + view._id + '-datepicker').find('input[name="start"]').datepicker("getDate");
+    var endDate = $('#' + view._id + '-datepicker').find('input[name="end"]').datepicker("getDate");
+    var dateWindow = [startDate, endDate];
+
+    $.each($("ul[id='sensors-list-" + view._id + "'] > li > input[name='sensor']:checked"), function () {
+        sensorsInGraph.push($(this).val());
+    });
+
+    log('viewMode: ', viewMode);
+    log('showAverages: ', showAverages);
+    log('startDate: ', startDate);
+    log('endDate: ', endDate);
+    log('sensors: ', sensorsInGraph);
+
+    
+    if (view.advancedToolbar === true) {
+        if (viewMode === "combined") {
+
+            var g = new DygraphPlotter();
+            g.plotParams.title = "Soil Moisture and Temperature";
+            g.plotParams.labels = ['Time'].concat(probeLabels.concat(temperatureLabels));
+            g.plotParams.ylabel = 'Moisture';
+            g.plotParams.y2label = 'Temperature';
+            g.plotParams.series = {};
+            g.plotParams.series["Temperature (C)"] = {axis: 'y2'};
+            g.plotParams.connectSeparatedPoints = true;
+            g.plotParams.labelsSeparateLines = true;
+            g.plotParams.customBars = showAverages; //Carefull with this
+            g.plotParams.highlightSeriesOpts = '';
+            g.plotParams.showRangeSelector = true;
+            // g.plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
+
+            // Additional Options
+            g.dataProvider.calculateAverages = showAverages; //Hack: May need to add interface functions for this setting
+            // g.dataProvider.averageGroups = [1, 2]; //Hack: May need to add interface functions for this setting
+            g.hasVisibletoolbar = true;
+            g.hasSeparateLegendDiv = true;
+            g.setWrapperElement("plot-area");
+            g.setDivElement("mixed-probes");
+            g.appendHTML();
+            g.showSpinner();
+
+            if (showAverages === true) {
+                g.plotParams.title = "Soil Moisture and Temperature Averages";
+                g.plotParams.labels = ['Time', 'Moisture', 'Temperature (C)'];
+                g.plotParams.series['Temperature (C)'] = {axis: 'y2'};
+                g.plotParams.highlightSeriesOpts = '';
+                g.dataProvider.averageGroups = [probeLabels.length, temperatureLabels.length];
+
+            } else {
+                for (var l in temperatureLabels) g.plotParams.series[temperatureLabels[l]] = {axis: 'y2'};
+            }
+            g.dataProvider._onDoneFetchingData(sensorsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+                [function () {
+                    return g.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(sensorsInGraph));
+                },
+                    function () {
+                        return g.stopSpinner();
+                    },
+                    function () {
+                        return g.plot();
+                    }]);
+        } else {
+
+            var probesGraphComplete = $.Deferred();
+            var tempsGraphComplete = $.Deferred();
+
+            if (probeLabels.length) {
+
+                var g1 = new DygraphPlotter();
+                g1.plotParams.title = "Quadrants Soil Moisture";
+                g1.plotParams.labels = ['Time'].concat(probeLabels);
+                g1.plotParams.ylabel = 'Moisture';
+                g1.plotParams.connectSeparatedPoints = true;
+                g1.plotParams.labelsSeparateLines = true;
+                g1.plotParams.customBars = showAverages; //Carefull with this
+                g1.plotParams.highlightSeriesOpts = '';
+                g1.plotParams.showRangeSelector = true;
+                // g1.plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
+
+                // Additional Options
+                g1.dataProvider.calculateAverages = showAverages; //Hack: May need to add interface functions for this setting
+                g1.dataProvider.averageGroups = [probesInGraph.length];
+                g1.hasVisibletoolbar = true;
+                g1.hasSeparateLegendDiv = true;
+                g1.setWrapperElement(view._id + '-plot-area');
+                g1.setDivElement(view._id + '-combined-graphs');
+                g1.appendHTML();
+                g1.showSpinner();
+
+                if (showAverages)
+                    g1.plotParams.labels = ['Time', 'Moisture'];
+
+                g1.dataProvider._onDoneFetchingData(probesInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+                    [function () {
+                        g1.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(probesInGraph));
+                        g1.stopSpinner();
+                        g1.plot();
+                        synchedDygraphs.push(dygraphs['mixed-probes']);
+                        probesGraphComplete.resolve();
+                    }]);
+            }
+
+            if (temperatureLabels.length) {
+
+                var g2 = new DygraphPlotter();
+                g2.plotParams.title = "Quadrants Temperature";
+                g2.plotParams.labels = ['Time'].concat(temperatureLabels);
+                g2.plotParams.ylabel = 'Temperature (C)';
+                g2.plotParams.connectSeparatedPoints = true;
+                g2.plotParams.labelsSeparateLines = true;
+                g2.plotParams.customBars = showAverages; //Carefull with this
+                g2.plotParams.highlightSeriesOpts = '';
+                g2.plotParams.showRangeSelector = false;
+                // g2.plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
+
+                // Additional Options
+                g2.dataProvider.calculateAverages = showAverages; //Hack: May need to add interface functions for this setting
+                g2.dataProvider.averageGroups = [tempsInGraph.length];
+                g2.hasVisibletoolbar = true;
+                g2.hasSeparateLegendDiv = true;
+                g2.setWrapperElement("plot-area");
+                g2.setDivElement("mixed-temperatures");
+                g2.appendHTML();
+                g2.showSpinner();
+
+                if (showAverages)
+                    g2.plotParams.labels = ['Time', 'Temperature'];
+
+                g2.dataProvider._onDoneFetchingData(tempsInGraph, {periodFrom: dateWindow[0], periodTo: dateWindow[1]},
+                    [function () {
+                        g2.dataProvider.addDataStreams(helperFunctions.getIndexSite().getSensorsById(tempsInGraph));
+                        g2.stopSpinner();
+                        g2.plot();
+                        synchedDygraphs.push(dygraphs['mixed-temperatures']);
+                        tempsGraphComplete.resolve();
+                    }]);
+            }
+
+            if (viewMode === "synchronized") {
+                $.when(probesGraphComplete, tempsGraphComplete).done(function () {
+                    Dygraph.synchronize(synchedDygraphs);
+                });
+            }
+        }
+    } else {
+        
+        var dygs = [];
+        for (var i = 0; i < sensorsInGraph.length; i++) {
+
+            var sensor = helperFunctions.getIndexSite().getSensorById(sensorsInGraph[i]);
+
+            dygs.push(new DygraphPlotter());
+            dygs[i].plotParams.title = sensor.name;
+            dygs[i].plotParams.labels = [sensor.units[1], sensor.units[0]];  //Use Reverse function or change db schema?
+            dygs[i].plotParams.ylabel = sensor.units[0];
+            dygs[i].plotParams.labelsSeparateLines = true;
+            dygs[i].plotParams.highlightSeriesOpts = '';
+            dygs[i].plotParams.showRangeSelector = true;
+            dygs[i].plotParams.fillGraph = true;
+            dygs[i].plotParams.rollPeriod = 30;
+            dygs[i].plotParams.color = "#5BAFF3";
+            // dygs[i].plotParams.dateWindow = [Date.parse(dateWindow[0]), Date.parse(dateWindow[1])];
+
+            // Additional Options
+            dygs[i].hasVisibletoolbar = true;
+            dygs[i].hasSeparateLegendDiv = true;
+            dygs[i].setWrapperElement(view._id + '-plot-area');
+            dygs[i].setDivElement(view._id + '-sensor-' + sensorsInGraph[i]);
+
+            dygs[i].loadAndPlot([sensorsInGraph[i]], {periodFrom: dateWindow[0], periodTo: dateWindow[1]});
+        }
+        
+    }
+    
+};
+
+
 
 function generateRainGraphs() {
     $("#rain-plot-area").empty();

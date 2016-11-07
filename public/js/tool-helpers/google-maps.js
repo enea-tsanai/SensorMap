@@ -89,25 +89,34 @@ function populateSitesOnMap() {
 
     $.when(loadSites()).done(function(results) {
 
-        for (var s in sites) {
-			log('Placing marker', sites[s].location.geo);
-            var marker = new google.maps.Marker({
-                position: new google.maps.LatLng(sites[s].location.geo[1], sites[s].location.geo[0]),
-                map: map,
-                // label: "A",
-                icon: {url: 'http://maps.gstatic.com/mapfiles/markers2/marker.png'},
-                animation: google.maps.Animation.DROP,
-                title: sites[s].name
-            });
+		if (sites.length) {
 
-            markers.push(marker);
-            marker.setMap(map);
-			bounds.extend(marker.position);
+			log('sites', sites);
+			for (var s in sites) {
+				log('Placing marker', sites[s].location.geo);
+				var marker = new google.maps.Marker({
+					position: new google.maps.LatLng(sites[s].location.geo[1], sites[s].location.geo[0]),
+					map: map,
+					// label: "A",
+					icon: {url: 'http://maps.gstatic.com/mapfiles/markers2/marker.png'},
+					animation: google.maps.Animation.DROP,
+					title: sites[s].name
+				});
 
-            bindInfoWindow(marker, map, infowindow, sites[s]);
-        }
+				markers.push(marker);
+				marker.setMap(map);
+				bounds.extend(marker.position);
 
-		map.fitBounds(bounds);
+				bindInfoWindow(marker, map, infowindow, sites[s]);
+			}
+
+			map.fitBounds(bounds);
+
+		} else {
+
+            $('#noSitesFound').modal();
+
+		}
 
     });
 
@@ -150,7 +159,6 @@ function bindInfoWindow(marker, map, infowindow, site) {
 			if (selectedMarkers.indexOf(marker) == -1) {
 
 				log('Selected site', site);
-
 
                 // Place camera at center and on top of marker
 				if (Dashboard.state.localeCompare("minimized") == 0)
