@@ -39,6 +39,7 @@ exports = module.exports = function (app) {
 	// app.get('/gallery', routes.views.gallery);
 	// app.all('/contact', routes.views.contact);
 	app.all('/map', routes.views.map);
+	app.all('/test', routes.views.test);
 
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
@@ -49,5 +50,8 @@ exports = module.exports = function (app) {
 	// API
 	app.get('/api/sites', routes.api.sites);
 	app.get('/api/data-stream', routes.api['data-streams']);
+	
+	// Sensors data manager
+	app.get('/api/updateSensorsData', routes.api.sensorsDataManager.fetchAndUpdateSensorsData);
 
 };

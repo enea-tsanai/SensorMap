@@ -62,8 +62,6 @@ function loadSites() {
 
             $.each(results, function (i, site) {
 
-				log('Loaded Site', site);
-
                 var sensors = [];
                 site.sensors.forEach(function (sensor) {
                     sensors.push($.extend(new Sensor(), sensor));
@@ -93,7 +91,7 @@ function populateSitesOnMap() {
 
 			log('sites', sites);
 			for (var s in sites) {
-				log('Placing marker', sites[s].location.geo);
+				// log('Placing marker', sites[s].location.geo);
 				var marker = new google.maps.Marker({
 					position: new google.maps.LatLng(sites[s].location.geo[1], sites[s].location.geo[0]),
 					map: map,
@@ -158,7 +156,7 @@ function bindInfoWindow(marker, map, infowindow, site) {
 
 			if (selectedMarkers.indexOf(marker) == -1) {
 
-				log('Selected site', site);
+				// log('Selected site', site);
 
                 // Place camera at center and on top of marker
 				if (Dashboard.state.localeCompare("minimized") == 0)
